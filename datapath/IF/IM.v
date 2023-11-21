@@ -4,6 +4,6 @@ module IM(
     reg[31:0] rom[0:1023];
     assign instruct=rom[addr];
     initial begin
-        $readmemh("test1.txt",rom);
+        $readmemh("sample_codes/qsort.txt",rom);
     end
 endmodule
