@@ -1,0 +1,138 @@
+module mips (
+    input clk,
+    input rst
+);
+    // outports wire
+    wire [61:0] 	ID_DATA_from_IF;
+    IF u_IF(
+        .clk         	( clk          ),
+        .rst         	( rst          ),
+        .NPC            ( NPC ),
+
+        .IF_FLUSH       ( IF_FLUSH     ),
+        .IF_CTRL     	( IF_CTRL      ),
+        .o_ID_DATA   	( ID_DATA_from_IF    )
+    );
+    
+    // outports wire from controller
+    wire        	IF_CTRL;
+    wire [6:0]  	ID_CTRL;
+    wire [13:0] 	EX_CTRL;
+    wire        	MEM_CTRL;
+    wire [4:0]  	WB_CTRL;
+    wire [31:2] ID_PCP1;
+    wire [31:0] ID_instr;
+    assign {ID_PCP1,ID_instr}=ID_DATA_from_IF;
+    Controller u_Controller(
+        .clk      	( clk       ),
+        .reset    	( rst       ),
+        .zero     	( zero      ),
+        .op(ID_instr[31:26]),
+        .func(ID_instr[5:0]),
+        .rt(ID_instr[20:16]),
+        .pipeline_stall(pipeline_stall),
+        .IF_FLUSH (IF_FLUSH),
+        .ID_FLUSH (ID_FLUSH),
+        .EX_FLUSH (EX_FLUSH),
+        .MEM_FLUSH (MEM_FLUSH),
+        .IF_CTRL  	( IF_CTRL   ),
+        .ID_CTRL  	( ID_CTRL   ),
+        .EX_CTRL  	( EX_CTRL   ),
+        .MEM_CTRL 	( MEM_CTRL  ),
+        .WB_CTRL  	( WB_CTRL   )
+    );
+    // outports wire
+    wire   	pipeline_stall;
+    
+    HazardDetect u_HazardDetect(
+        .ID_rs       	( ID_DATA_from_IF[25:21]        ),
+        .ID_rt       	( ID_DATA_from_IF[20:16]        ),
+        .EX_rw       	( EX_rw_from_EX      ),
+        .MEM_rw         ( MEM_BACK_from_MEM[4:0]),
+        .MEM_memToReg    ( WB_CTRL_from_EX[3]),
+        .EX_memToReg 	( WB_CTRL_from_ID[3]  ),
+        .ID_uncertainJump(ID_uncertainJump),
+        .stall       	( pipeline_stall        )
+    );
+    
+    // outports wire
+    wire [157:0] 	EX_DATA_from_ID;
+    wire [13:0]     EX_CTRL_from_ID;
+    wire         	MEM_CTRL_from_ID;
+    wire [4:0]   	WB_CTRL_from_ID;
+    wire [31:2]     NPC;
+    wire ID_uncertainJump;
+    ID u_ID(
+        .clk         	( clk          ),
+        .rst         	( rst          ),
+        .ID_CTRL     	( ID_CTRL      ),
+        .EX_CTRL        ( EX_CTRL      ),
+        .MEM_CTRL       ( MEM_CTRL     ),
+        .WB_CTRL        ( WB_CTRL      ),
+        .ID_FLUSH (ID_FLUSH),
+        .ID_DATA     	( ID_DATA_from_IF      ),
+        .WB_BACK       	( WB_BACK_from_WB        ),
+        .MEM_BACK       ( MEM_BACK_from_MEM),
+        .o_EX_CTRL      ( EX_CTRL_from_ID ),
+        .o_MEM_CTRL     ( MEM_CTRL_from_ID),
+        .o_WB_CTRL      ( WB_CTRL_from_ID ),
+        .o_EX_DATA   	( EX_DATA_from_ID ),
+        .o_NPC          (NPC),
+        .o_uncertainJump(ID_uncertainJump)
+    );
+    
+    // outports wire
+    wire         	MEM_CTRL_from_EX;
+    wire [4:0]   	WB_CTRL_from_EX;
+    wire [68:0] 	MEM_DATA_from_EX;
+    wire [4:0]      EX_rw_from_EX;
+    EX u_EX(
+        .clk           	( clk            ),
+        .rst           	( rst            ),
+        .EX_FLUSH (EX_FLUSH),
+        .EX_CTRL       	( EX_CTRL_from_ID        ),
+        .MEM_CTRL      	( MEM_CTRL_from_ID       ),
+        .WB_CTRL       	( WB_CTRL_from_ID        ),
+        .EX_DATA       	( EX_DATA_from_ID  ),
+        .WB_BACK        ( WB_BACK_from_WB),
+        .MEM_BACK       ( MEM_BACK_from_MEM),
+        .o_MEM_CTRL    	( MEM_CTRL_from_EX     ),
+        .o_WB_CTRL     	( WB_CTRL_from_EX      ),
+        .o_MEM_DATA    	( MEM_DATA_from_EX     ),
+        .rw        ( EX_rw_from_EX)
+    );
+    
+    // outports wire
+    wire [4:0]   	WB_CTRL_from_MEM;
+    wire [68:0] 	WB_DATA_from_MEM;
+    wire [37:0]     MEM_BACK_from_MEM;
+    MEM u_MEM(
+        .clk       	( clk        ),
+        .rst       	( rst        ),
+        .MEM_FLUSH (MEM_FLUSH),
+        .MEM_CTRL  	( MEM_CTRL_from_EX   ),
+        .WB_CTRL   	( WB_CTRL_from_EX    ),
+        .MEM_DATA  	( MEM_DATA_from_EX   ),
+        .o_WB_CTRL 	( WB_CTRL_from_MEM  ),
+        .o_WB_DATA 	( WB_DATA_from_MEM  ),
+        .o_MEM_BACK  ( MEM_BACK_from_MEM )
+    );
+    
+    wire WB_regWrite_from_WB;
+    wire[37:0] WB_BACK_from_WB;
+    WB u_WB(
+        .clk(clk),
+        .rst(rst),
+        .WB_CTRL(WB_CTRL_from_MEM),
+        .WB_DATA(WB_DATA_from_MEM),
+        .o_WB_regWrite(WB_regWrite_from_WB),
+        .o_WB_BACK(WB_BACK_from_WB)
+    );
+endmodule //mips
+
+//将代码按阶段重新封装为几个大模块，从而显现出所有每个阶段所需的信号接口
+//将原本的中间寄存器拓展为流水线寄存器
+//将控制器状态机改为单指令固定五阶段,测试依赖流水线寄存器的单指令多周期运行
+//实现旁路和阻塞解决数据冒险
+//实现清空解决控制冒险，实现流水线
+//优化控制冒险
