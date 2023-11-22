@@ -1,5 +1,5 @@
 module DM (
-    input[11:2]A,
+    input[1zz:2]A,
     input memWrite,
     input memToReg,
     input [3:0]be,
@@ -7,7 +7,7 @@ module DM (
     input [31:0] D,
     output [31:0] Dout
 );
-    reg[31:0] ram[0:1023];
+    reg[31:0] ram[0:3071];
     assign Dout=ram[A];
     assign in_byte=D[7:0];
     always @(posedge clk) begin

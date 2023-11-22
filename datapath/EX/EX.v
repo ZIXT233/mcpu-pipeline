@@ -69,7 +69,7 @@ module EX (
     end
     always @(posedge clk) begin
         if(EX_FLUSH) begin
-            o_MEM_DATA<=0;
+            //o_MEM_DATA<=0;
             o_MEM_CTRL<=0;
             o_WB_CTRL<=0;
         end

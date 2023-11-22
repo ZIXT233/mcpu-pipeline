@@ -3,6 +3,10 @@ module MEM (
     input      rst,
     input MEM_FLUSH,
     input MEM_CTRL,
+    input [31:0]PrRD,
+    output [31:2]PrAddr,
+    output [31:0]PrWD,
+    output IOWrite,
     input [4:0]WB_CTRL,
     input [68:0]MEM_DATA,
     output reg[4:0]o_WB_CTRL,
@@ -11,7 +15,7 @@ module MEM (
 );
     assign {memWrite}=MEM_CTRL;
     assign {isDMByte,isDMHalf}=WB_CTRL[2:1];
-    wire[31:0]EXout,rd2; 
+    wire[31:0]EXout,rd2,MEMout; 
     wire[4:0]rw;
     assign {rw,EXout,rd2}=MEM_DATA;
     assign o_MEM_BACK={WB_CTRL[4],MEM_DATA[63:32],MEM_DATA[68:64]}; //regWrite,Wd,rw
@@ -24,22 +28,21 @@ module MEM (
         .low_addr(EXout[1:0]),
         .be(be)
     );
+    assign AddrInDM=(EXout[15:0]<'h3000);
+    assign DMWrite=memWrite&&AddrInDM;
     DM DM(
-        .A(EXout[11:2]),
-        .memWrite(memWrite&!EXout[12]),
+        .A(EXout[13:2]),
+        .memWrite(DMWrite),
         .memToReg(memToReg),
         .clk(clk),
         .be(be),
         .D(rd2),
         .Dout(Dout)
     );
-
-    screenBoard screenBoard(
-        .D(rd2),
-        .WE(memWrite&EXout[12]),
-        .clk(clk),
-        .reset(rst)
-    );
+    assign IOWrite=memWrite&&!AddrInDM;
+    assign PrAddr=EXout[31:2];
+    assign PrWD=rd2;
+    assign MEMout=AddrInDM?Dout:PrRD;
     
     initial begin
         o_WB_CTRL<=0;
@@ -48,10 +51,10 @@ module MEM (
     always @(posedge clk)begin
         if(MEM_FLUSH)   begin
             o_WB_CTRL<=0;
-            o_WB_DATA<=0;
+            //o_WB_DATA<=0;
         end
         else begin
-            o_WB_DATA<={rw,EXout,Dout};
+            o_WB_DATA<={rw,EXout,MEMout};
             o_WB_CTRL<=WB_CTRL;
         end
     end

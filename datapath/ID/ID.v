@@ -93,7 +93,7 @@ module ID (
     end
     always @(posedge clk) begin
         if(ID_FLUSH) begin
-            o_EX_DATA<=0;
+            //o_EX_DATA<=0;
             o_EX_CTRL<=0;
             o_MEM_CTRL<=0;
             o_WB_CTRL<=0;

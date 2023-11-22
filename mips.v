@@ -1,6 +1,11 @@
 module mips (
     input clk,
-    input rst
+    input rst,
+    input [7:2]HWInt,
+    output [31:2]PrAddr,
+    input [31:0]PrRD,
+    output [31:0]PrWD,
+    output IOWrite
 );
     // outports wire
     wire [61:0] 	ID_DATA_from_IF;
@@ -113,6 +118,10 @@ module mips (
         .MEM_CTRL  	( MEM_CTRL_from_EX   ),
         .WB_CTRL   	( WB_CTRL_from_EX    ),
         .MEM_DATA  	( MEM_DATA_from_EX   ),
+        .PrAddr(PrAddr),
+        .PrRD(PrRD),
+        .PrWD(PrWD),
+        .IOWrite(IOWrite),
         .o_WB_CTRL 	( WB_CTRL_from_MEM  ),
         .o_WB_DATA 	( WB_DATA_from_MEM  ),
         .o_MEM_BACK  ( MEM_BACK_from_MEM )
