@@ -1,5 +1,5 @@
 module DM (
-    input[1zz:2]A,
+    input[13:2]A,
     input memWrite,
     input memToReg,
     input [3:0]be,
