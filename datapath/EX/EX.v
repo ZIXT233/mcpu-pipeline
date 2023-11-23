@@ -2,24 +2,29 @@ module EX (
     input      clk,
     input      rst,
     input EX_FLUSH,
-    input [13:0]EX_CTRL,
+    input [15:0]EX_CTRL,
     input MEM_CTRL,
     input [4:0]WB_CTRL,
     input [157:0]EX_DATA,
     input [37:0] WB_BACK,
     input [37:0] MEM_BACK,
+    input [31:0] CP0_DATA,
     output reg o_MEM_CTRL,
     output reg [4:0]o_WB_CTRL,
     output reg [68:0]o_MEM_DATA,
+    output [37:0] o_CP0_DATA,
     output[4:0] rw
 );
     wire [3:0]aluop;
     wire [2:0]MDFunc;
-    assign {regDst,isSlt,savePC,ALUSrc,aluop,MDSign,MDFunc,MDHIWB,MDLOWB}=EX_CTRL;
+    assign {CP0WB,CP0Write,regDst,isSlt,savePC,ALUSrc,aluop,MDSign,MDFunc,MDHIWB,MDLOWB}=EX_CTRL;
 
     wire  [31:2]PCP1;
     wire [31:0]instr,rd1,rd2,EXTB;
     assign {PCP1,instr,rd1,rd2,EXTB}=EX_DATA;
+    
+    assign o_CP0_DATA={CP0Write,instr[15:11],f_rd2};
+
     
     wire[31:0]f_rd1,f_rd2,ALUB,ALUC,EXout,MDHI,MDLO;  
     
@@ -58,6 +63,7 @@ module EX (
 
     assign EXout=isSlt?ALUC[31]:
                  savePC?PCP1<<2:
+                 CP0WB?CP0_DATA:
                  MDHIWB?MDHI:
                  MDLOWB?MDLO:
                  ALUC;

@@ -21,10 +21,11 @@ module mips (
     
     // outports wire from controller
     wire        	IF_CTRL;
-    wire [6:0]  	ID_CTRL;
-    wire [13:0] 	EX_CTRL;
+    wire [8:0]  	ID_CTRL;
+    wire [15:0] 	EX_CTRL;
     wire        	MEM_CTRL;
     wire [4:0]  	WB_CTRL;
+    wire [1:0]      CP0_CTRL;
     wire [31:2] ID_PCP1;
     wire [31:0] ID_instr;
     assign {ID_PCP1,ID_instr}=ID_DATA_from_IF;
@@ -34,8 +35,10 @@ module mips (
         .zero     	( zero      ),
         .op(ID_instr[31:26]),
         .func(ID_instr[5:0]),
+        .rs(ID_instr[25:21]),
         .rt(ID_instr[20:16]),
         .pipeline_stall(pipeline_stall),
+        .IntReq(IntReq),
         .IF_FLUSH (IF_FLUSH),
         .ID_FLUSH (ID_FLUSH),
         .EX_FLUSH (EX_FLUSH),
@@ -44,7 +47,8 @@ module mips (
         .ID_CTRL  	( ID_CTRL   ),
         .EX_CTRL  	( EX_CTRL   ),
         .MEM_CTRL 	( MEM_CTRL  ),
-        .WB_CTRL  	( WB_CTRL   )
+        .WB_CTRL  	( WB_CTRL   ),
+        .CP0_CTRL(CP0_CTRL)
     );
     // outports wire
     wire   	pipeline_stall;
@@ -62,7 +66,7 @@ module mips (
     
     // outports wire
     wire [157:0] 	EX_DATA_from_ID;
-    wire [13:0]     EX_CTRL_from_ID;
+    wire [15:0]     EX_CTRL_from_ID;
     wire         	MEM_CTRL_from_ID;
     wire [4:0]   	WB_CTRL_from_ID;
     wire [31:2]     NPC;
@@ -77,6 +81,7 @@ module mips (
         .ID_FLUSH (ID_FLUSH),
         .ID_DATA     	( ID_DATA_from_IF      ),
         .WB_BACK       	( WB_BACK_from_WB        ),
+        .CP0_EPC        ( ID_EPC_from_CP0),
         .MEM_BACK       ( MEM_BACK_from_MEM),
         .o_EX_CTRL      ( EX_CTRL_from_ID ),
         .o_MEM_CTRL     ( MEM_CTRL_from_ID),
@@ -91,6 +96,7 @@ module mips (
     wire [4:0]   	WB_CTRL_from_EX;
     wire [68:0] 	MEM_DATA_from_EX;
     wire [4:0]      EX_rw_from_EX;
+    wire [37:0]     CP0_DATA_from_EX;
     EX u_EX(
         .clk           	( clk            ),
         .rst           	( rst            ),
@@ -101,9 +107,11 @@ module mips (
         .EX_DATA       	( EX_DATA_from_ID  ),
         .WB_BACK        ( WB_BACK_from_WB),
         .MEM_BACK       ( MEM_BACK_from_MEM),
+        .CP0_DATA       ( EX_DATA_from_CP0),
         .o_MEM_CTRL    	( MEM_CTRL_from_EX     ),
         .o_WB_CTRL     	( WB_CTRL_from_EX      ),
         .o_MEM_DATA    	( MEM_DATA_from_EX     ),
+        .o_CP0_DATA     ( CP0_DATA_from_EX ),
         .rw        ( EX_rw_from_EX)
     );
     
@@ -137,6 +145,23 @@ module mips (
         .o_WB_regWrite(WB_regWrite_from_WB),
         .o_WB_BACK(WB_BACK_from_WB)
     );
+    // outports wire
+    wire [31:2] 	ID_EPC_from_CP0;
+    wire [31:0] 	EX_DATA_from_CP0;
+    wire        	IntReq;
+    
+    CP0 u_CP0(
+        .clk       	( clk        ),
+        .rst       	( rst        ),
+        .HWInt     	( HWInt      ),
+        .ID_PCP1   	( ID_PCP1    ),
+        .o_ID_EPC  	( ID_EPC_from_CP0   ),
+        .EX_DATA   	( CP0_DATA_from_EX    ),
+        .o_EX_DATA 	( EX_DATA_from_CP0  ),
+        .CP0_CTRL  	( CP0_CTRL   ),
+        .IntReq    	( IntReq     )
+    );
+    
 endmodule //mips
 
 //将代码按阶段重新封装为几个大模块，从而显现出所有每个阶段所需的信号接口

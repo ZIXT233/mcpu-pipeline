@@ -3,15 +3,15 @@ module ID (
     input      rst,
 
     input ID_FLUSH,
-    input [6:0]ID_CTRL,
-    input [13:0]EX_CTRL,
+    input [8:0]ID_CTRL,
+    input [15:0]EX_CTRL,
     input MEM_CTRL,
     input [4:0]WB_CTRL,
     input [61:0]ID_DATA,
     input [37:0]WB_BACK,
     input [37:0]MEM_BACK,
-    
-    output reg[13:0]o_EX_CTRL,
+    input [31:2]CP0_EPC,
+    output reg[15:0]o_EX_CTRL,
     output reg o_MEM_CTRL,
     output reg [4:0] o_WB_CTRL,
     output reg[157:0] o_EX_DATA,
@@ -19,7 +19,7 @@ module ID (
     output o_uncertainJump
 );  
     wire [2:0]branchType;
-    assign {jmp,NPCFromGPR,branchType,extop,exsign}=ID_CTRL;
+    assign {NPCFromEPC,ExlSet,jmp,NPCFromGPR,branchType,extop,exsign}=ID_CTRL;
     assign o_uncertainJump=NPCFromGPR||(branchType!=0);
     wire [31:2] PCP1;
     wire [31:0] instr;
@@ -82,6 +82,9 @@ module ID (
         .instr_index(instr[25:0]),
         .reg_index(f_rd1),
         .NPCFromGPR(NPCFromGPR),
+        .goExceptionHandler(ExlSet),
+        .NPCFromEPC(NPCFromEPC),
+        .EPC(CP0_EPC),
         .NPC(o_NPC)
     );
 

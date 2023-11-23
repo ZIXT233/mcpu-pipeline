@@ -7,27 +7,31 @@ module Controller (
     input zero,
     input [5:0]op,
     input [5:0]func,
+    input [4:0]rs,
     input [4:0]rt,
     input BRANCH_CTRL,
     input pipeline_stall,
+    input IntReq,
     output IF_FLUSH,
     output ID_FLUSH,
     output EX_FLUSH,
     output MEM_FLUSH,
     output IF_CTRL,
-    output [6:0]ID_CTRL,
-    output [13:0]EX_CTRL,
+    output [8:0]ID_CTRL,
+    output [15:0]EX_CTRL,
     output MEM_CTRL,
-    output [4:0]WB_CTRL
+    output [4:0]WB_CTRL,
+    output [1:0]CP0_CTRL
 );
     wire [3:0]aluop;
     wire [2:0]branchType,MDFunc;
     //package
     assign IF_CTRL={PCWrite};
-    assign ID_CTRL={jmp,NPCFromGPR,branchType,extop,exsign};
-    assign EX_CTRL={regDst,isSlt,savePC,ALUSrc,aluop,MDSign,MDFunc,MDHIWB,MDLOWB};
+    assign ID_CTRL={NPCFromEPC,ExlSet,jmp,NPCFromGPR,branchType,extop,exsign};
+    assign EX_CTRL={CP0WB,CP0Write,regDst,isSlt,savePC,ALUSrc,aluop,MDSign,MDFunc,MDHIWB,MDLOWB};
     assign MEM_CTRL={memWrite};
     assign WB_CTRL={regWrite,memToReg,isDMByte,isDMHalf,isLOADS};
+    assign CP0_CTRL={ExlSet,ExlClr};
     //decode instr
     //wire add,sub,ori,beq,sw,lw,lui,j,jal,jr,addi,addiu,slt,lb,lbu,lh,lhu,sb,sh,slti;
     assign add  =(op==0)    &&(func==6'b100000);
@@ -81,6 +85,9 @@ module Controller (
     assign multu=(op==0)    &&(func==6'b011001);
     assign div  =(op==0)    &&(func==6'b011010);
     assign divu =(op==0)    &&(func==6'b011011); 
+    assign eret =(op==6'b010000)  && rs[4]==1'b1  &&(func==6'b011000);
+    assign mfc0 =(op==6'b010000)  && (rs==0);
+    assign mtc0 =(op==6'b010000)  && (rs==5'b00100);
     //fsm
     reg[3:0] fsm;  
     assign Branch =beq|bne|bgtz|bltz|bgez|blez;
@@ -161,6 +168,7 @@ module Controller (
 
     //IF and NPC
     assign PCWrite  = !pipeline_stall;
+    assign IF_FLUSH = ExlSet;
     assign ID_FLUSH =pipeline_stall;
     //`S(0); 
     /*assign IF_FLUSH =`S(1);
@@ -178,6 +186,10 @@ module Controller (
     assign regWrite =typeIA|typeR|mfhi|mflo
                     |LOAD
                     |savePC; //*WB S4 S7 lw jal
-    
+    assign CP0WB=mfc0;
+    assign CP0Write =mtc0;
+    assign ExlSet=IntReq&&!(jmp||NPCFromGPR||branchType);
+    assign NPCFromEPC =eret;
+    assign ExlClr=eret;
    
 endmodule //Controller

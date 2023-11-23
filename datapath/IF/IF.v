@@ -21,7 +21,7 @@ module IF (
         .PC(IF_PC)
     );
     IM IM (
-        .addr(IF_PC[11:2]),
+        .addr(IF_PC[15:2]),
         .instruct(IF_instr)
     );
      
