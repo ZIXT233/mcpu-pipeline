@@ -14,12 +14,14 @@ module pc(
         if(!reset) begin
             PC<=`START_ADDR;
         end
-        if(PCWrite)begin 
-            PC<=NPC;
-            //$display("--%x",line);
-        end
-        if(PC==`START_ADDR)begin
-            $display("start");
-        end
+        else begin 
+            if(PCWrite)begin 
+                PC<=NPC;
+                //$display("--%x",line);
+            end
+            if(PC==`START_ADDR)begin
+                $display("start");
+            end
+        end 
     end
 endmodule
