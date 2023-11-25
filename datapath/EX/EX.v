@@ -22,11 +22,12 @@ module EX (
     wire  [31:2]PCP1;
     wire [31:0]instr,rd1,rd2,EXTB;
     assign {PCP1,instr,rd1,rd2,EXTB}=EX_DATA;
+
+    wire[31:0]f_rd1,f_rd2,ALUB,ALUC,EXout,MDHI,MDLO;  
     
     assign o_CP0_DATA={CP0Write,instr[15:11],f_rd2};
 
     
-    wire[31:0]f_rd1,f_rd2,ALUB,ALUC,EXout,MDHI,MDLO;  
     
     wire zero;
     assign ALUB=ALUSrc?EXTB:f_rd2;

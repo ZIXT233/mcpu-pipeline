@@ -12,17 +12,21 @@ module GPR(
     reg[31:0] register[0:31];
     assign rd1=register[rs];
     assign rd2=register[rt];
-    initial begin
-    end
+
     integer i;
-    always @(posedge reset) begin
+    initial begin
         for(i=0;i<32;i=i+1) begin
             register[i]<=0;
         end
     end
     //reg d=0;
-    always @(posedge clk) begin
-        if(regWrite) begin
+    always @(posedge clk or negedge reset) begin
+        if(!reset) begin
+            for(i=0;i<32;i=i+1) begin
+                register[i]<=0;
+            end
+        end
+        else if(regWrite) begin
             //$display("reg %d=%1d",rw,$signed(Wd));
             register[rw]<=Wd;
         end

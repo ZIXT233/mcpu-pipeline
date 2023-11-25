@@ -6,7 +6,6 @@ module IM(
     assign index=addr-'hC00;
     assign instruct=rom[index];
     initial begin
-        $readmemh("sample_codes/intr.txt",rom);
-        $readmemh("sample_codes/handler.txt", rom, 32'h460);
+        $readmemh("sample_codes/qsort.txt",rom);
     end
 endmodule

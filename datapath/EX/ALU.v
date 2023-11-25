@@ -3,7 +3,7 @@ module ALU(
     input [31:0]B,
     input [4:0] sa,
     input [3:0]F,
-    output [31:0]C, 
+    output reg[31:0]C, 
     output zero); 
     wire [31:0] sll,srl,sra,sllv,srlv,srav; 
     assign sll=B<<sa;
@@ -13,19 +13,24 @@ module ALU(
     assign srlv=B>>A;
     assign srav=$signed(B)>>>A;
 
-    assign C=(F==0)?sll:
-             (F==1)?A|B:
-             (F==2)?A-B:
-             (F==3)?A+B:
-             (F==4)?A&B:
-             (F==5)?A^B:
-             (F==6)?~(A|B):
-             (F==7)?srl:
-             (F==8)?sra:
-             (F==9)?sllv:
-             (F==10)?srlv:
-             (F==11)?srav:
-             (F==12)?A:
-             0;
+    always @(*) begin
+        case(F)
+            0:C<=sll;
+            1:C<=A|B;
+            2:C<=A-B;
+            3:C<=A+B;
+            4:C<=A&B;
+            5:C<=A^B;
+            6:C<=~(A|B);
+            7:C<=srl;
+            8:C<=sra;
+            9:C<=sllv;
+            10:C<=srlv;
+            11:C<=srav;
+            12:C<=A;
+            default:C<=0;
+        endcase
+    end
+
     assign zero=(C==0); 
 endmodule

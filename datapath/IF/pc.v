@@ -8,12 +8,12 @@ module pc(
     initial begin
         PC<=`START_ADDR;
     end
-    always @(posedge reset) begin
-        PC<=`START_ADDR;
-    end
     wire [29:0] line;
     assign line=PC<<2;
-    always @(posedge clk) begin
+    always @(posedge clk or negedge reset) begin
+        if(!reset) begin
+            PC<=`START_ADDR;
+        end
         if(PCWrite)begin 
             PC<=NPC;
             //$display("--%x",line);

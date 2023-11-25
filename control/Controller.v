@@ -1,6 +1,3 @@
-`define S(num) (fsm==num)
-`define SAnd(num,instr) (`S(num)&(instr))
-`define SNot(num,instr) (~`S(num)&(instr))
 module Controller (
     input clk,
     input reset,
@@ -9,7 +6,6 @@ module Controller (
     input [5:0]func,
     input [4:0]rs,
     input [4:0]rt,
-    input BRANCH_CTRL,
     input pipeline_stall,
     input IntReq,
     output IF_FLUSH,
@@ -88,22 +84,9 @@ module Controller (
     assign eret =(op==6'b010000)  && rs[4]==1'b1  &&(func==6'b011000);
     assign mfc0 =(op==6'b010000)  && (rs==0);
     assign mtc0 =(op==6'b010000)  && (rs==5'b00100);
-    //fsm
-    reg[3:0] fsm;  
+
     assign Branch =beq|bne|bgtz|bltz|bgez|blez;
-    initial begin
-        fsm=0; 
-    end
-    always @(posedge clk) begin
-        //0IF 1ID 2EX 3MEM 4WB
-        if(fsm<4) fsm<=fsm+1;
-        else begin
-            fsm<=0; 
-        end 
-    end
-    always @(posedge reset) begin
-        fsm=0;
-    end
+
     //controll signal
     //assist variable 
     assign typeR    =add|addu|sub|subu|slt|AND|OR|XOR|NOR|sll|srl|sra|sllv|srlv|srav;
