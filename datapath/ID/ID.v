@@ -15,7 +15,8 @@ module ID (
     output reg o_MEM_CTRL,
     output reg [4:0] o_WB_CTRL,
     output reg[157:0] o_EX_DATA,
-    output [31:2]o_NPC,
+    output [31:2]o_JPC,
+    output o_jpcAvail,
     output o_uncertainJump
 );  
     wire [2:0]branchType;
@@ -31,7 +32,7 @@ module ID (
     wire [31:0]rd1,rd2,EXTB;
 
     GPR GPR(
-        .clk(!clk),  //for WB befor ID
+        .clk(clk),  //for WB befor ID
         .reset(rst),
         .rs(instr[25:21]),
         .rt(instr[20:16]),
@@ -74,7 +75,7 @@ module ID (
         .branchAvail 	( branchAvail  )
     );
     
-    npc npc (
+    jpc jpc (
         .PC(PCP1),
         .branchAvail(branchAvail), 
         .jmp(jmp),
@@ -85,9 +86,10 @@ module ID (
         .goExceptionHandler(ExlSet),
         .NPCFromEPC(NPCFromEPC),
         .EPC(CP0_EPC),
-        .NPC(o_NPC)
+        .JPC(o_JPC)
     );
 
+    assign o_jpcAvail=ExlSet|NPCFromEPC||NPCFromGPR||jmp||branchAvail;
     initial begin
         o_EX_DATA<=0;
         o_EX_CTRL<=0;
@@ -102,7 +104,7 @@ module ID (
             o_WB_CTRL<=0;
         end
         else begin
-            o_EX_DATA<={PCP1,instr,rd1,rd2,EXTB};
+            o_EX_DATA<={PCP1,instr,f_rd1,f_rd2,EXTB};
             o_EX_CTRL<=EX_CTRL;
             o_MEM_CTRL<=MEM_CTRL;
             o_WB_CTRL<=WB_CTRL;

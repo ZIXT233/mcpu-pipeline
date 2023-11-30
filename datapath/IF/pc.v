@@ -1,4 +1,4 @@
-`define START_ADDR 30'h0000C00
+`define START_ADDR 30'h0000BFF
 module pc(
     input wire[31:2] NPC,
     input clk,

@@ -12,8 +12,8 @@ module mips (
     IF u_IF(
         .clk         	( clk          ),
         .rst         	( rst          ),
-        .NPC            ( NPC ),
-
+        .JPC            ( JPC ),
+        .jpcAvail       ( jpcAvail ),
         .IF_FLUSH       ( IF_FLUSH     ),
         .IF_CTRL     	( IF_CTRL      ),
         .o_ID_DATA   	( ID_DATA_from_IF    )
@@ -69,7 +69,7 @@ module mips (
     wire [15:0]     EX_CTRL_from_ID;
     wire         	MEM_CTRL_from_ID;
     wire [4:0]   	WB_CTRL_from_ID;
-    wire [31:2]     NPC;
+    wire [31:2]     JPC;
     wire ID_uncertainJump;
     ID u_ID(
         .clk         	( clk          ),
@@ -87,7 +87,8 @@ module mips (
         .o_MEM_CTRL     ( MEM_CTRL_from_ID),
         .o_WB_CTRL      ( WB_CTRL_from_ID ),
         .o_EX_DATA   	( EX_DATA_from_ID ),
-        .o_NPC          (NPC),
+        .o_JPC          (JPC),
+        .o_jpcAvail     (jpcAvail),
         .o_uncertainJump(ID_uncertainJump)
     );
     
@@ -97,6 +98,7 @@ module mips (
     wire [68:0] 	MEM_DATA_from_EX;
     wire [4:0]      EX_rw_from_EX;
     wire [37:0]     CP0_DATA_from_EX;
+    wire [64:0]     pre_MEM_DATA_from_EX;
     EX u_EX(
         .clk           	( clk            ),
         .rst           	( rst            ),
@@ -112,6 +114,7 @@ module mips (
         .o_WB_CTRL     	( WB_CTRL_from_EX      ),
         .o_MEM_DATA    	( MEM_DATA_from_EX     ),
         .o_CP0_DATA     ( CP0_DATA_from_EX ),
+        .o_pre_MEM_DATA(pre_MEM_DATA_from_EX),
         .rw        ( EX_rw_from_EX)
     );
     
@@ -126,6 +129,7 @@ module mips (
         .MEM_CTRL  	( MEM_CTRL_from_EX   ),
         .WB_CTRL   	( WB_CTRL_from_EX    ),
         .MEM_DATA  	( MEM_DATA_from_EX   ),
+        .pre_MEM_DATA(pre_MEM_DATA_from_EX),
         .PrAddr(PrAddr),
         .PrRD(PrRD),
         .PrWD(PrWD),

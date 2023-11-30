@@ -12,6 +12,7 @@ module EX (
     output reg o_MEM_CTRL,
     output reg [4:0]o_WB_CTRL,
     output reg [68:0]o_MEM_DATA,
+    output [64:0]o_pre_MEM_DATA,
     output [37:0] o_CP0_DATA,
     output[4:0] rw
 );
@@ -86,4 +87,5 @@ module EX (
             o_WB_CTRL<=WB_CTRL;
         end
     end
+    assign o_pre_MEM_DATA={MEM_CTRL,EXout,f_rd2};
 endmodule //EX
