@@ -39,7 +39,7 @@ module tb();
         clk=0;
         reset=1;
         // $monitor(pc);
-		#10000 $finish;
+		#30000 $finish;
 	end
 
 endmodule

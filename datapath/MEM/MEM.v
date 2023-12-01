@@ -44,7 +44,8 @@ module MEM (
     assign IOWrite=memWrite&&!AddrInDM;
     assign PrAddr=preEXout[31:2];
     assign PrWD=prerd2;
-    assign MEMout=AddrInDM?Dout:PrRD;
+    
+    assign MEMout=(EXout[15:0]<'h3000)?Dout:PrRD;
     
     initial begin
         o_WB_CTRL<=0;

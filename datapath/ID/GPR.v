@@ -27,7 +27,7 @@ module GPR(
             end
         end
         else if(regWrite) begin
-            //$display("reg %d=%1d",rw,$signed(Wd));
+           // $display("reg %d=%1d",rw,$signed(Wd));
             register[rw]<=Wd;
         end
     end
