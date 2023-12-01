@@ -60,6 +60,7 @@ module mips (
         .MEM_rw         ( MEM_BACK_from_MEM[4:0]),
         .MEM_memToReg    ( WB_CTRL_from_EX[3]),
         .EX_memToReg 	( WB_CTRL_from_ID[3]  ),
+        .EX_regWrite    ( WB_CTRL_from_ID[4]),
         .ID_uncertainJump(ID_uncertainJump),
         .stall       	( pipeline_stall        )
     );
