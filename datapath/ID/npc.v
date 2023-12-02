@@ -17,5 +17,5 @@ module jpc(
                `npcmatch(NPCFromEPC,EPC)|
                `npcmatch(NPCFromGPR,reg_index>>2)|
                `npcmatch(jmp,instr_index)|
-               `npcmatch(branchAvail,PC+{{14{offset[17]}},offset});
+               `npcmatch(branchAvail,(PC+{{14{offset[17]}},offset}));
 endmodule
