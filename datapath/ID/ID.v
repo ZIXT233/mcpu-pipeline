@@ -16,8 +16,7 @@ module ID (
     output reg [4:0] o_WB_CTRL,
     output reg[157:0] o_EX_DATA,
     output [31:2]o_JPC,
-    output o_jpcAvail,
-    output o_uncertainJump
+    output o_jpcAvail
 );  
     wire [2:0]branchType;
     assign {NPCFromEPC,ExlSet,jmp,NPCFromGPR,branchType,extop,exsign}=ID_CTRL;

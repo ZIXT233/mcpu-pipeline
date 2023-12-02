@@ -12,7 +12,7 @@ module EX (
     output reg o_MEM_CTRL,
     output reg [4:0]o_WB_CTRL,
     output reg [68:0]o_MEM_DATA,
-    output [64:0]o_pre_MEM_DATA,
+    output [66:0]o_pre_MEM_DATA,
     output [37:0] o_CP0_DATA,
     output[4:0] rw
 );
@@ -31,6 +31,7 @@ module EX (
     
     
     wire zero;
+    wire[31:0]preMemAddr;
     assign ALUB=ALUSrc?EXTB:f_rd2;
     FORWARD u_EX_FORWARD(
         .MEM_BACK (MEM_BACK),
@@ -50,9 +51,10 @@ module EX (
         .F(aluop),
         .sa(instr[10:6]),
         .C(ALUC),
+        .sum(preMemAddr),
         .zero(zero)
     );
-    MDPROC U_MDPROC(
+  /*  MDPROC U_MDPROC(
         .clk(clk),
         .A(f_rd1),
         .B(ALUB),
@@ -61,13 +63,13 @@ module EX (
         .O_HI(MDHI),
         .O_LO(MDLO)
     );
-
+*/
 
     assign EXout=isSlt?ALUC[31]:
                  savePC?PCP1<<2:
                  CP0WB?CP0_DATA:
-                 MDHIWB?MDHI:
-                 MDLOWB?MDLO:
+               //  MDHIWB?MDHI:
+               //  MDLOWB?MDLO:
                  ALUC;
     assign rw=(savePC&&!regDst)?5'h1F:(regDst?instr[15:11]:instr[20:16]);
     initial begin
@@ -87,5 +89,5 @@ module EX (
             o_WB_CTRL<=WB_CTRL;
         end
     end
-    assign o_pre_MEM_DATA={MEM_CTRL,EXout,f_rd2};
+    assign o_pre_MEM_DATA={WB_CTRL[2:1],MEM_CTRL,preMemAddr,f_rd2};
 endmodule //EX

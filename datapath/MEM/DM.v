@@ -1,13 +1,14 @@
-module sim_bram (
+module DM (
     input[13:2]A,
     input memWrite,
     input memToReg,
     input [3:0]be,
     input clk,
     input [31:0] D,
-    output reg[31:0] Dout
+    output [31:0] Dout
 );
     reg[31:0] ram[0:3071];
+    assign Dout=ram[A];
     assign in_byte=D[7:0];
     always @(posedge clk) begin
         if(memWrite) begin
@@ -23,6 +24,5 @@ module sim_bram (
             4'b1000: ram[A][31:24]<=D[7:0];
             endcase
         end
-        Dout<=ram[A];
     end
 endmodule //DM

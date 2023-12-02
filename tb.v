@@ -2,44 +2,30 @@
 module tb();
 	reg clk;
     reg reset;
-    wire [31:2]PrAddr;
-    wire [31:0]PrRD,PrWD;
-    wire [7:2]HWInt;
-    wire IOWrite;
-    mips mips(
+    wire [7:0]led;
+    
+    top top(
         .clk(clk),
         .rst(reset),
-        .PrAddr(PrAddr),
-        .PrRD(PrRD),
-        .PrWD(PrWD),
-        .IOWrite(IOWrite),
-        .HWInt(HWInt)
+        .led(led)
     );
-
-    BRIDGE u_BRIDGE(
-        .clk    	( clk     ),
-        .PrAddr 	( PrAddr  ),
-        .PrRD   	( PrRD    ),
-        .PrWD   	( PrWD    ),
-        .WeCPU  	( IOWrite   ),
-        .HWInt      ( HWInt )
-    );
-    
 	always begin
-		#2 clk = 0;
-		#2 clk = 1;
+		#5 clk = 0;
+		#5 clk = 1;
 	end
 
     initial begin
-        $dumpfile("mips.vcd"); // 指定用作dumpfile的文件
+        $dumpfile("mips.vcd"); // 指定用作dumpfile的文�?
 		$dumpvars; // dump all vars
 	end
 
     initial begin
         clk=0;
         reset=1;
+        #120 reset=0;
+        #125 reset=1;
         // $monitor(pc);
-		#600 $finish;
+		#10000 $finish;
 	end
 
 endmodule

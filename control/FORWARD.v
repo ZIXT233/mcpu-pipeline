@@ -1,4 +1,4 @@
-`define match(sel,val) ({32{sel}}&(val))
+`define fmatch(sel,val) ({32{sel}}&(val))
 module FORWARD (
     input [37:0]MEM_BACK,
     input [37:0]WB_BACK,
@@ -25,8 +25,8 @@ module FORWARD (
     assign BFromWB =WB_EN && WB_rd==rt && !BFromMEM;
     assign oriB=!BFromMEM&&!BFromWB;
 
-    assign f_rd1=`match(AFromMEM,MEM_Wd)|`match(AFromWB,WB_Wd)|`match(oriA,rd1);
-    assign f_rd2=`match(BFromMEM,MEM_Wd)|`match(BFromWB,WB_Wd)|`match(oriB,rd2);
+    assign f_rd1=`fmatch(AFromMEM,MEM_Wd)|`fmatch(AFromWB,WB_Wd)|`fmatch(oriA,rd1);
+    assign f_rd2=`fmatch(BFromMEM,MEM_Wd)|`fmatch(BFromWB,WB_Wd)|`fmatch(oriB,rd2);
 
     
 endmodule //Forward

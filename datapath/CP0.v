@@ -45,7 +45,7 @@ module CP0 (
         end
         else if(ExlClr) EXL<=1'b0;
     end
-    always @(HWInt)begin
+    always @(*)begin
         if(!EXL)hwint_pend<=HWInt;
     end
 endmodule //CP0

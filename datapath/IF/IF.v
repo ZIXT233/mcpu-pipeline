@@ -17,7 +17,7 @@ module IF (
     pc pc (
         .NPC(NPC),
         .clk(clk),
-        .reset(reset),
+        .reset(rst),
         .PCWrite(PCWrite  ),
         .PC(IF_PC)
     );
@@ -29,17 +29,26 @@ module IF (
     );
      
     reg [31:0] ID_instr; 
-    reg firstFetch=1'b1;
+    reg firstFetch;
     initial begin 
         ID_instr<=0;
+        firstFetch<=1'b1;
     end
-    always @(posedge clk) begin
-        if(IF_FLUSH||firstFetch) ID_instr<=0;
-        else if(PCWrite)begin 
-            //$display("[%x]",new_instr);
-            ID_instr<=IF_instr;
+    always @(posedge clk or negedge rst) begin
+        if(!rst) begin
+            ID_instr<=0;
+            firstFetch<=1'b1;
         end
-        firstFetch<=0;
+        else begin
+            if(IF_FLUSH||firstFetch) begin 
+                ID_instr<=0;
+            end
+            else if(PCWrite)begin 
+                //$display("[%x]",new_instr);
+                ID_instr<=IF_instr;
+            end
+            firstFetch<=1'b0;
+        end
     end
     wire [31:2] ID_PCP1;
     assign ID_PCP1=IF_PC;

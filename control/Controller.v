@@ -1,7 +1,6 @@
 module Controller (
     input clk,
     input reset,
-    input zero,
     input [5:0]op,
     input [5:0]func,
     input [4:0]rs,
@@ -17,13 +16,15 @@ module Controller (
     output [15:0]EX_CTRL,
     output MEM_CTRL,
     output [4:0]WB_CTRL,
-    output [1:0]CP0_CTRL
+    output [1:0]CP0_CTRL,
+    output o_uncertainJump
 );
     wire [3:0]aluop;
     wire [2:0]branchType,MDFunc;
     //package
     assign IF_CTRL={PCWrite};
     assign ID_CTRL={NPCFromEPC,ExlSet,jmp,NPCFromGPR,branchType,extop,exsign};
+    assign o_uncertainJump=NPCFromGPR||(branchType!=0);
     assign EX_CTRL={CP0WB,CP0Write,regDst,isSlt,savePC,ALUSrc,aluop,MDSign,MDFunc,MDHIWB,MDLOWB};
     assign MEM_CTRL={memWrite};
     assign WB_CTRL={regWrite,memToReg,isDMByte,isDMHalf,isLOADS};
@@ -138,9 +139,9 @@ module Controller (
                      MDDIV?  4:
                      0; 
     //  status strict signal 
-    //写使能信号是状态严格的
-    //由于s0每个命令必须经过，且s0赋值依赖于npc
-    //若npc跳转信号在s0出现，会影响npc（而且此时npc跳转信号是上一个指令的），故npc跳转信号要排除S0
+    //写使能信号是状�?�严格的
+    //由于s0每个命令必须经过，且s0赋�?�依赖于npc
+    //若npc跳转信号在s0出现，会影响npc（�?�且此时npc跳转信号是上�?个指令的），故npc跳转信号要排除S0
     assign branchType=beq?1:
                       bne?2:  
                       bgtz?3: 
@@ -153,6 +154,8 @@ module Controller (
     assign PCWrite  = !pipeline_stall;
     assign IF_FLUSH = ExlSet;
     assign ID_FLUSH =pipeline_stall;
+    assign EX_FLUSH=0;
+    assign MEM_FLUSH=0;
     //`S(0); 
     /*assign IF_FLUSH =`S(1);
     assign ID_FLUSH =`S(0)|`S(2); 

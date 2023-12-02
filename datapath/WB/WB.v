@@ -2,8 +2,7 @@ module WB (
     input      clk,
     input      rst,
     input [4:0]WB_CTRL,
-    input [68:0]WB_DATA,
-    output o_WB_regWrite,
+    input [68:0]WB_DATA, 
     output [37:0]o_WB_BACK
 );
     assign {regWrite,memToReg,isDMByte,isDMHalf,isLOADS}=WB_CTRL;

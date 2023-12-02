@@ -5,10 +5,40 @@ module mips (
     output [31:2]PrAddr,
     input [31:0]PrRD,
     output [31:0]PrWD,
+    output [3:0]PrBE,
     output IOWrite
 );
     // outports wire
     wire [61:0] 	ID_DATA_from_IF;
+     wire        	IF_CTRL;
+    wire [8:0]  	ID_CTRL;
+    wire [15:0] 	EX_CTRL;
+    wire        	MEM_CTRL;
+    wire [4:0]  	WB_CTRL;
+    wire [1:0]      CP0_CTRL;
+    wire [31:2] ID_PCP1;
+    wire [31:0] ID_instr;
+     wire   	pipeline_stall;
+     wire [157:0] 	EX_DATA_from_ID;
+    wire [15:0]     EX_CTRL_from_ID;
+    wire         	MEM_CTRL_from_ID;
+    wire [4:0]   	WB_CTRL_from_ID;
+    wire [31:2]     JPC;
+    wire jpcAvail;
+    wire ID_uncertainJump;
+    wire         	MEM_CTRL_from_EX;
+    wire [4:0]   	WB_CTRL_from_EX;
+    wire [68:0] 	MEM_DATA_from_EX;
+    wire [4:0]      EX_rw_from_EX;
+    wire [37:0]     CP0_DATA_from_EX;
+    wire [4:0]   	WB_CTRL_from_MEM;
+    wire [68:0] 	WB_DATA_from_MEM;
+    wire [37:0]     MEM_BACK_from_MEM;
+    wire[37:0] WB_BACK_from_WB;
+    wire [31:2] 	ID_EPC_from_CP0;
+    wire [31:0] 	EX_DATA_from_CP0;
+    wire [66:0] pre_MEM_DATA_from_EX;
+    wire        	IntReq;
     IF u_IF(
         .clk         	( clk          ),
         .rst         	( rst          ),
@@ -20,19 +50,11 @@ module mips (
     );
     
     // outports wire from controller
-    wire        	IF_CTRL;
-    wire [8:0]  	ID_CTRL;
-    wire [15:0] 	EX_CTRL;
-    wire        	MEM_CTRL;
-    wire [4:0]  	WB_CTRL;
-    wire [1:0]      CP0_CTRL;
-    wire [31:2] ID_PCP1;
-    wire [31:0] ID_instr;
+   
     assign {ID_PCP1,ID_instr}=ID_DATA_from_IF;
     Controller u_Controller(
         .clk      	( clk       ),
-        .reset    	( rst       ),
-        .zero     	( zero      ),
+        .reset    	( rst       ), 
         .op(ID_instr[31:26]),
         .func(ID_instr[5:0]),
         .rs(ID_instr[25:21]),
@@ -48,10 +70,11 @@ module mips (
         .EX_CTRL  	( EX_CTRL   ),
         .MEM_CTRL 	( MEM_CTRL  ),
         .WB_CTRL  	( WB_CTRL   ),
-        .CP0_CTRL(CP0_CTRL)
+        .CP0_CTRL(CP0_CTRL),
+        .o_uncertainJump(ID_uncertainJump)
     );
     // outports wire
-    wire   	pipeline_stall;
+   
     
     HazardDetect u_HazardDetect(
         .ID_rs       	( ID_DATA_from_IF[25:21]        ),
@@ -59,19 +82,14 @@ module mips (
         .EX_rw       	( EX_rw_from_EX      ),
         .MEM_rw         ( MEM_BACK_from_MEM[4:0]),
         .MEM_memToReg    ( WB_CTRL_from_EX[3]),
+        .EX_regWrite    (WB_CTRL_from_ID[4]),
         .EX_memToReg 	( WB_CTRL_from_ID[3]  ),
-        .EX_regWrite    ( WB_CTRL_from_ID[4]),
         .ID_uncertainJump(ID_uncertainJump),
         .stall       	( pipeline_stall        )
     );
     
     // outports wire
-    wire [157:0] 	EX_DATA_from_ID;
-    wire [15:0]     EX_CTRL_from_ID;
-    wire         	MEM_CTRL_from_ID;
-    wire [4:0]   	WB_CTRL_from_ID;
-    wire [31:2]     JPC;
-    wire ID_uncertainJump;
+    
     ID u_ID(
         .clk         	( clk          ),
         .rst         	( rst          ),
@@ -89,17 +107,11 @@ module mips (
         .o_WB_CTRL      ( WB_CTRL_from_ID ),
         .o_EX_DATA   	( EX_DATA_from_ID ),
         .o_JPC          (JPC),
-        .o_jpcAvail     (jpcAvail),
-        .o_uncertainJump(ID_uncertainJump)
+        .o_jpcAvail       (jpcAvail)
     );
     
     // outports wire
-    wire         	MEM_CTRL_from_EX;
-    wire [4:0]   	WB_CTRL_from_EX;
-    wire [68:0] 	MEM_DATA_from_EX;
-    wire [4:0]      EX_rw_from_EX;
-    wire [37:0]     CP0_DATA_from_EX;
-    wire [64:0]     pre_MEM_DATA_from_EX;
+    
     EX u_EX(
         .clk           	( clk            ),
         .rst           	( rst            ),
@@ -115,14 +127,12 @@ module mips (
         .o_WB_CTRL     	( WB_CTRL_from_EX      ),
         .o_MEM_DATA    	( MEM_DATA_from_EX     ),
         .o_CP0_DATA     ( CP0_DATA_from_EX ),
-        .o_pre_MEM_DATA(pre_MEM_DATA_from_EX),
+        .o_pre_MEM_DATA (pre_MEM_DATA_from_EX),
         .rw        ( EX_rw_from_EX)
     );
     
     // outports wire
-    wire [4:0]   	WB_CTRL_from_MEM;
-    wire [68:0] 	WB_DATA_from_MEM;
-    wire [37:0]     MEM_BACK_from_MEM;
+    
     MEM u_MEM(
         .clk       	( clk        ),
         .rst       	( rst        ),
@@ -130,30 +140,27 @@ module mips (
         .MEM_CTRL  	( MEM_CTRL_from_EX   ),
         .WB_CTRL   	( WB_CTRL_from_EX    ),
         .MEM_DATA  	( MEM_DATA_from_EX   ),
-        .pre_MEM_DATA(pre_MEM_DATA_from_EX),
+        .pre_MEM_DATA (pre_MEM_DATA_from_EX),
         .PrAddr(PrAddr),
         .PrRD(PrRD),
         .PrWD(PrWD),
+        .PrBE(PrBE),
         .IOWrite(IOWrite),
         .o_WB_CTRL 	( WB_CTRL_from_MEM  ),
         .o_WB_DATA 	( WB_DATA_from_MEM  ),
         .o_MEM_BACK  ( MEM_BACK_from_MEM )
     );
     
-    wire WB_regWrite_from_WB;
-    wire[37:0] WB_BACK_from_WB;
+    
     WB u_WB(
         .clk(clk),
         .rst(rst),
         .WB_CTRL(WB_CTRL_from_MEM),
         .WB_DATA(WB_DATA_from_MEM),
-        .o_WB_regWrite(WB_regWrite_from_WB),
         .o_WB_BACK(WB_BACK_from_WB)
     );
     // outports wire
-    wire [31:2] 	ID_EPC_from_CP0;
-    wire [31:0] 	EX_DATA_from_CP0;
-    wire        	IntReq;
+    
     
     CP0 u_CP0(
         .clk       	( clk        ),
@@ -169,9 +176,9 @@ module mips (
     
 endmodule //mips
 
-//将代码按阶段重新封装为几个大模块，从而显现出所有每个阶段所需的信号接口
+//将代码按阶段重新封装为几个大模块，从而显现出�?有每个阶段所�?的信号接�?
 //将原本的中间寄存器拓展为流水线寄存器
-//将控制器状态机改为单指令固定五阶段,测试依赖流水线寄存器的单指令多周期运行
-//实现旁路和阻塞解决数据冒险
+//将控制器状�?�机改为单指令固定五阶段,测试依赖流水线寄存器的单指令多周期运�?
+//实现旁路和阻塞解决数据冒�?
 //实现清空解决控制冒险，实现流水线
 //优化控制冒险
