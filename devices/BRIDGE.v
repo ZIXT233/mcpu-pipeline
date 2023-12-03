@@ -54,7 +54,7 @@ module BRIDGE (
     //DEV2
     seg7 u_seg7(
         .D(DEV_WD),
-        .A(PrAddr[3:2]),
+        .A(PrAddr[2]),
         .be(PrBE),
         .clk(clk),
         .we(WeDEV[2]),

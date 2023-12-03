@@ -47,12 +47,12 @@ module MEM (
         .ena(preAddrInDM),      // input wire ena
         .wea({4{DMWrite}}&be),      // input wire [3 : 0] wea
         .addra(preEXout[13:2]),  // input wire [11 : 0] addra
-        .dina(prerd2),    // input wire [31 : 0] dina
+        .dina(prerd2<<{preEXout[1:0],3'b0}),    // input wire [31 : 0] dina
         .douta(Dout)  // output wire [31 : 0] douta
     );
     assign IOWrite=memWrite&&!preAddrInDM;
     assign PrAddr=preEXout[31:2];
-    assign PrWD=prerd2;
+    assign PrWD=prerd2<<{preEXout[1:0],3'b0};
     assign PrBE=be;
     
     assign AddrInDM=(EXout[15:0]<'h3000);
@@ -73,3 +73,4 @@ module MEM (
     end
     
 endmodule //MEM
+

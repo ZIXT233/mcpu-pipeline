@@ -2,6 +2,7 @@
 module tb();
 	reg clk;
     reg reset;
+    reg [31:0] _time=0;
     wire [7:0]led;
     
     top top(
@@ -12,6 +13,8 @@ module tb();
 	always begin
 		#5 clk = 0;
 		#5 clk = 1;
+        _time<=_time+10;
+        if(_time%100==0)$display("time:%d",_time);
 	end
 
     initial begin
@@ -25,7 +28,7 @@ module tb();
         #120 reset=0;
         #125 reset=1;
         // $monitor(pc);
-		#10000 $finish;
+		#20000 $finish;
 	end
 
 endmodule

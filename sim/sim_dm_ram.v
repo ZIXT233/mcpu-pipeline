@@ -14,13 +14,14 @@ module dm_ram (
                 ram[addra]<=dina;//$display("[%d]%d",addra,D);
             end
             4'b0011: ram[addra][15:0]<=dina[15:0];
-            4'b1100: ram[addra][31:16]<=dina[15:0];
+            4'b1100: ram[addra][31:16]<=dina[31:16];
             4'b0001: ram[addra][7:0]<=dina[7:0];
-            4'b0010: ram[addra][15:8]<=dina[7:0];
-            4'b0100: ram[addra][23:16]<=dina[7:0];
-            4'b1000: ram[addra][31:24]<=dina[7:0];
+            4'b0010: ram[addra][15:8]<=dina[15:8];
+            4'b0100: ram[addra][23:16]<=dina[23:16];
+            4'b1000: ram[addra][31:24]<=dina[31:24];
             endcase
         end
         douta<=ram[addra];
     end
+    
 endmodule //DM
