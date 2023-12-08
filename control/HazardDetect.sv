@@ -8,6 +8,7 @@ module HazardDetect (
     input EX_regWrite,
     input MEM_memToReg,
     output stall
+
 ); 
     assign LOAD=(EX_memToReg)&&(EX_rw==ID_rs||EX_rw==ID_rt);
     assign Branch_EX=ID_uncertainJump&&(EX_memToReg||EX_regWrite)&&EX_rw!=0&&(EX_rw==ID_rs||EX_rw==ID_rt);

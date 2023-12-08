@@ -14,7 +14,7 @@ module tb();
 		#5 clk = 0;
 		#5 clk = 1;
         _time<=_time+10;
-        if(_time%100==0)$display("time:%d",_time);
+        //if(_time%100==0)$display("time:%d",_time);
 	end
 
     initial begin
@@ -28,7 +28,7 @@ module tb();
         #120 reset=0;
         #125 reset=1;
         // $monitor(pc);
-		#20000 $finish;
+		#5000 $finish;
 	end
 
 endmodule

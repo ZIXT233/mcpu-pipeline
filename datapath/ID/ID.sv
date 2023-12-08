@@ -1,12 +1,12 @@
+`include "CTRLStructDef.sv"
 module ID (
     input      clk,
     input      rst,
-
     input ID_FLUSH,
-    input [8:0]ID_CTRL,
-    input [15:0]EX_CTRL,
-    input MEM_CTRL,
-    input [4:0]WB_CTRL,
+    input type_ID_CTRL ID_CTRL,
+    input type_EX_CTRL EX_CTRL,
+    input type_MEM_CTRL MEM_CTRL,
+    input type_WB_CTRL WB_CTRL,
     input [61:0]ID_DATA,
     input [37:0]WB_BACK,
     input [37:0]MEM_BACK,
@@ -19,8 +19,7 @@ module ID (
     output o_jpcAvail
 );  
     wire [2:0]branchType;
-    assign {NPCFromEPC,ExlSet,jmp,NPCFromGPR,branchType,extop,exsign}=ID_CTRL;
-    assign o_uncertainJump=NPCFromGPR||(branchType!=0);
+    assign o_uncertainJump=ID_CTRL.NPCFromGPR||(ID_CTRL.branchType!=0);
     wire [31:2] PCP1;
     wire [31:0] instr;
     assign {PCP1,instr}=ID_DATA;
@@ -41,11 +40,10 @@ module ID (
         .rd1(rd1),
         .rd2(rd2) 
     );
- 
     EXT EXT(
         .A(instr[15:0]),
-        .extop(extop),
-        .exsign(exsign),
+        .extop(ID_CTRL.extop),
+        .exsign(ID_CTRL.exsign),
         .B(EXTB)
     );
     // outports wire
@@ -77,18 +75,18 @@ module ID (
     jpc jpc (
         .PC(PCP1),
         .branchAvail(branchAvail), 
-        .jmp(jmp),
+        .jmp(ID_CTRL.jmp),
         .offset(instr[15:0]),
         .instr_index(instr[25:0]),
         .reg_index(f_rd1),
-        .NPCFromGPR(NPCFromGPR),
-        .goExceptionHandler(ExlSet),
-        .NPCFromEPC(NPCFromEPC),
+        .NPCFromGPR(ID_CTRL.NPCFromGPR),
+        .goExceptionHandler(ID_CTRL.ExlSet),
+        .NPCFromEPC(ID_CTRL.NPCFromEPC),
         .EPC(CP0_EPC),
         .JPC(o_JPC)
     );
 
-    assign o_jpcAvail=ExlSet|NPCFromEPC||NPCFromGPR||jmp||branchAvail;
+    assign o_jpcAvail=ID_CTRL.ExlSet||ID_CTRL.NPCFromEPC||ID_CTRL.NPCFromGPR||ID_CTRL.jmp||branchAvail;
     initial begin
         o_EX_DATA<=0;
         o_EX_CTRL<=0;

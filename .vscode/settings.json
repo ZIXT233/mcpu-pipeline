@@ -1,0 +1,10 @@
+{
+   // "HDL.linting.iverilog.arguments": "-g2005-sv -I /mnt/c/Users/ZIXT/Desktop/mcpu-pipeline-main/headers",
+    "verilog.linting.iverilog.includePath": [
+        "./headers"
+    ],
+    "ctags-companion.command": "ctags -R --fields=+nKz -f .vscode/.tags",
+    "verilog.linting.iverilog.systemVerilog.standard": "SystemVerilog2005",
+    "verilog.linting.linter": "iverilog",
+    "verilog.linting.iverilog.arguments": "-i",
+}

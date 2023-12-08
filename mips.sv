@@ -1,3 +1,4 @@
+`include "CTRLStructDef.sv"
 module mips (
     input clk,
     input rst,
@@ -10,12 +11,12 @@ module mips (
 );
     // outports wire
     wire [61:0] 	ID_DATA_from_IF;
-     wire        	IF_CTRL;
-    wire [8:0]  	ID_CTRL;
-    wire [15:0] 	EX_CTRL;
-    wire        	MEM_CTRL;
-    wire [4:0]  	WB_CTRL;
-    wire [1:0]      CP0_CTRL;
+    type_IF_CTRL        	IF_CTRL;
+    type_ID_CTRL  	ID_CTRL;
+    type_EX_CTRL 	EX_CTRL;
+    type_MEM_CTRL        	MEM_CTRL;
+    type_WB_CTRL  	WB_CTRL;
+    type_CP0_CTRL      CP0_CTRL;
     wire [31:2] ID_PCP1;
     wire [31:0] ID_instr;
      wire   	pipeline_stall;
@@ -38,6 +39,7 @@ module mips (
     wire [31:2] 	ID_EPC_from_CP0;
     wire [31:0] 	EX_DATA_from_CP0;
     wire [66:0] pre_MEM_DATA_from_EX;
+    
     wire        	IntReq;
     IF u_IF(
         .clk         	( clk          ),
@@ -52,7 +54,9 @@ module mips (
     // outports wire from controller
    
     assign {ID_PCP1,ID_instr}=ID_DATA_from_IF;
+
     Controller u_Controller(
+
         .clk      	( clk       ),
         .reset    	( rst       ), 
         .op(ID_instr[31:26]),
@@ -176,9 +180,9 @@ module mips (
     
 endmodule //mips
 
-//将代码按阶段重新封装为几个大模块，从而显现出�?有每个阶段所�?的信号接�?
-//将原本的中间寄存器拓展为流水线寄存器
-//将控制器状�?�机改为单指令固定五阶段,测试依赖流水线寄存器的单指令多周期运�?
-//实现旁路和阻塞解决数据冒�?
+//将代码按阶�?�重新封装为几个大模块，从而显现出�?有每�?阶�?�所�?的信号接�?
+//将原�?的中间寄存器拓展为流水线寄存�?
+//将控制器状�?�机改为单指令固定五阶�??,测试依赖流水线寄存器的单指令多周期运�?
+//实现旁路和阻塞解决数�?冒�??
 //实现清空解决控制冒险，实现流水线
 //优化控制冒险

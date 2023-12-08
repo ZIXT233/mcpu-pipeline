@@ -15,22 +15,22 @@ module ALU(
     assign srav=$signed(B)>>>A;
     assign sum=A+B;
 
-    always @(*) begin
+    always_comb begin
         case(F)
-            0:C<=sll;
-            1:C<=A|B;
-            2:C<=A-B;
-            3:C<=A+B;
-            4:C<=A&B;
-            5:C<=A^B;
-            6:C<=~(A|B);
-            7:C<=srl;
-            8:C<=sra;
-            9:C<=sllv;
-            10:C<=srlv;
-            11:C<=srav;
-            12:C<=A;
-            default:C<=0;
+            0:C=sll;
+            1:C=A|B;
+            2:C=A-B;
+            3:C=A+B;
+            4:C=A&B;
+            5:C=A^B;
+            6:C=~(A|B);
+            7:C=srl;
+            8:C=sra;
+            9:C=sllv;
+            10:C=srlv;
+            11:C=srav;
+            12:C=A;
+            default:C=0;
         endcase
     end
 

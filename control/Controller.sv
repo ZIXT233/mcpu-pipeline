@@ -1,3 +1,4 @@
+`include "CTRLStructDef.sv"
 module Controller (
     input clk,
     input reset,
@@ -9,20 +10,21 @@ module Controller (
     input IntReq,
     output IF_FLUSH,
     output ID_FLUSH,
-    output EX_FLUSH,
-    output MEM_FLUSH,
-    output IF_CTRL,
-    output [8:0]ID_CTRL,
-    output [15:0]EX_CTRL,
-    output MEM_CTRL,
-    output [4:0]WB_CTRL,
-    output [1:0]CP0_CTRL,
+    output EX_FLUSH, 
+    output MEM_FLUSH, 
+    output type_IF_CTRL IF_CTRL,
+    output type_ID_CTRL ID_CTRL,
+    output type_EX_CTRL EX_CTRL,
+    output type_MEM_CTRL MEM_CTRL,
+    output type_WB_CTRL WB_CTRL,
+    output type_CP0_CTRL CP0_CTRL,
     output o_uncertainJump
 );
     wire [3:0]aluop;
     wire [2:0]branchType,MDFunc;
     //package
     assign IF_CTRL={PCWrite};
+    
     assign ID_CTRL={NPCFromEPC,ExlSet,jmp,NPCFromGPR,branchType,extop,exsign};
     assign o_uncertainJump=NPCFromGPR||(branchType!=0);
     assign EX_CTRL={CP0WB,CP0Write,regDst,isSlt,savePC,ALUSrc,aluop,MDSign,MDFunc,MDHIWB,MDLOWB};
@@ -141,7 +143,7 @@ module Controller (
     //  status strict signal 
     //写使能信号是状�?�严格的
     //由于s0每个命令必须经过，且s0赋�?�依赖于npc
-    //若npc跳转信号在s0出现，会影响npc（�?�且此时npc跳转信号是上�?个指令的），故npc跳转信号要排除S0
+    //�?npc跳转信号在s0出现，会影响npc（�?�且此时npc跳转信号�?上�??�?指令的），故npc跳转信号要排�?S0
     assign branchType=beq?1:
                       bne?2:  
                       bgtz?3: 

@@ -43,6 +43,7 @@ module top(
         .IOWrite(IOWrite),
         .HWInt(HWInt)
     );
+    
 
     BRIDGE u_BRIDGE(
         .clk    	( clk     ),

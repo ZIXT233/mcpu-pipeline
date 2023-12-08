@@ -10,7 +10,6 @@ module WB (
     wire[4:0]rw;
     assign {rw,EXout,Dout}=WB_DATA;
     wire[31:0] EXT_Dout;
-
     DREXT U_DREXT(
         .in_data(Dout),
         .out_data(EXT_Dout),
