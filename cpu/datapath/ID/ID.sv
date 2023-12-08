@@ -1,13 +1,9 @@
+`include "cpu/pipelineInterfaces.sv"
 module ID (
     input      clk,
     input      rst,
-
-    input ID_FLUSH,
-    input [8:0]ID_CTRL,
-    input [15:0]EX_CTRL,
-    input MEM_CTRL,
-    input [4:0]WB_CTRL,
-    input [61:0]ID_DATA,
+    IController.ID i_controller,
+    IIF_ID.ID i_if_id,
     input [37:0]WB_BACK,
     input [37:0]MEM_BACK,
     input [31:2]CP0_EPC,
@@ -15,15 +11,14 @@ module ID (
     output reg o_MEM_CTRL,
     output reg [4:0] o_WB_CTRL,
     output reg[157:0] o_EX_DATA,
-    output [31:2]o_JPC,
-    output o_jpcAvail
 );  
     wire [2:0]branchType;
-    assign {NPCFromEPC,ExlSet,jmp,NPCFromGPR,branchType,extop,exsign}=ID_CTRL;
+    assign {NPCFromEPC,ExlSet,jmp,NPCFromGPR,branchType,extop,exsign}=i_controller.ID_CTRL;
     assign o_uncertainJump=NPCFromGPR||(branchType!=0);
     wire [31:2] PCP1;
     wire [31:0] instr;
-    assign {PCP1,instr}=ID_DATA;
+    assign {PCP1,instr}=i_if_id.ID_DATA;
+    assign i_controller.ID_instr=instr;
     wire [31:0] WB_Wd;
     wire [4:0] WB_rw;
     assign {WB_regWrite,WB_Wd,WB_rw}=WB_BACK;
@@ -85,10 +80,10 @@ module ID (
         .goExceptionHandler(ExlSet),
         .NPCFromEPC(NPCFromEPC),
         .EPC(CP0_EPC),
-        .JPC(o_JPC)
+        .JPC(i_if_id.JPC)
     );
 
-    assign o_jpcAvail=ExlSet|NPCFromEPC||NPCFromGPR||jmp||branchAvail;
+    assign i_if_id.jpcAvail=ExlSet|NPCFromEPC||NPCFromGPR||jmp||branchAvail;
     initial begin
         o_EX_DATA<=0;
         o_EX_CTRL<=0;
@@ -96,7 +91,7 @@ module ID (
         o_WB_CTRL<=0;
     end
     always @(posedge clk) begin
-        if(ID_FLUSH) begin
+        if(i_controller.ID_FLUSH) begin
             //o_EX_DATA<=0;
             o_EX_CTRL<=0;
             o_MEM_CTRL<=0;
@@ -104,9 +99,9 @@ module ID (
         end
         else begin
             o_EX_DATA<={PCP1,instr,f_rd1,f_rd2,EXTB};
-            o_EX_CTRL<=EX_CTRL;
-            o_MEM_CTRL<=MEM_CTRL;
-            o_WB_CTRL<=WB_CTRL;
+            o_EX_CTRL<=i_controller.EX_CTRL;
+            o_MEM_CTRL<=i_controller.MEM_CTRL;
+            o_WB_CTRL<=i_controller.WB_CTRL;
         end
     end
 endmodule //ID

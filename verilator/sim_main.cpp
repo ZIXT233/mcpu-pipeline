@@ -17,7 +17,7 @@ int main(int argc, char **argv)
     Vtop *top = new Vtop; //调用VAccumulator.h里面的IO struct
  
     top->trace(tfp, 0);   
-    tfp->open("verilator/wave.vcd"); //打开vcd
+    tfp->open("./wave.vcd"); //打开vcd
     top->rst=1;
     top->clk=1;
     while (main_time < 20000 && !Verilated::gotFinish()) { //控制仿真时间

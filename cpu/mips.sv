@@ -39,36 +39,26 @@ module mips (
     wire [31:0] 	EX_DATA_from_CP0;
     wire [66:0] pre_MEM_DATA_from_EX;
     wire        	IntReq;
-    IIF i_if(clk);
+    IController i_controller(clk);
+    IIF_ID      i_if_id(clk);
     IF u_IF(
         .clk         	( clk          ),
         .rst         	( rst          ),
-        .JPC            ( JPC ),
-        .jpcAvail       ( jpcAvail ),
-        .i_if           (i_if.IF),
-        .o_ID_DATA   	( ID_DATA_from_IF    )
+        .i_controller,
+        .i_if_id
     );
     
     // outports wire from controller
    
-    assign {ID_PCP1,ID_instr}=ID_DATA_from_IF;
+    assign {ID_PCP1,ID_instr}=i_if_id.ID_DATA;
     Controller u_Controller(
         .clk      	( clk       ),
         .reset    	( rst       ), 
-        .op(ID_instr[31:26]),
-        .func(ID_instr[5:0]),
-        .rs(ID_instr[25:21]),
-        .rt(ID_instr[20:16]),
         .pipeline_stall(pipeline_stall),
         .IntReq(IntReq),
-        .i_if   (i_if.Controller),
-        .ID_FLUSH (ID_FLUSH),
+        .i_controller,
         .EX_FLUSH (EX_FLUSH),
         .MEM_FLUSH (MEM_FLUSH),
-        .ID_CTRL  	( ID_CTRL   ),
-        .EX_CTRL  	( EX_CTRL   ),
-        .MEM_CTRL 	( MEM_CTRL  ),
-        .WB_CTRL  	( WB_CTRL   ),
         .CP0_CTRL(CP0_CTRL),
         .o_uncertainJump(ID_uncertainJump)
     );
@@ -92,21 +82,15 @@ module mips (
     ID u_ID(
         .clk         	( clk          ),
         .rst         	( rst          ),
-        .ID_CTRL     	( ID_CTRL      ),
-        .EX_CTRL        ( EX_CTRL      ),
-        .MEM_CTRL       ( MEM_CTRL     ),
-        .WB_CTRL        ( WB_CTRL      ),
-        .ID_FLUSH (ID_FLUSH),
-        .ID_DATA     	( ID_DATA_from_IF      ),
+        .i_controller,
+        .i_if_id,
         .WB_BACK       	( WB_BACK_from_WB        ),
         .CP0_EPC        ( ID_EPC_from_CP0),
         .MEM_BACK       ( MEM_BACK_from_MEM),
         .o_EX_CTRL      ( EX_CTRL_from_ID ),
         .o_MEM_CTRL     ( MEM_CTRL_from_ID),
         .o_WB_CTRL      ( WB_CTRL_from_ID ),
-        .o_EX_DATA   	( EX_DATA_from_ID ),
-        .o_JPC          (JPC),
-        .o_jpcAvail       (jpcAvail)
+        .o_EX_DATA   	( EX_DATA_from_ID )
     );
     
     // outports wire

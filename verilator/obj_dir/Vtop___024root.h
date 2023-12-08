@@ -6,7 +6,8 @@
 #define VERILATED_VTOP___024ROOT_H_  // guard
 
 #include "verilated.h"
-class Vtop_IIF;
+class Vtop_IController;
+class Vtop_IIF_ID;
 
 
 class Vtop__Syms;
@@ -14,7 +15,8 @@ class Vtop__Syms;
 class alignas(VL_CACHE_LINE_BYTES) Vtop___024root final : public VerilatedModule {
   public:
     // CELLS
-    Vtop_IIF* __PVT__top__DOT__mips__DOT__i_if;
+    Vtop_IController* __PVT__top__DOT__mips__DOT__i_controller;
+    Vtop_IIF_ID* __PVT__top__DOT__mips__DOT__i_if_id;
 
     // DESIGN SPECIFIC STATE
     // Anonymous structures to workaround compiler member-count bugs
@@ -28,17 +30,21 @@ class alignas(VL_CACHE_LINE_BYTES) Vtop___024root final : public VerilatedModule
         CData/*3:0*/ top__DOT__PrBE;
         CData/*5:0*/ top__DOT__HWInt;
         CData/*0:0*/ top__DOT__mips__DOT__IF_CTRL;
-        CData/*0:0*/ top__DOT__mips__DOT__pipeline_stall;
+        CData/*0:0*/ top__DOT__mips__DOT__MEM_CTRL;
+        CData/*4:0*/ top__DOT__mips__DOT__WB_CTRL;
         CData/*0:0*/ top__DOT__mips__DOT__MEM_CTRL_from_ID;
         CData/*4:0*/ top__DOT__mips__DOT__WB_CTRL_from_ID;
+        CData/*0:0*/ top__DOT__mips__DOT__jpcAvail;
+        CData/*0:0*/ top__DOT__mips__DOT__ID_uncertainJump;
         CData/*0:0*/ top__DOT__mips__DOT__MEM_CTRL_from_EX;
         CData/*4:0*/ top__DOT__mips__DOT__WB_CTRL_from_EX;
         CData/*4:0*/ top__DOT__mips__DOT__EX_rw_from_EX;
         CData/*4:0*/ top__DOT__mips__DOT__WB_CTRL_from_MEM;
         CData/*0:0*/ top__DOT__mips__DOT__u_IF__DOT__firstFetch;
         CData/*2:0*/ top__DOT__mips__DOT__u_Controller__DOT__branchType;
+        CData/*0:0*/ top__DOT__mips__DOT__u_Controller__DOT__IF_FLUSH;
+        CData/*0:0*/ top__DOT__mips__DOT__u_Controller__DOT__ID_FLUSH;
         CData/*0:0*/ top__DOT__mips__DOT__u_Controller__DOT__NPCFromEPC;
-        CData/*0:0*/ top__DOT__mips__DOT__u_Controller__DOT__ExlSet;
         CData/*0:0*/ top__DOT__mips__DOT__u_Controller__DOT__jmp;
         CData/*0:0*/ top__DOT__mips__DOT__u_Controller__DOT__NPCFromGPR;
         CData/*0:0*/ top__DOT__mips__DOT__u_Controller__DOT__savePC;
@@ -69,22 +75,21 @@ class alignas(VL_CACHE_LINE_BYTES) Vtop___024root final : public VerilatedModule
         CData/*0:0*/ top__DOT__mips__DOT__u_Controller__DOT__typeR;
         CData/*0:0*/ top__DOT__mips__DOT__u_Controller__DOT__typeIA;
         CData/*0:0*/ top__DOT__mips__DOT__u_Controller__DOT__ALURs;
-        CData/*0:0*/ top__DOT__mips__DOT__u_Controller__DOT____VdfgTmp_h1fabfdd5__0;
-        CData/*0:0*/ top__DOT__mips__DOT__u_Controller__DOT____VdfgTmp_h4e7f6188__0;
+        CData/*0:0*/ top__DOT__mips__DOT__u_Controller__DOT____VdfgTmp_h1faed734__0;
+        CData/*0:0*/ top__DOT__mips__DOT__u_Controller__DOT____VdfgTmp_h4e50702c__0;
         CData/*0:0*/ top__DOT__mips__DOT__u_HazardDetect__DOT____VdfgTmp_h6c4ba390__0;
         CData/*0:0*/ top__DOT__mips__DOT__u_ID__DOT__branchAvail;
-        CData/*0:0*/ top__DOT__mips__DOT__u_ID__DOT__o_uncertainJump;
         CData/*0:0*/ top__DOT__mips__DOT__u_ID__DOT__u_ID_FORWARD__DOT__AFromMEM;
         CData/*0:0*/ top__DOT__mips__DOT__u_ID__DOT__u_ID_FORWARD__DOT__AFromWB;
         CData/*0:0*/ top__DOT__mips__DOT__u_ID__DOT__u_ID_FORWARD__DOT__BFromMEM;
         CData/*0:0*/ top__DOT__mips__DOT__u_ID__DOT__u_ID_FORWARD__DOT__BFromWB;
         CData/*0:0*/ top__DOT__mips__DOT__u_ID__DOT__u_BRANCH__DOT__eq;
         CData/*0:0*/ top__DOT__mips__DOT__u_EX__DOT__u_EX_FORWARD__DOT__MEM_EN;
+    };
+    struct {
         CData/*0:0*/ top__DOT__mips__DOT__u_EX__DOT__u_EX_FORWARD__DOT__WB_EN;
         CData/*0:0*/ top__DOT__mips__DOT__u_EX__DOT__u_EX_FORWARD__DOT__AFromMEM;
         CData/*0:0*/ top__DOT__mips__DOT__u_EX__DOT__u_EX_FORWARD__DOT__AFromWB;
-    };
-    struct {
         CData/*0:0*/ top__DOT__mips__DOT__u_EX__DOT__u_EX_FORWARD__DOT__BFromMEM;
         CData/*0:0*/ top__DOT__mips__DOT__u_EX__DOT__u_EX_FORWARD__DOT__BFromWB;
         CData/*3:0*/ top__DOT__mips__DOT__u_MEM__DOT____Vcellinp__u_dm_ram__wea;
@@ -106,21 +111,24 @@ class alignas(VL_CACHE_LINE_BYTES) Vtop___024root final : public VerilatedModule
         CData/*0:0*/ __Vtrigprevexpr___TOP__rst__0;
         CData/*0:0*/ __VactDidInit;
         CData/*0:0*/ __VactContinue;
+        SData/*8:0*/ top__DOT__mips__DOT__ID_CTRL;
+        SData/*15:0*/ top__DOT__mips__DOT__EX_CTRL;
         SData/*15:0*/ top__DOT__mips__DOT__EX_CTRL_from_ID;
         SData/*15:0*/ top__DOT__mips__DOT__u_MEM__DOT__u_dm_ram__DOT____Vlvbound_hc028c573__0;
         SData/*15:0*/ top__DOT__mips__DOT__u_MEM__DOT__u_dm_ram__DOT____Vlvbound_hc029c120__0;
         SData/*9:0*/ top__DOT__u_BRIDGE__DOT__u_seg7__DOT__pause;
         IData/*31:0*/ top__DOT__PrWD;
         VlWide<5>/*157:0*/ top__DOT__mips__DOT__EX_DATA_from_ID;
+        IData/*29:0*/ top__DOT__mips__DOT__JPC;
         VlWide<3>/*68:0*/ top__DOT__mips__DOT__MEM_DATA_from_EX;
         VlWide<3>/*68:0*/ top__DOT__mips__DOT__WB_DATA_from_MEM;
         IData/*29:0*/ top__DOT__mips__DOT__ID_EPC_from_CP0;
         IData/*31:0*/ top__DOT__mips__DOT__u_IF__DOT__reg_index;
         IData/*25:0*/ top__DOT__mips__DOT__u_IF__DOT__EX_instr;
         IData/*29:0*/ top__DOT__mips__DOT__u_IF__DOT__IF_PC;
+        IData/*29:0*/ top__DOT__mips__DOT__u_IF__DOT__NPC;
         IData/*31:0*/ top__DOT__mips__DOT__u_IF__DOT__IF_instr;
         IData/*31:0*/ top__DOT__mips__DOT__u_IF__DOT__ID_instr;
-        IData/*31:0*/ top__DOT__mips__DOT__u_IF__DOT____VdfgTmp_h52d3c299__0;
         IData/*31:0*/ top__DOT__mips__DOT__u_ID__DOT__f_rd1;
         IData/*31:0*/ top__DOT__mips__DOT__u_ID__DOT__f_rd2;
         IData/*31:0*/ top__DOT__mips__DOT__u_ID__DOT__GPR__DOT__i;
@@ -143,14 +151,14 @@ class alignas(VL_CACHE_LINE_BYTES) Vtop___024root final : public VerilatedModule
         IData/*31:0*/ top__DOT__u_BRIDGE__DOT__DEV1_RD;
         IData/*31:0*/ top__DOT__u_BRIDGE__DOT__u_counter__DOT__cnt;
         IData/*18:0*/ top__DOT__u_BRIDGE__DOT__u_seg7__DOT__cnt;
-        IData/*29:0*/ __Vdly__top__DOT__mips__DOT__u_IF__DOT__IF_PC;
+    };
+    struct {
         IData/*31:0*/ __VstlIterCount;
         IData/*31:0*/ __Vtrigprevexpr_ha3f5a80b__0;
         IData/*31:0*/ __Vtrigprevexpr_ha3f53da3__0;
         IData/*31:0*/ __VactIterCount;
+        QData/*61:0*/ top__DOT__mips__DOT__ID_DATA_from_IF;
         VlUnpacked<IData/*31:0*/, 2048> top__DOT__mips__DOT__u_IF__DOT__IM__DOT__u_imrom__DOT__rom;
-    };
-    struct {
         VlUnpacked<IData/*31:0*/, 32> top__DOT__mips__DOT__u_ID__DOT__GPR__DOT__register;
         VlUnpacked<IData/*31:0*/, 3072> top__DOT__mips__DOT__u_MEM__DOT__u_dm_ram__DOT__ram;
         VlUnpacked<IData/*31:0*/, 2> top__DOT__u_BRIDGE__DOT__u_seg7__DOT__ram;

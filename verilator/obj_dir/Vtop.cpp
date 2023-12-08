@@ -17,7 +17,8 @@ Vtop::Vtop(VerilatedContext* _vcontextp__, const char* _vcname__)
     , seg7_seg{vlSymsp->TOP.seg7_seg}
     , seg7_seg1{vlSymsp->TOP.seg7_seg1}
     , seg7_select{vlSymsp->TOP.seg7_select}
-    , __PVT__top__DOT__mips__DOT__i_if{vlSymsp->TOP.__PVT__top__DOT__mips__DOT__i_if}
+    , __PVT__top__DOT__mips__DOT__i_controller{vlSymsp->TOP.__PVT__top__DOT__mips__DOT__i_controller}
+    , __PVT__top__DOT__mips__DOT__i_if_id{vlSymsp->TOP.__PVT__top__DOT__mips__DOT__i_if_id}
     , rootp{&(vlSymsp->TOP)}
 {
     // Register model with the context

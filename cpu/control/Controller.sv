@@ -2,31 +2,31 @@
 module Controller (
     input clk,
     input reset,
-    input [5:0]op,
-    input [5:0]func,
-    input [4:0]rs,
-    input [4:0]rt,
     input pipeline_stall,
     input IntReq,
-    IIF.Controller i_if,
-    output ID_FLUSH,
+    IController.Controller i_controller,
     output EX_FLUSH,
     output MEM_FLUSH,
-    output [8:0]ID_CTRL,
-    output [15:0]EX_CTRL,
-    output MEM_CTRL,
-    output [4:0]WB_CTRL,
     output [1:0]CP0_CTRL,
     output o_uncertainJump
 );
     wire [3:0]aluop;
     wire [2:0]branchType,MDFunc;
     //package
-    assign ID_CTRL={NPCFromEPC,ExlSet,jmp,NPCFromGPR,branchType,extop,exsign};
+    wire [5:0] op,func;
+    wire [4:0] rs,rt;
+    assign op=i_controller.op;
+    assign func=i_controller.func;
+    assign rs=i_controller.rs;
+    assign rt=i_controller.rt;
+    assign i_controller.IF_FLUSH=IF_FLUSH;
+    assign i_controller.IF_CTRL={PCWrite};
+    assign i_controller.ID_FLUSH=ID_FLUSH;
+    assign i_controller.ID_CTRL={NPCFromEPC,ExlSet,jmp,NPCFromGPR,branchType,extop,exsign};
+    assign i_controller.EX_CTRL={CP0WB,CP0Write,regDst,isSlt,savePC,ALUSrc,aluop,MDSign,MDFunc,MDHIWB,MDLOWB};
+    assign i_controller.MEM_CTRL={memWrite};
+    assign i_controller.WB_CTRL={regWrite,memToReg,isDMByte,isDMHalf,isLOADS};
     assign o_uncertainJump=NPCFromGPR||(branchType!=0);
-    assign EX_CTRL={CP0WB,CP0Write,regDst,isSlt,savePC,ALUSrc,aluop,MDSign,MDFunc,MDHIWB,MDLOWB};
-    assign MEM_CTRL={memWrite};
-    assign WB_CTRL={regWrite,memToReg,isDMByte,isDMHalf,isLOADS};
     assign CP0_CTRL={ExlSet,ExlClr};
     //decode instr
     //wire add,sub,ori,beq,sw,lw,lui,j,jal,jr,addi,addiu,slt,lb,lbu,lh,lhu,sb,sh,slti;
@@ -150,8 +150,8 @@ module Controller (
                       0; 
 
     //IF and NPC
-    assign i_if.PCWrite  = !pipeline_stall;
-    assign i_if.IF_FLUSH = ExlSet;
+    assign PCWrite  = !pipeline_stall;
+    assign IF_FLUSH = ExlSet;
     assign ID_FLUSH =pipeline_stall;
     assign EX_FLUSH=0;
     assign MEM_FLUSH=0;
