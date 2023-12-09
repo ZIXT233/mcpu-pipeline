@@ -4,9 +4,8 @@ module ID (
     input      rst,
     IController.ID i_controller,
     IIF_ID.ID i_if_id,
-    input [37:0]WB_BACK,
-    input [37:0]MEM_BACK,
-    input [31:2]CP0_EPC,
+    IBypass.ID i_bypass,
+    ICP0.ID i_cp0,
     IID_EX.ID i_id_ex,
     IStallDetect.ID i_stallDetect
 );  
@@ -18,10 +17,10 @@ module ID (
     assign i_controller.ID_instr=instr;
     assign i_stallDetect.ID_rs=instr[25:21];
     assign i_stallDetect.ID_rt=instr[20:16];
-
+    assign i_cp0.ID_PCP1=PCP1;
     wire [31:0] WB_Wd;
     wire [4:0] WB_rw;
-    assign {WB_regWrite,WB_Wd,WB_rw}=WB_BACK;
+    assign {WB_regWrite,WB_Wd,WB_rw}=i_bypass.WB_BACK;
 
     wire [31:0]rd1,rd2,EXTB;
 
@@ -48,8 +47,8 @@ module ID (
     wire [31:0] 	f_rd2;
     
     FORWARD u_ID_FORWARD(
-        .MEM_BACK 	( MEM_BACK  ),
-        .WB_BACK  	( WB_BACK   ),
+        .MEM_BACK 	( i_bypass.MEM_BACK  ),
+        .WB_BACK  	( i_bypass.WB_BACK   ),
         .USE_MEM_BACK(1'b1),
         .USE_WB_BACK(1'b1),
         .rs       	( instr[25:21]       ),
@@ -79,7 +78,7 @@ module ID (
         .NPCFromGPR(NPCFromGPR),
         .goExceptionHandler(ExlSet),
         .NPCFromEPC(NPCFromEPC),
-        .EPC(CP0_EPC),
+        .EPC(i_cp0.EPC),
         .JPC(i_if_id.JPC)
     );
 

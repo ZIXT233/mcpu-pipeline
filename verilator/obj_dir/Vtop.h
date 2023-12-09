@@ -13,6 +13,8 @@
 class Vtop__Syms;
 class Vtop___024root;
 class VerilatedVcdC;
+class Vtop_IBypass;
+class Vtop_ICP0;
 class Vtop_IController;
 class Vtop_IEX_MEM;
 class Vtop_IID_EX;
@@ -47,6 +49,8 @@ class alignas(VL_CACHE_LINE_BYTES) Vtop VL_NOT_FINAL : public VerilatedModel {
     Vtop_IID_EX* const __PVT__top__DOT__mips__DOT__i_id_ex;
     Vtop_IEX_MEM* const __PVT__top__DOT__mips__DOT__i_ex_mem;
     Vtop_IMEM_WB* const __PVT__top__DOT__mips__DOT__i_mem_wb;
+    Vtop_IBypass* const __PVT__top__DOT__mips__DOT__i_bypass;
+    Vtop_ICP0* const __PVT__top__DOT__mips__DOT__i_cp0;
     Vtop_IStallDetect* const __PVT__top__DOT__mips__DOT__i_stallDetect;
 
     // Root instance pointer to allow access to model internals,

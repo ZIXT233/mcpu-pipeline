@@ -6,6 +6,8 @@
 #define VERILATED_VTOP___024ROOT_H_  // guard
 
 #include "verilated.h"
+class Vtop_IBypass;
+class Vtop_ICP0;
 class Vtop_IController;
 class Vtop_IEX_MEM;
 class Vtop_IID_EX;
@@ -24,6 +26,8 @@ class alignas(VL_CACHE_LINE_BYTES) Vtop___024root final : public VerilatedModule
     Vtop_IID_EX* __PVT__top__DOT__mips__DOT__i_id_ex;
     Vtop_IEX_MEM* __PVT__top__DOT__mips__DOT__i_ex_mem;
     Vtop_IMEM_WB* __PVT__top__DOT__mips__DOT__i_mem_wb;
+    Vtop_IBypass* __PVT__top__DOT__mips__DOT__i_bypass;
+    Vtop_ICP0* __PVT__top__DOT__mips__DOT__i_cp0;
     Vtop_IStallDetect* __PVT__top__DOT__mips__DOT__i_stallDetect;
 
     // DESIGN SPECIFIC STATE
@@ -37,18 +41,10 @@ class alignas(VL_CACHE_LINE_BYTES) Vtop___024root final : public VerilatedModule
         VL_OUT8(seg7_select,7,0);
         CData/*3:0*/ top__DOT__PrBE;
         CData/*5:0*/ top__DOT__HWInt;
-        CData/*0:0*/ top__DOT__mips__DOT__pipeline_stall;
-        CData/*0:0*/ top__DOT__mips__DOT__MEM_CTRL_from_ID;
-        CData/*4:0*/ top__DOT__mips__DOT__WB_CTRL_from_ID;
-        CData/*0:0*/ top__DOT__mips__DOT__jpcAvail;
-        CData/*0:0*/ top__DOT__mips__DOT__MEM_CTRL_from_EX;
-        CData/*4:0*/ top__DOT__mips__DOT__WB_CTRL_from_EX;
-        CData/*4:0*/ top__DOT__mips__DOT__EX_rw_from_EX;
-        CData/*4:0*/ top__DOT__mips__DOT__WB_CTRL_from_MEM;
         CData/*0:0*/ top__DOT__mips__DOT__u_IF__DOT__firstFetch;
         CData/*2:0*/ top__DOT__mips__DOT__u_Controller__DOT__branchType;
-        CData/*0:0*/ top__DOT__mips__DOT__u_Controller__DOT__IF_FLUSH;
         CData/*0:0*/ top__DOT__mips__DOT__u_Controller__DOT__NPCFromEPC;
+        CData/*0:0*/ top__DOT__mips__DOT__u_Controller__DOT__ExlSet;
         CData/*0:0*/ top__DOT__mips__DOT__u_Controller__DOT__jmp;
         CData/*0:0*/ top__DOT__mips__DOT__u_Controller__DOT__NPCFromGPR;
         CData/*0:0*/ top__DOT__mips__DOT__u_Controller__DOT__savePC;
@@ -75,26 +71,23 @@ class alignas(VL_CACHE_LINE_BYTES) Vtop___024root final : public VerilatedModule
         CData/*0:0*/ top__DOT__mips__DOT__u_Controller__DOT__jalr;
         CData/*0:0*/ top__DOT__mips__DOT__u_Controller__DOT__mult;
         CData/*0:0*/ top__DOT__mips__DOT__u_Controller__DOT__div;
-        CData/*0:0*/ top__DOT__mips__DOT__u_Controller__DOT__Branch;
         CData/*0:0*/ top__DOT__mips__DOT__u_Controller__DOT__typeR;
         CData/*0:0*/ top__DOT__mips__DOT__u_Controller__DOT__typeIA;
         CData/*0:0*/ top__DOT__mips__DOT__u_Controller__DOT__ALURs;
         CData/*0:0*/ top__DOT__mips__DOT__u_Controller__DOT____VdfgTmp_h1faed734__0;
         CData/*0:0*/ top__DOT__mips__DOT__u_Controller__DOT____VdfgTmp_h4e50702c__0;
         CData/*0:0*/ top__DOT__mips__DOT__u_ID__DOT__branchAvail;
+        CData/*0:0*/ top__DOT__mips__DOT__u_ID__DOT__u_ID_FORWARD__DOT__MEM_EN;
+        CData/*0:0*/ top__DOT__mips__DOT__u_ID__DOT__u_ID_FORWARD__DOT__WB_EN;
         CData/*0:0*/ top__DOT__mips__DOT__u_ID__DOT__u_ID_FORWARD__DOT__AFromMEM;
         CData/*0:0*/ top__DOT__mips__DOT__u_ID__DOT__u_ID_FORWARD__DOT__AFromWB;
         CData/*0:0*/ top__DOT__mips__DOT__u_ID__DOT__u_ID_FORWARD__DOT__BFromMEM;
         CData/*0:0*/ top__DOT__mips__DOT__u_ID__DOT__u_ID_FORWARD__DOT__BFromWB;
         CData/*0:0*/ top__DOT__mips__DOT__u_ID__DOT__u_BRANCH__DOT__eq;
-        CData/*0:0*/ top__DOT__mips__DOT__u_EX__DOT__o_MEM_CTRL;
-        CData/*4:0*/ top__DOT__mips__DOT__u_EX__DOT__o_WB_CTRL;
         CData/*0:0*/ top__DOT__mips__DOT__u_EX__DOT__u_EX_FORWARD__DOT__MEM_EN;
         CData/*0:0*/ top__DOT__mips__DOT__u_EX__DOT__u_EX_FORWARD__DOT__WB_EN;
         CData/*0:0*/ top__DOT__mips__DOT__u_EX__DOT__u_EX_FORWARD__DOT__AFromMEM;
         CData/*0:0*/ top__DOT__mips__DOT__u_EX__DOT__u_EX_FORWARD__DOT__AFromWB;
-    };
-    struct {
         CData/*0:0*/ top__DOT__mips__DOT__u_EX__DOT__u_EX_FORWARD__DOT__BFromMEM;
         CData/*0:0*/ top__DOT__mips__DOT__u_EX__DOT__u_EX_FORWARD__DOT__BFromWB;
         CData/*3:0*/ top__DOT__mips__DOT__u_MEM__DOT____Vcellinp__u_dm_ram__wea;
@@ -104,7 +97,8 @@ class alignas(VL_CACHE_LINE_BYTES) Vtop___024root final : public VerilatedModule
         CData/*7:0*/ top__DOT__mips__DOT__u_MEM__DOT__u_dm_ram__DOT____Vlvbound_hfcd3b6e7__0;
         CData/*7:0*/ top__DOT__mips__DOT__u_MEM__DOT__u_dm_ram__DOT____Vlvbound_hfcd519e0__0;
         CData/*7:0*/ top__DOT__mips__DOT__u_MEM__DOT__u_dm_ram__DOT____Vlvbound_hfcd09d0e__0;
-        CData/*0:0*/ top__DOT__mips__DOT__u_WB__DOT__MEMout;
+    };
+    struct {
         CData/*5:0*/ top__DOT__mips__DOT__u_CP0__DOT__IM;
         CData/*0:0*/ top__DOT__mips__DOT__u_CP0__DOT__EXL;
         CData/*0:0*/ top__DOT__mips__DOT__u_CP0__DOT__IE;
@@ -143,24 +137,14 @@ class alignas(VL_CACHE_LINE_BYTES) Vtop___024root final : public VerilatedModule
         CData/*0:0*/ __Vtrigprevexpr___TOP__rst__0;
         CData/*0:0*/ __VactDidInit;
         CData/*0:0*/ __VactContinue;
-        SData/*15:0*/ top__DOT__mips__DOT__EX_CTRL_from_ID;
         SData/*15:0*/ top__DOT__mips__DOT__u_MEM__DOT__u_dm_ram__DOT____Vlvbound_hc028c573__0;
         SData/*15:0*/ top__DOT__mips__DOT__u_MEM__DOT__u_dm_ram__DOT____Vlvbound_hc029c120__0;
         SData/*9:0*/ top__DOT__u_BRIDGE__DOT__u_seg7__DOT__pause;
         SData/*15:0*/ __Vdlyvval__top__DOT__u_BRIDGE__DOT__u_seg7__DOT__ram__v1;
         SData/*15:0*/ __Vdlyvval__top__DOT__u_BRIDGE__DOT__u_seg7__DOT__ram__v2;
         IData/*31:0*/ top__DOT__PrWD;
-        VlWide<5>/*157:0*/ top__DOT__mips__DOT__EX_DATA_from_ID;
-        IData/*29:0*/ top__DOT__mips__DOT__JPC;
-        VlWide<3>/*68:0*/ top__DOT__mips__DOT__MEM_DATA_from_EX;
-        VlWide<3>/*68:0*/ top__DOT__mips__DOT__WB_DATA_from_MEM;
-        IData/*29:0*/ top__DOT__mips__DOT__ID_EPC_from_CP0;
-        VlWide<3>/*66:0*/ top__DOT__mips__DOT__pre_MEM_DATA_from_EX;
-        IData/*31:0*/ top__DOT__mips__DOT__Dout;
         IData/*31:0*/ top__DOT__mips__DOT__u_IF__DOT__reg_index;
         IData/*25:0*/ top__DOT__mips__DOT__u_IF__DOT__EX_instr;
-    };
-    struct {
         IData/*29:0*/ top__DOT__mips__DOT__u_IF__DOT__IF_PC;
         IData/*29:0*/ top__DOT__mips__DOT__u_IF__DOT__NPC;
         IData/*31:0*/ top__DOT__mips__DOT__u_IF__DOT__IF_instr;
@@ -168,8 +152,8 @@ class alignas(VL_CACHE_LINE_BYTES) Vtop___024root final : public VerilatedModule
         IData/*31:0*/ top__DOT__mips__DOT__u_ID__DOT__f_rd1;
         IData/*31:0*/ top__DOT__mips__DOT__u_ID__DOT__f_rd2;
         IData/*31:0*/ top__DOT__mips__DOT__u_ID__DOT__GPR__DOT__i;
-        VlWide<3>/*68:0*/ top__DOT__mips__DOT__u_EX__DOT__o_MEM_DATA;
         IData/*31:0*/ top__DOT__mips__DOT__u_EX__DOT__f_rd1;
+        IData/*31:0*/ top__DOT__mips__DOT__u_EX__DOT__f_rd2;
         IData/*31:0*/ top__DOT__mips__DOT__u_EX__DOT__ALUB;
         IData/*31:0*/ top__DOT__mips__DOT__u_EX__DOT__ALUC;
         IData/*31:0*/ top__DOT__mips__DOT__u_EX__DOT__MDHI;
@@ -177,8 +161,10 @@ class alignas(VL_CACHE_LINE_BYTES) Vtop___024root final : public VerilatedModule
         IData/*31:0*/ top__DOT__mips__DOT__u_MEM__DOT__MEMout;
         IData/*31:0*/ top__DOT__mips__DOT__u_MEM__DOT____Vcellout__u_dm_ram__douta;
         IData/*31:0*/ top__DOT__mips__DOT__u_MEM__DOT__u_dm_ram__DOT____Vlvbound_hf01ede65__0;
+        IData/*31:0*/ top__DOT__mips__DOT__u_WB__DOT__MEMout;
         IData/*31:0*/ top__DOT__mips__DOT__u_WB__DOT__U_DREXT__DOT____VdfgTmp_h992ded47__0;
-        IData/*31:0*/ top__DOT__mips__DOT__u_CP0__DOT__DIn;
+    };
+    struct {
         IData/*31:0*/ top__DOT__mips__DOT__u_CP0__DOT__PrID;
         IData/*29:0*/ top__DOT__u_BRIDGE__DOT__PrAddr;
         IData/*31:0*/ top__DOT__u_BRIDGE__DOT__PrWD;
@@ -191,8 +177,6 @@ class alignas(VL_CACHE_LINE_BYTES) Vtop___024root final : public VerilatedModule
         IData/*31:0*/ __Vtrigprevexpr_ha3f5a80b__0;
         IData/*31:0*/ __Vtrigprevexpr_ha3f53da3__0;
         IData/*31:0*/ __VactIterCount;
-        QData/*37:0*/ top__DOT__mips__DOT__MEM_BACK_from_MEM;
-        QData/*37:0*/ top__DOT__mips__DOT__WB_BACK_from_WB;
         VlUnpacked<IData/*31:0*/, 2048> top__DOT__mips__DOT__u_IF__DOT__IM__DOT__u_imrom__DOT__rom;
         VlUnpacked<IData/*31:0*/, 32> top__DOT__mips__DOT__u_ID__DOT__GPR__DOT__register;
         VlUnpacked<IData/*31:0*/, 3072> top__DOT__mips__DOT__u_MEM__DOT__u_dm_ram__DOT__ram;

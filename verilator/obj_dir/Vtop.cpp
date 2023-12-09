@@ -22,6 +22,8 @@ Vtop::Vtop(VerilatedContext* _vcontextp__, const char* _vcname__)
     , __PVT__top__DOT__mips__DOT__i_id_ex{vlSymsp->TOP.__PVT__top__DOT__mips__DOT__i_id_ex}
     , __PVT__top__DOT__mips__DOT__i_ex_mem{vlSymsp->TOP.__PVT__top__DOT__mips__DOT__i_ex_mem}
     , __PVT__top__DOT__mips__DOT__i_mem_wb{vlSymsp->TOP.__PVT__top__DOT__mips__DOT__i_mem_wb}
+    , __PVT__top__DOT__mips__DOT__i_bypass{vlSymsp->TOP.__PVT__top__DOT__mips__DOT__i_bypass}
+    , __PVT__top__DOT__mips__DOT__i_cp0{vlSymsp->TOP.__PVT__top__DOT__mips__DOT__i_cp0}
     , __PVT__top__DOT__mips__DOT__i_stallDetect{vlSymsp->TOP.__PVT__top__DOT__mips__DOT__i_stallDetect}
     , rootp{&(vlSymsp->TOP)}
 {

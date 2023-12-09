@@ -33,6 +33,8 @@ VM_CLASSES_FAST += \
 	Vtop_IID_EX__DepSet_h365dc188__0 \
 	Vtop_IEX_MEM__DepSet_hc09b9494__0 \
 	Vtop_IMEM_WB__DepSet_h410dca04__0 \
+	Vtop_IBypass__DepSet_h330ddd6e__0 \
+	Vtop_ICP0__DepSet_h8a365286__0 \
 
 # Generated module classes, non-fast-path, compile with low/medium optimization
 VM_CLASSES_SLOW += \
@@ -53,6 +55,10 @@ VM_CLASSES_SLOW += \
 	Vtop_IEX_MEM__DepSet_hc09b9494__0__Slow \
 	Vtop_IMEM_WB__Slow \
 	Vtop_IMEM_WB__DepSet_h410dca04__0__Slow \
+	Vtop_IBypass__Slow \
+	Vtop_IBypass__DepSet_h330ddd6e__0__Slow \
+	Vtop_ICP0__Slow \
+	Vtop_ICP0__DepSet_h8a365286__0__Slow \
 
 # Generated support classes, fast-path, compile with highest optimization
 VM_SUPPORT_FAST += \

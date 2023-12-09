@@ -3,11 +3,14 @@
 typedef struct packed{
     logic PCWrite;
 } type_IF_CTRL;
-typedef struct packed{
-    logic NPCFromEPC,ExlSet,jmp,NPCFromGPR;
-    logic [2:0]branchType;
-    logic extop,exsign;
-} type_ID_CTRL;
+
+
+typedef struct packed {
+    logic regWrite,memToReg,isDMByte,isDMHalf,isLOADS;
+} type_WB_CTRL;
+typedef struct packed {
+    logic memWrite;
+} type_MEM_CTRL;
 typedef struct packed {
     logic CP0WB,CP0Write,regDst,isSlt,savePC,ALUSrc;
     logic [3:0]ALUSrc;
@@ -15,12 +18,11 @@ typedef struct packed {
     logic [2:0]MDFunc;
     logic MDHIWB,MDLOWB;
 } type_EX_CTRL;
-typedef struct packed {
-    logic memWrite;
-} type_MEM_CTRL;
-typedef struct packed {
-    logic regWrite,memToReg,isDMByte,isDMHalf,isLOADS;
-} type_WB_CTRL;
+typedef struct packed{
+    logic NPCFromEPC,ExlSet,jmp,NPCFromGPR;
+    logic [2:0]branchType;
+    logic extop,exsign;
+} type_ID_CTRL;
 typedef struct packed {
     logic ExlSet,ExlClr;
 } type_CP0_CTRL;
@@ -41,6 +43,11 @@ typedef struct packed {
     logic [4:0] rw;
     logic [31:0] EXout;
 } type_WB_DATA;
+typedef struct packed {
+    logic regWrite;
+    logic [31:0]Wd;
+    logic [4:0]rw;
+} type_Bypass_DATA;
 interface IController(input clk);
     logic [31:26] op;
     logic [5:0] func;
@@ -113,5 +120,26 @@ interface IMEM_WB(input clk);
     wire [31:0] Dout;
     modport MEM(output WB_CTRL,WB_DATA,Dout);
     modport WB(input  WB_CTRL,WB_DATA,Dout);
+endinterface
+interface IBypass(input clk);
+    type_Bypass_DATA MEM_BACK,WB_BACK;
+    modport ID(input MEM_BACK,WB_BACK);
+    modport EX(input MEM_BACK,WB_BACK);
+    modport MEM(output MEM_BACK);
+    modport WB(output WB_BACK);
+endinterface
+interface ICP0(input clk);
+    wire [7:2 ]HWInt;
+    wire [31:2] ID_PCP1;
+    logic [31:2] EPC;
+    wire [37:0] EX_TO_CP0;
+    wire [31:0] CP0_TO_EX;
+    wire [1:0]CP0_CTRL;
+    wire IntReq;
+    modport CP0(input HWInt,ID_PCP1,EX_TO_CP0,CP0_CTRL,
+                output IntReq,EPC,CP0_TO_EX);
+    modport Controller(input IntReq,output CP0_CTRL);
+    modport ID(input EPC,output ID_PCP1);
+    modport EX(input CP0_TO_EX,output EX_TO_CP0);
 endinterface
 `endif

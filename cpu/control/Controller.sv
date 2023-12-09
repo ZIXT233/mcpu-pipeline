@@ -2,10 +2,9 @@
 module Controller (
     input clk,
     input reset,
-    input IntReq,
     IStallDetect.Controller i_stallDetect,
     IController.Controller i_controller,
-    output [1:0]CP0_CTRL
+    ICP0.Controller i_cp0
 );
     wire [3:0]aluop;
     wire [2:0]branchType,MDFunc;
@@ -24,7 +23,7 @@ module Controller (
     assign i_controller.MEM_CTRL={memWrite};
     assign i_controller.WB_CTRL={regWrite,memToReg,isDMByte,isDMHalf,isLOADS};
     assign i_stallDetect.ID_uncertainJump=NPCFromGPR||(branchType!=0);
-    assign CP0_CTRL={ExlSet,ExlClr};
+    assign i_cp0.CP0_CTRL={ExlSet,ExlClr};
     //decode instr
     //wire add,sub,ori,beq,sw,lw,lui,j,jal,jr,addi,addiu,slt,lb,lbu,lh,lhu,sb,sh,slti;
     assign add  =(op==0)    &&(func==6'b100000);
@@ -170,7 +169,7 @@ module Controller (
                     |savePC; //*WB S4 S7 lw jal
     assign CP0WB=mfc0;
     assign CP0Write =mtc0;
-    assign ExlSet=IntReq&&!(jmp||NPCFromGPR||branchType);
+    assign ExlSet=i_cp0.IntReq&&!(jmp||NPCFromGPR||branchType);
     assign NPCFromEPC =eret;
     assign ExlClr=eret;
    
