@@ -7,18 +7,18 @@ module ID (
     input [37:0]WB_BACK,
     input [37:0]MEM_BACK,
     input [31:2]CP0_EPC,
-    output reg[15:0]o_EX_CTRL,
-    output reg o_MEM_CTRL,
-    output reg [4:0] o_WB_CTRL,
-    output reg[157:0] o_EX_DATA,
+    IID_EX.ID i_id_ex,
+    IStallDetect.ID i_stallDetect
 );  
     wire [2:0]branchType;
     assign {NPCFromEPC,ExlSet,jmp,NPCFromGPR,branchType,extop,exsign}=i_controller.ID_CTRL;
-    assign o_uncertainJump=NPCFromGPR||(branchType!=0);
     wire [31:2] PCP1;
     wire [31:0] instr;
     assign {PCP1,instr}=i_if_id.ID_DATA;
     assign i_controller.ID_instr=instr;
+    assign i_stallDetect.ID_rs=instr[25:21];
+    assign i_stallDetect.ID_rt=instr[20:16];
+
     wire [31:0] WB_Wd;
     wire [4:0] WB_rw;
     assign {WB_regWrite,WB_Wd,WB_rw}=WB_BACK;
@@ -85,23 +85,23 @@ module ID (
 
     assign i_if_id.jpcAvail=ExlSet|NPCFromEPC||NPCFromGPR||jmp||branchAvail;
     initial begin
-        o_EX_DATA<=0;
-        o_EX_CTRL<=0;
-        o_MEM_CTRL<=0;
-        o_WB_CTRL<=0;
+        i_id_ex.EX_DATA<=0;
+        i_id_ex.EX_CTRL<=0;
+        i_id_ex.MEM_CTRL<=0;
+        i_id_ex.WB_CTRL<=0;
     end
     always @(posedge clk) begin
         if(i_controller.ID_FLUSH) begin
             //o_EX_DATA<=0;
-            o_EX_CTRL<=0;
-            o_MEM_CTRL<=0;
-            o_WB_CTRL<=0;
+            i_id_ex.EX_CTRL<=0;
+            i_id_ex.MEM_CTRL<=0;
+            i_id_ex.WB_CTRL<=0;
         end
         else begin
-            o_EX_DATA<={PCP1,instr,f_rd1,f_rd2,EXTB};
-            o_EX_CTRL<=i_controller.EX_CTRL;
-            o_MEM_CTRL<=i_controller.MEM_CTRL;
-            o_WB_CTRL<=i_controller.WB_CTRL;
+            i_id_ex.EX_DATA<={PCP1,instr,f_rd1,f_rd2,EXTB};
+            i_id_ex.EX_CTRL<=i_controller.EX_CTRL;
+            i_id_ex.MEM_CTRL<=i_controller.MEM_CTRL;
+            i_id_ex.WB_CTRL<=i_controller.WB_CTRL;
         end
     end
 endmodule //ID

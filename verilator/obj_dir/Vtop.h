@@ -14,7 +14,11 @@ class Vtop__Syms;
 class Vtop___024root;
 class VerilatedVcdC;
 class Vtop_IController;
+class Vtop_IEX_MEM;
+class Vtop_IID_EX;
 class Vtop_IIF_ID;
+class Vtop_IMEM_WB;
+class Vtop_IStallDetect;
 
 
 // This class is the main interface to the Verilated model
@@ -40,6 +44,10 @@ class alignas(VL_CACHE_LINE_BYTES) Vtop VL_NOT_FINAL : public VerilatedModel {
     // Otherwise the application code can consider these internals.
     Vtop_IController* const __PVT__top__DOT__mips__DOT__i_controller;
     Vtop_IIF_ID* const __PVT__top__DOT__mips__DOT__i_if_id;
+    Vtop_IID_EX* const __PVT__top__DOT__mips__DOT__i_id_ex;
+    Vtop_IEX_MEM* const __PVT__top__DOT__mips__DOT__i_ex_mem;
+    Vtop_IMEM_WB* const __PVT__top__DOT__mips__DOT__i_mem_wb;
+    Vtop_IStallDetect* const __PVT__top__DOT__mips__DOT__i_stallDetect;
 
     // Root instance pointer to allow access to model internals,
     // including inlined /* verilator public_flat_* */ items.

@@ -2,13 +2,10 @@
 module Controller (
     input clk,
     input reset,
-    input pipeline_stall,
     input IntReq,
+    IStallDetect.Controller i_stallDetect,
     IController.Controller i_controller,
-    output EX_FLUSH,
-    output MEM_FLUSH,
-    output [1:0]CP0_CTRL,
-    output o_uncertainJump
+    output [1:0]CP0_CTRL
 );
     wire [3:0]aluop;
     wire [2:0]branchType,MDFunc;
@@ -26,7 +23,7 @@ module Controller (
     assign i_controller.EX_CTRL={CP0WB,CP0Write,regDst,isSlt,savePC,ALUSrc,aluop,MDSign,MDFunc,MDHIWB,MDLOWB};
     assign i_controller.MEM_CTRL={memWrite};
     assign i_controller.WB_CTRL={regWrite,memToReg,isDMByte,isDMHalf,isLOADS};
-    assign o_uncertainJump=NPCFromGPR||(branchType!=0);
+    assign i_stallDetect.ID_uncertainJump=NPCFromGPR||(branchType!=0);
     assign CP0_CTRL={ExlSet,ExlClr};
     //decode instr
     //wire add,sub,ori,beq,sw,lw,lui,j,jal,jr,addi,addiu,slt,lb,lbu,lh,lhu,sb,sh,slti;
@@ -150,9 +147,9 @@ module Controller (
                       0; 
 
     //IF and NPC
-    assign PCWrite  = !pipeline_stall;
+    assign PCWrite  = !i_stallDetect.stall;
     assign IF_FLUSH = ExlSet;
-    assign ID_FLUSH =pipeline_stall;
+    assign ID_FLUSH =i_stallDetect.stall;
     assign EX_FLUSH=0;
     assign MEM_FLUSH=0;
     //`S(0); 

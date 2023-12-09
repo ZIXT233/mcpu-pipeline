@@ -27,7 +27,12 @@ VM_CLASSES_FAST += \
 	Vtop___024root__DepSet_h4b98a05d__0 \
 	Vtop___024root__DepSet_h6944321b__0 \
 	Vtop_IController__DepSet_h75406f52__0 \
+	Vtop_IStallDetect__DepSet_h8e101a14__0 \
+	Vtop_IStallDetect__DepSet_h696745ae__0 \
 	Vtop_IIF_ID__DepSet_h6c5358a9__0 \
+	Vtop_IID_EX__DepSet_h365dc188__0 \
+	Vtop_IEX_MEM__DepSet_hc09b9494__0 \
+	Vtop_IMEM_WB__DepSet_h410dca04__0 \
 
 # Generated module classes, non-fast-path, compile with low/medium optimization
 VM_CLASSES_SLOW += \
@@ -38,8 +43,16 @@ VM_CLASSES_SLOW += \
 	Vtop___024unit__DepSet_h1e8fffb9__0__Slow \
 	Vtop_IController__Slow \
 	Vtop_IController__DepSet_h75406f52__0__Slow \
+	Vtop_IStallDetect__Slow \
+	Vtop_IStallDetect__DepSet_h8e101a14__0__Slow \
 	Vtop_IIF_ID__Slow \
 	Vtop_IIF_ID__DepSet_h6c5358a9__0__Slow \
+	Vtop_IID_EX__Slow \
+	Vtop_IID_EX__DepSet_h365dc188__0__Slow \
+	Vtop_IEX_MEM__Slow \
+	Vtop_IEX_MEM__DepSet_hc09b9494__0__Slow \
+	Vtop_IMEM_WB__Slow \
+	Vtop_IMEM_WB__DepSet_h410dca04__0__Slow \
 
 # Generated support classes, fast-path, compile with highest optimization
 VM_SUPPORT_FAST += \

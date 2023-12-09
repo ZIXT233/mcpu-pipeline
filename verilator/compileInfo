@@ -1,10 +1,13 @@
-%Warning-NULLPORT: cpu/datapath/ID/ID.sv:14:1: Null port on module (perhaps extraneous comma)
-   14 | );  
-      | ^
-                   ... For warning description see https://verilator.org/warn/NULLPORT?v=5.016
-                   ... Use "/* verilator lint_off NULLPORT */" and lint_on around source to disable this message.
-%Warning-PINMISSING: cpu/mips.sv:82:8: Cell has missing pin: '__pinNumber12'
-   82 |     ID u_ID(
+%Warning-PINMISSING: cpu/mips.sv:83:8: Cell has missing pin: 'o_MEM_CTRL'
+   83 |     EX u_EX(
+      |        ^~~~
+                     ... For warning description see https://verilator.org/warn/PINMISSING?v=5.016
+                     ... Use "/* verilator lint_off PINMISSING */" and lint_on around source to disable this message.
+%Warning-PINMISSING: cpu/mips.sv:83:8: Cell has missing pin: 'o_WB_CTRL'
+   83 |     EX u_EX(
+      |        ^~~~
+%Warning-PINMISSING: cpu/mips.sv:83:8: Cell has missing pin: 'o_MEM_DATA'
+   83 |     EX u_EX(
       |        ^~~~
 %Warning-IMPLICIT: cpu/datapath/ID/BRANCH.sv:8:12: Signal definition not found, creating implicitly: 'eq'
     8 |     assign eq=rd1==rd2;
@@ -50,94 +53,93 @@
                                                : ... Suggested alternative: 'oriA'
    26 |     assign oriB=!BFromMEM&&!BFromWB;
       |            ^~~~
-%Warning-IMPLICIT: cpu/datapath/WB/WB.sv:8:13: Signal definition not found, creating implicitly: 'regWrite'
-    8 |     assign {regWrite,memToReg,isDMByte,isDMHalf,isLOADS}=WB_CTRL;
+%Warning-IMPLICIT: cpu/datapath/WB/WB.sv:10:13: Signal definition not found, creating implicitly: 'regWrite'
+   10 |     assign {regWrite,memToReg,isDMByte,isDMHalf,isLOADS}=i_mem_wb.WB_CTRL;
       |             ^~~~~~~~
-%Warning-IMPLICIT: cpu/datapath/WB/WB.sv:8:22: Signal definition not found, creating implicitly: 'memToReg'
-    8 |     assign {regWrite,memToReg,isDMByte,isDMHalf,isLOADS}=WB_CTRL;
+%Warning-IMPLICIT: cpu/datapath/WB/WB.sv:10:22: Signal definition not found, creating implicitly: 'memToReg'
+   10 |     assign {regWrite,memToReg,isDMByte,isDMHalf,isLOADS}=i_mem_wb.WB_CTRL;
       |                      ^~~~~~~~
-%Warning-IMPLICIT: cpu/datapath/WB/WB.sv:8:31: Signal definition not found, creating implicitly: 'isDMByte'
-    8 |     assign {regWrite,memToReg,isDMByte,isDMHalf,isLOADS}=WB_CTRL;
+%Warning-IMPLICIT: cpu/datapath/WB/WB.sv:10:31: Signal definition not found, creating implicitly: 'isDMByte'
+   10 |     assign {regWrite,memToReg,isDMByte,isDMHalf,isLOADS}=i_mem_wb.WB_CTRL;
       |                               ^~~~~~~~
-%Warning-IMPLICIT: cpu/datapath/WB/WB.sv:8:40: Signal definition not found, creating implicitly: 'isDMHalf'
-    8 |     assign {regWrite,memToReg,isDMByte,isDMHalf,isLOADS}=WB_CTRL;
+%Warning-IMPLICIT: cpu/datapath/WB/WB.sv:10:40: Signal definition not found, creating implicitly: 'isDMHalf'
+   10 |     assign {regWrite,memToReg,isDMByte,isDMHalf,isLOADS}=i_mem_wb.WB_CTRL;
       |                                        ^~~~~~~~
-%Warning-IMPLICIT: cpu/datapath/WB/WB.sv:8:49: Signal definition not found, creating implicitly: 'isLOADS'
-    8 |     assign {regWrite,memToReg,isDMByte,isDMHalf,isLOADS}=WB_CTRL;
+%Warning-IMPLICIT: cpu/datapath/WB/WB.sv:10:49: Signal definition not found, creating implicitly: 'isLOADS'
+   10 |     assign {regWrite,memToReg,isDMByte,isDMHalf,isLOADS}=i_mem_wb.WB_CTRL;
       |                                                 ^~~~~~~
-%Warning-IMPLICIT: cpu/datapath/MEM/MEM.sv:23:13: Signal definition not found, creating implicitly: 'isDMByte'
-   23 |     assign {isDMByte,isDMHalf,memWrite,preEXout,prerd2}=pre_MEM_DATA;
-      |             ^~~~~~~~
-%Warning-IMPLICIT: cpu/datapath/MEM/MEM.sv:23:22: Signal definition not found, creating implicitly: 'isDMHalf'
-   23 |     assign {isDMByte,isDMHalf,memWrite,preEXout,prerd2}=pre_MEM_DATA;
-      |                      ^~~~~~~~
-%Warning-IMPLICIT: cpu/datapath/MEM/MEM.sv:23:31: Signal definition not found, creating implicitly: 'memWrite'
-   23 |     assign {isDMByte,isDMHalf,memWrite,preEXout,prerd2}=pre_MEM_DATA;
-      |                               ^~~~~~~~
-%Warning-IMPLICIT: cpu/datapath/MEM/MEM.sv:34:12: Signal definition not found, creating implicitly: 'preAddrInDM'
-   34 |     assign preAddrInDM=(preEXout[15:0]<'h3000);
-      |            ^~~~~~~~~~~
-%Warning-IMPLICIT: cpu/datapath/MEM/MEM.sv:35:12: Signal definition not found, creating implicitly: 'DMWrite'
-                                                : ... Suggested alternative: 'IOWrite'
-   35 |     assign DMWrite=memWrite&&preAddrInDM;
-      |            ^~~~~~~
-%Warning-IMPLICIT: cpu/datapath/MEM/MEM.sv:58:12: Signal definition not found, creating implicitly: 'AddrInDM'
-                                                : ... Suggested alternative: 'preAddrInDM'
-   58 |     assign AddrInDM=(EXout[15:0]<'h3000);
+%Warning-IMPLICIT: cpu/datapath/WB/WB.sv:11:12: Signal definition not found, creating implicitly: 'AddrInDM'
+   11 |     assign AddrInDM=(i_mem_wb.WB_DATA.EXout[15:0]<'h3000);
       |            ^~~~~~~~
-%Warning-IMPLICIT: cpu/datapath/ID/ID.sv:16:13: Signal definition not found, creating implicitly: 'NPCFromEPC'
-   16 |     assign {NPCFromEPC,ExlSet,jmp,NPCFromGPR,branchType,extop,exsign}=i_controller.ID_CTRL;
+%Warning-IMPLICIT: cpu/datapath/WB/WB.sv:12:12: Signal definition not found, creating implicitly: 'MEMout'
+   12 |     assign MEMout=AddrInDM?i_mem_wb.Dout:PrRD;
+      |            ^~~~~~
+%Warning-IMPLICIT: cpu/datapath/MEM/newMEM.sv:16:12: Signal definition not found, creating implicitly: 'memWrite'
+   16 |     assign memWrite=i_ex_mem.MEM_CTRL.memWrite;
+      |            ^~~~~~~~
+%Warning-IMPLICIT: cpu/datapath/MEM/newMEM.sv:25:17: Signal definition not found, creating implicitly: 'isDMByte'
+   25 |         .isByte(isDMByte),
+      |                 ^~~~~~~~
+%Warning-IMPLICIT: cpu/datapath/MEM/newMEM.sv:26:17: Signal definition not found, creating implicitly: 'isDMHalf'
+   26 |         .isHalf(isDMHalf),
+      |                 ^~~~~~~~
+%Warning-IMPLICIT: cpu/datapath/MEM/newMEM.sv:30:12: Signal definition not found, creating implicitly: 'AddrInDM'
+   30 |     assign AddrInDM=(EXout[15:0]<'h3000);
+      |            ^~~~~~~~
+%Warning-IMPLICIT: cpu/datapath/MEM/newMEM.sv:31:12: Signal definition not found, creating implicitly: 'DMWrite'
+                                                   : ... Suggested alternative: 'IOWrite'
+   31 |     assign DMWrite=memWrite&&AddrInDM;
+      |            ^~~~~~~
+%Warning-IMPLICIT: cpu/datapath/ID/ID.sv:14:13: Signal definition not found, creating implicitly: 'NPCFromEPC'
+   14 |     assign {NPCFromEPC,ExlSet,jmp,NPCFromGPR,branchType,extop,exsign}=i_controller.ID_CTRL;
       |             ^~~~~~~~~~
-%Warning-IMPLICIT: cpu/datapath/ID/ID.sv:16:24: Signal definition not found, creating implicitly: 'ExlSet'
-   16 |     assign {NPCFromEPC,ExlSet,jmp,NPCFromGPR,branchType,extop,exsign}=i_controller.ID_CTRL;
+%Warning-IMPLICIT: cpu/datapath/ID/ID.sv:14:24: Signal definition not found, creating implicitly: 'ExlSet'
+   14 |     assign {NPCFromEPC,ExlSet,jmp,NPCFromGPR,branchType,extop,exsign}=i_controller.ID_CTRL;
       |                        ^~~~~~
-%Warning-IMPLICIT: cpu/datapath/ID/ID.sv:16:31: Signal definition not found, creating implicitly: 'jmp'
-   16 |     assign {NPCFromEPC,ExlSet,jmp,NPCFromGPR,branchType,extop,exsign}=i_controller.ID_CTRL;
+%Warning-IMPLICIT: cpu/datapath/ID/ID.sv:14:31: Signal definition not found, creating implicitly: 'jmp'
+   14 |     assign {NPCFromEPC,ExlSet,jmp,NPCFromGPR,branchType,extop,exsign}=i_controller.ID_CTRL;
       |                               ^~~
-%Warning-IMPLICIT: cpu/datapath/ID/ID.sv:16:35: Signal definition not found, creating implicitly: 'NPCFromGPR'
+%Warning-IMPLICIT: cpu/datapath/ID/ID.sv:14:35: Signal definition not found, creating implicitly: 'NPCFromGPR'
                                               : ... Suggested alternative: 'NPCFromEPC'
-   16 |     assign {NPCFromEPC,ExlSet,jmp,NPCFromGPR,branchType,extop,exsign}=i_controller.ID_CTRL;
+   14 |     assign {NPCFromEPC,ExlSet,jmp,NPCFromGPR,branchType,extop,exsign}=i_controller.ID_CTRL;
       |                                   ^~~~~~~~~~
-%Warning-IMPLICIT: cpu/datapath/ID/ID.sv:16:57: Signal definition not found, creating implicitly: 'extop'
-   16 |     assign {NPCFromEPC,ExlSet,jmp,NPCFromGPR,branchType,extop,exsign}=i_controller.ID_CTRL;
+%Warning-IMPLICIT: cpu/datapath/ID/ID.sv:14:57: Signal definition not found, creating implicitly: 'extop'
+   14 |     assign {NPCFromEPC,ExlSet,jmp,NPCFromGPR,branchType,extop,exsign}=i_controller.ID_CTRL;
       |                                                         ^~~~~
-%Warning-IMPLICIT: cpu/datapath/ID/ID.sv:16:63: Signal definition not found, creating implicitly: 'exsign'
-   16 |     assign {NPCFromEPC,ExlSet,jmp,NPCFromGPR,branchType,extop,exsign}=i_controller.ID_CTRL;
+%Warning-IMPLICIT: cpu/datapath/ID/ID.sv:14:63: Signal definition not found, creating implicitly: 'exsign'
+   14 |     assign {NPCFromEPC,ExlSet,jmp,NPCFromGPR,branchType,extop,exsign}=i_controller.ID_CTRL;
       |                                                               ^~~~~~
-%Warning-IMPLICIT: cpu/datapath/ID/ID.sv:17:12: Signal definition not found, creating implicitly: 'o_uncertainJump'
-   17 |     assign o_uncertainJump=NPCFromGPR||(branchType!=0);
-      |            ^~~~~~~~~~~~~~~
 %Warning-IMPLICIT: cpu/datapath/ID/ID.sv:24:13: Signal definition not found, creating implicitly: 'WB_regWrite'
    24 |     assign {WB_regWrite,WB_Wd,WB_rw}=WB_BACK;
       |             ^~~~~~~~~~~
-%Warning-IMPLICIT: cpu/datapath/EX/EX.sv:21:13: Signal definition not found, creating implicitly: 'CP0WB'
-   21 |     assign {CP0WB,CP0Write,regDst,isSlt,savePC,ALUSrc,aluop,MDSign,MDFunc,MDHIWB,MDLOWB}=EX_CTRL;
+%Warning-IMPLICIT: cpu/datapath/EX/EX.sv:19:13: Signal definition not found, creating implicitly: 'CP0WB'
+   19 |     assign {CP0WB,CP0Write,regDst,isSlt,savePC,ALUSrc,aluop,MDSign,MDFunc,MDHIWB,MDLOWB}=i_id_ex.EX_CTRL;
       |             ^~~~~
-%Warning-IMPLICIT: cpu/datapath/EX/EX.sv:21:19: Signal definition not found, creating implicitly: 'CP0Write'
-   21 |     assign {CP0WB,CP0Write,regDst,isSlt,savePC,ALUSrc,aluop,MDSign,MDFunc,MDHIWB,MDLOWB}=EX_CTRL;
+%Warning-IMPLICIT: cpu/datapath/EX/EX.sv:19:19: Signal definition not found, creating implicitly: 'CP0Write'
+   19 |     assign {CP0WB,CP0Write,regDst,isSlt,savePC,ALUSrc,aluop,MDSign,MDFunc,MDHIWB,MDLOWB}=i_id_ex.EX_CTRL;
       |                   ^~~~~~~~
-%Warning-IMPLICIT: cpu/datapath/EX/EX.sv:21:28: Signal definition not found, creating implicitly: 'regDst'
-   21 |     assign {CP0WB,CP0Write,regDst,isSlt,savePC,ALUSrc,aluop,MDSign,MDFunc,MDHIWB,MDLOWB}=EX_CTRL;
+%Warning-IMPLICIT: cpu/datapath/EX/EX.sv:19:28: Signal definition not found, creating implicitly: 'regDst'
+   19 |     assign {CP0WB,CP0Write,regDst,isSlt,savePC,ALUSrc,aluop,MDSign,MDFunc,MDHIWB,MDLOWB}=i_id_ex.EX_CTRL;
       |                            ^~~~~~
-%Warning-IMPLICIT: cpu/datapath/EX/EX.sv:21:35: Signal definition not found, creating implicitly: 'isSlt'
-   21 |     assign {CP0WB,CP0Write,regDst,isSlt,savePC,ALUSrc,aluop,MDSign,MDFunc,MDHIWB,MDLOWB}=EX_CTRL;
+%Warning-IMPLICIT: cpu/datapath/EX/EX.sv:19:35: Signal definition not found, creating implicitly: 'isSlt'
+   19 |     assign {CP0WB,CP0Write,regDst,isSlt,savePC,ALUSrc,aluop,MDSign,MDFunc,MDHIWB,MDLOWB}=i_id_ex.EX_CTRL;
       |                                   ^~~~~
-%Warning-IMPLICIT: cpu/datapath/EX/EX.sv:21:41: Signal definition not found, creating implicitly: 'savePC'
-   21 |     assign {CP0WB,CP0Write,regDst,isSlt,savePC,ALUSrc,aluop,MDSign,MDFunc,MDHIWB,MDLOWB}=EX_CTRL;
+%Warning-IMPLICIT: cpu/datapath/EX/EX.sv:19:41: Signal definition not found, creating implicitly: 'savePC'
+   19 |     assign {CP0WB,CP0Write,regDst,isSlt,savePC,ALUSrc,aluop,MDSign,MDFunc,MDHIWB,MDLOWB}=i_id_ex.EX_CTRL;
       |                                         ^~~~~~
-%Warning-IMPLICIT: cpu/datapath/EX/EX.sv:21:48: Signal definition not found, creating implicitly: 'ALUSrc'
-   21 |     assign {CP0WB,CP0Write,regDst,isSlt,savePC,ALUSrc,aluop,MDSign,MDFunc,MDHIWB,MDLOWB}=EX_CTRL;
+%Warning-IMPLICIT: cpu/datapath/EX/EX.sv:19:48: Signal definition not found, creating implicitly: 'ALUSrc'
+   19 |     assign {CP0WB,CP0Write,regDst,isSlt,savePC,ALUSrc,aluop,MDSign,MDFunc,MDHIWB,MDLOWB}=i_id_ex.EX_CTRL;
       |                                                ^~~~~~
-%Warning-IMPLICIT: cpu/datapath/EX/EX.sv:21:61: Signal definition not found, creating implicitly: 'MDSign'
-   21 |     assign {CP0WB,CP0Write,regDst,isSlt,savePC,ALUSrc,aluop,MDSign,MDFunc,MDHIWB,MDLOWB}=EX_CTRL;
+%Warning-IMPLICIT: cpu/datapath/EX/EX.sv:19:61: Signal definition not found, creating implicitly: 'MDSign'
+   19 |     assign {CP0WB,CP0Write,regDst,isSlt,savePC,ALUSrc,aluop,MDSign,MDFunc,MDHIWB,MDLOWB}=i_id_ex.EX_CTRL;
       |                                                             ^~~~~~
-%Warning-IMPLICIT: cpu/datapath/EX/EX.sv:21:75: Signal definition not found, creating implicitly: 'MDHIWB'
+%Warning-IMPLICIT: cpu/datapath/EX/EX.sv:19:75: Signal definition not found, creating implicitly: 'MDHIWB'
                                               : ... Suggested alternative: 'MDHI'
-   21 |     assign {CP0WB,CP0Write,regDst,isSlt,savePC,ALUSrc,aluop,MDSign,MDFunc,MDHIWB,MDLOWB}=EX_CTRL;
+   19 |     assign {CP0WB,CP0Write,regDst,isSlt,savePC,ALUSrc,aluop,MDSign,MDFunc,MDHIWB,MDLOWB}=i_id_ex.EX_CTRL;
       |                                                                           ^~~~~~
-%Warning-IMPLICIT: cpu/datapath/EX/EX.sv:21:82: Signal definition not found, creating implicitly: 'MDLOWB'
+%Warning-IMPLICIT: cpu/datapath/EX/EX.sv:19:82: Signal definition not found, creating implicitly: 'MDLOWB'
                                               : ... Suggested alternative: 'MDHIWB'
-   21 |     assign {CP0WB,CP0Write,regDst,isSlt,savePC,ALUSrc,aluop,MDSign,MDFunc,MDHIWB,MDLOWB}=EX_CTRL;
+   19 |     assign {CP0WB,CP0Write,regDst,isSlt,savePC,ALUSrc,aluop,MDSign,MDFunc,MDHIWB,MDLOWB}=i_id_ex.EX_CTRL;
       |                                                                                  ^~~~~~
 %Warning-IMPLICIT: cpu/datapath/CP0.sv:12:13: Signal definition not found, creating implicitly: 'ExlSet'
    12 |     assign {ExlSet,ExlClr}=CP0_CTRL;
@@ -148,348 +150,338 @@
 %Warning-IMPLICIT: cpu/datapath/CP0.sv:17:22: Signal definition not found, creating implicitly: 'Dout'
    17 |     assign o_EX_DATA=Dout;
       |                      ^~~~
-%Warning-IMPLICIT: cpu/control/HazardDetect.sv:13:12: Signal definition not found, creating implicitly: 'LOAD'
-   13 |     assign LOAD=(EX_memToReg)&&(EX_rw==ID_rs||EX_rw==ID_rt);
-      |            ^~~~
-%Warning-IMPLICIT: cpu/control/HazardDetect.sv:14:12: Signal definition not found, creating implicitly: 'Branch_EX'
-   14 |     assign Branch_EX=ID_uncertainJump&&(EX_memToReg||EX_regWrite)&&EX_rw!=0&&(EX_rw==ID_rs||EX_rw==ID_rt);
-      |            ^~~~~~~~~
-%Warning-IMPLICIT: cpu/control/HazardDetect.sv:15:12: Signal definition not found, creating implicitly: 'Branch_LOAD'
-                                                    : ... Suggested alternative: 'Branch_EX'
-   15 |     assign Branch_LOAD=ID_uncertainJump&&MEM_memToReg&&(MEM_rw==ID_rs||MEM_rw==ID_rt);
-      |            ^~~~~~~~~~~
-%Warning-IMPLICIT: cpu/control/Controller.sv:22:34: Signal definition not found, creating implicitly: 'IF_FLUSH'
-                                                  : ... Suggested alternative: 'EX_FLUSH'
-   22 |     assign i_controller.IF_FLUSH=IF_FLUSH;
+%Warning-IMPLICIT: cpu/control/Controller.sv:19:34: Signal definition not found, creating implicitly: 'IF_FLUSH'
+   19 |     assign i_controller.IF_FLUSH=IF_FLUSH;
       |                                  ^~~~~~~~
-%Warning-IMPLICIT: cpu/control/Controller.sv:23:34: Signal definition not found, creating implicitly: 'PCWrite'
-   23 |     assign i_controller.IF_CTRL={PCWrite};
+%Warning-IMPLICIT: cpu/control/Controller.sv:20:34: Signal definition not found, creating implicitly: 'PCWrite'
+   20 |     assign i_controller.IF_CTRL={PCWrite};
       |                                  ^~~~~~~
-%Warning-IMPLICIT: cpu/control/Controller.sv:24:34: Signal definition not found, creating implicitly: 'ID_FLUSH'
+%Warning-IMPLICIT: cpu/control/Controller.sv:21:34: Signal definition not found, creating implicitly: 'ID_FLUSH'
                                                   : ... Suggested alternative: 'IF_FLUSH'
-   24 |     assign i_controller.ID_FLUSH=ID_FLUSH;
+   21 |     assign i_controller.ID_FLUSH=ID_FLUSH;
       |                                  ^~~~~~~~
-%Warning-IMPLICIT: cpu/control/Controller.sv:25:34: Signal definition not found, creating implicitly: 'NPCFromEPC'
-   25 |     assign i_controller.ID_CTRL={NPCFromEPC,ExlSet,jmp,NPCFromGPR,branchType,extop,exsign};
+%Warning-IMPLICIT: cpu/control/Controller.sv:22:34: Signal definition not found, creating implicitly: 'NPCFromEPC'
+   22 |     assign i_controller.ID_CTRL={NPCFromEPC,ExlSet,jmp,NPCFromGPR,branchType,extop,exsign};
       |                                  ^~~~~~~~~~
-%Warning-IMPLICIT: cpu/control/Controller.sv:25:45: Signal definition not found, creating implicitly: 'ExlSet'
-   25 |     assign i_controller.ID_CTRL={NPCFromEPC,ExlSet,jmp,NPCFromGPR,branchType,extop,exsign};
+%Warning-IMPLICIT: cpu/control/Controller.sv:22:45: Signal definition not found, creating implicitly: 'ExlSet'
+   22 |     assign i_controller.ID_CTRL={NPCFromEPC,ExlSet,jmp,NPCFromGPR,branchType,extop,exsign};
       |                                             ^~~~~~
-%Warning-IMPLICIT: cpu/control/Controller.sv:25:52: Signal definition not found, creating implicitly: 'jmp'
-   25 |     assign i_controller.ID_CTRL={NPCFromEPC,ExlSet,jmp,NPCFromGPR,branchType,extop,exsign};
+%Warning-IMPLICIT: cpu/control/Controller.sv:22:52: Signal definition not found, creating implicitly: 'jmp'
+   22 |     assign i_controller.ID_CTRL={NPCFromEPC,ExlSet,jmp,NPCFromGPR,branchType,extop,exsign};
       |                                                    ^~~
-%Warning-IMPLICIT: cpu/control/Controller.sv:25:56: Signal definition not found, creating implicitly: 'NPCFromGPR'
+%Warning-IMPLICIT: cpu/control/Controller.sv:22:56: Signal definition not found, creating implicitly: 'NPCFromGPR'
                                                   : ... Suggested alternative: 'NPCFromEPC'
-   25 |     assign i_controller.ID_CTRL={NPCFromEPC,ExlSet,jmp,NPCFromGPR,branchType,extop,exsign};
+   22 |     assign i_controller.ID_CTRL={NPCFromEPC,ExlSet,jmp,NPCFromGPR,branchType,extop,exsign};
       |                                                        ^~~~~~~~~~
-%Warning-IMPLICIT: cpu/control/Controller.sv:25:78: Signal definition not found, creating implicitly: 'extop'
-   25 |     assign i_controller.ID_CTRL={NPCFromEPC,ExlSet,jmp,NPCFromGPR,branchType,extop,exsign};
+%Warning-IMPLICIT: cpu/control/Controller.sv:22:78: Signal definition not found, creating implicitly: 'extop'
+   22 |     assign i_controller.ID_CTRL={NPCFromEPC,ExlSet,jmp,NPCFromGPR,branchType,extop,exsign};
       |                                                                              ^~~~~
-%Warning-IMPLICIT: cpu/control/Controller.sv:25:84: Signal definition not found, creating implicitly: 'exsign'
-   25 |     assign i_controller.ID_CTRL={NPCFromEPC,ExlSet,jmp,NPCFromGPR,branchType,extop,exsign};
+%Warning-IMPLICIT: cpu/control/Controller.sv:22:84: Signal definition not found, creating implicitly: 'exsign'
+   22 |     assign i_controller.ID_CTRL={NPCFromEPC,ExlSet,jmp,NPCFromGPR,branchType,extop,exsign};
       |                                                                                    ^~~~~~
-%Warning-IMPLICIT: cpu/control/Controller.sv:26:34: Signal definition not found, creating implicitly: 'CP0WB'
-   26 |     assign i_controller.EX_CTRL={CP0WB,CP0Write,regDst,isSlt,savePC,ALUSrc,aluop,MDSign,MDFunc,MDHIWB,MDLOWB};
+%Warning-IMPLICIT: cpu/control/Controller.sv:23:34: Signal definition not found, creating implicitly: 'CP0WB'
+   23 |     assign i_controller.EX_CTRL={CP0WB,CP0Write,regDst,isSlt,savePC,ALUSrc,aluop,MDSign,MDFunc,MDHIWB,MDLOWB};
       |                                  ^~~~~
-%Warning-IMPLICIT: cpu/control/Controller.sv:26:40: Signal definition not found, creating implicitly: 'CP0Write'
+%Warning-IMPLICIT: cpu/control/Controller.sv:23:40: Signal definition not found, creating implicitly: 'CP0Write'
                                                   : ... Suggested alternative: 'PCWrite'
-   26 |     assign i_controller.EX_CTRL={CP0WB,CP0Write,regDst,isSlt,savePC,ALUSrc,aluop,MDSign,MDFunc,MDHIWB,MDLOWB};
+   23 |     assign i_controller.EX_CTRL={CP0WB,CP0Write,regDst,isSlt,savePC,ALUSrc,aluop,MDSign,MDFunc,MDHIWB,MDLOWB};
       |                                        ^~~~~~~~
-%Warning-IMPLICIT: cpu/control/Controller.sv:26:49: Signal definition not found, creating implicitly: 'regDst'
-   26 |     assign i_controller.EX_CTRL={CP0WB,CP0Write,regDst,isSlt,savePC,ALUSrc,aluop,MDSign,MDFunc,MDHIWB,MDLOWB};
+%Warning-IMPLICIT: cpu/control/Controller.sv:23:49: Signal definition not found, creating implicitly: 'regDst'
+   23 |     assign i_controller.EX_CTRL={CP0WB,CP0Write,regDst,isSlt,savePC,ALUSrc,aluop,MDSign,MDFunc,MDHIWB,MDLOWB};
       |                                                 ^~~~~~
-%Warning-IMPLICIT: cpu/control/Controller.sv:26:56: Signal definition not found, creating implicitly: 'isSlt'
-   26 |     assign i_controller.EX_CTRL={CP0WB,CP0Write,regDst,isSlt,savePC,ALUSrc,aluop,MDSign,MDFunc,MDHIWB,MDLOWB};
+%Warning-IMPLICIT: cpu/control/Controller.sv:23:56: Signal definition not found, creating implicitly: 'isSlt'
+   23 |     assign i_controller.EX_CTRL={CP0WB,CP0Write,regDst,isSlt,savePC,ALUSrc,aluop,MDSign,MDFunc,MDHIWB,MDLOWB};
       |                                                        ^~~~~
-%Warning-IMPLICIT: cpu/control/Controller.sv:26:62: Signal definition not found, creating implicitly: 'savePC'
-   26 |     assign i_controller.EX_CTRL={CP0WB,CP0Write,regDst,isSlt,savePC,ALUSrc,aluop,MDSign,MDFunc,MDHIWB,MDLOWB};
+%Warning-IMPLICIT: cpu/control/Controller.sv:23:62: Signal definition not found, creating implicitly: 'savePC'
+   23 |     assign i_controller.EX_CTRL={CP0WB,CP0Write,regDst,isSlt,savePC,ALUSrc,aluop,MDSign,MDFunc,MDHIWB,MDLOWB};
       |                                                              ^~~~~~
-%Warning-IMPLICIT: cpu/control/Controller.sv:26:69: Signal definition not found, creating implicitly: 'ALUSrc'
-   26 |     assign i_controller.EX_CTRL={CP0WB,CP0Write,regDst,isSlt,savePC,ALUSrc,aluop,MDSign,MDFunc,MDHIWB,MDLOWB};
+%Warning-IMPLICIT: cpu/control/Controller.sv:23:69: Signal definition not found, creating implicitly: 'ALUSrc'
+   23 |     assign i_controller.EX_CTRL={CP0WB,CP0Write,regDst,isSlt,savePC,ALUSrc,aluop,MDSign,MDFunc,MDHIWB,MDLOWB};
       |                                                                     ^~~~~~
-%Warning-IMPLICIT: cpu/control/Controller.sv:26:82: Signal definition not found, creating implicitly: 'MDSign'
-   26 |     assign i_controller.EX_CTRL={CP0WB,CP0Write,regDst,isSlt,savePC,ALUSrc,aluop,MDSign,MDFunc,MDHIWB,MDLOWB};
+%Warning-IMPLICIT: cpu/control/Controller.sv:23:82: Signal definition not found, creating implicitly: 'MDSign'
+   23 |     assign i_controller.EX_CTRL={CP0WB,CP0Write,regDst,isSlt,savePC,ALUSrc,aluop,MDSign,MDFunc,MDHIWB,MDLOWB};
       |                                                                                  ^~~~~~
-%Warning-IMPLICIT: cpu/control/Controller.sv:26:96: Signal definition not found, creating implicitly: 'MDHIWB'
-   26 |     assign i_controller.EX_CTRL={CP0WB,CP0Write,regDst,isSlt,savePC,ALUSrc,aluop,MDSign,MDFunc,MDHIWB,MDLOWB};
+%Warning-IMPLICIT: cpu/control/Controller.sv:23:96: Signal definition not found, creating implicitly: 'MDHIWB'
+   23 |     assign i_controller.EX_CTRL={CP0WB,CP0Write,regDst,isSlt,savePC,ALUSrc,aluop,MDSign,MDFunc,MDHIWB,MDLOWB};
       |                                                                                                ^~~~~~
-%Warning-IMPLICIT: cpu/control/Controller.sv:26:103: Signal definition not found, creating implicitly: 'MDLOWB'
+%Warning-IMPLICIT: cpu/control/Controller.sv:23:103: Signal definition not found, creating implicitly: 'MDLOWB'
                                                    : ... Suggested alternative: 'MDHIWB'
-   26 |     assign i_controller.EX_CTRL={CP0WB,CP0Write,regDst,isSlt,savePC,ALUSrc,aluop,MDSign,MDFunc,MDHIWB,MDLOWB};
+   23 |     assign i_controller.EX_CTRL={CP0WB,CP0Write,regDst,isSlt,savePC,ALUSrc,aluop,MDSign,MDFunc,MDHIWB,MDLOWB};
       |                                                                                                       ^~~~~~
-%Warning-IMPLICIT: cpu/control/Controller.sv:27:35: Signal definition not found, creating implicitly: 'memWrite'
-   27 |     assign i_controller.MEM_CTRL={memWrite};
+%Warning-IMPLICIT: cpu/control/Controller.sv:24:35: Signal definition not found, creating implicitly: 'memWrite'
+   24 |     assign i_controller.MEM_CTRL={memWrite};
       |                                   ^~~~~~~~
-%Warning-IMPLICIT: cpu/control/Controller.sv:28:34: Signal definition not found, creating implicitly: 'regWrite'
+%Warning-IMPLICIT: cpu/control/Controller.sv:25:34: Signal definition not found, creating implicitly: 'regWrite'
                                                   : ... Suggested alternative: 'memWrite'
-   28 |     assign i_controller.WB_CTRL={regWrite,memToReg,isDMByte,isDMHalf,isLOADS};
+   25 |     assign i_controller.WB_CTRL={regWrite,memToReg,isDMByte,isDMHalf,isLOADS};
       |                                  ^~~~~~~~
-%Warning-IMPLICIT: cpu/control/Controller.sv:28:43: Signal definition not found, creating implicitly: 'memToReg'
-   28 |     assign i_controller.WB_CTRL={regWrite,memToReg,isDMByte,isDMHalf,isLOADS};
+%Warning-IMPLICIT: cpu/control/Controller.sv:25:43: Signal definition not found, creating implicitly: 'memToReg'
+   25 |     assign i_controller.WB_CTRL={regWrite,memToReg,isDMByte,isDMHalf,isLOADS};
       |                                           ^~~~~~~~
-%Warning-IMPLICIT: cpu/control/Controller.sv:28:52: Signal definition not found, creating implicitly: 'isDMByte'
-   28 |     assign i_controller.WB_CTRL={regWrite,memToReg,isDMByte,isDMHalf,isLOADS};
+%Warning-IMPLICIT: cpu/control/Controller.sv:25:52: Signal definition not found, creating implicitly: 'isDMByte'
+   25 |     assign i_controller.WB_CTRL={regWrite,memToReg,isDMByte,isDMHalf,isLOADS};
       |                                                    ^~~~~~~~
-%Warning-IMPLICIT: cpu/control/Controller.sv:28:61: Signal definition not found, creating implicitly: 'isDMHalf'
-   28 |     assign i_controller.WB_CTRL={regWrite,memToReg,isDMByte,isDMHalf,isLOADS};
+%Warning-IMPLICIT: cpu/control/Controller.sv:25:61: Signal definition not found, creating implicitly: 'isDMHalf'
+   25 |     assign i_controller.WB_CTRL={regWrite,memToReg,isDMByte,isDMHalf,isLOADS};
       |                                                             ^~~~~~~~
-%Warning-IMPLICIT: cpu/control/Controller.sv:28:70: Signal definition not found, creating implicitly: 'isLOADS'
-   28 |     assign i_controller.WB_CTRL={regWrite,memToReg,isDMByte,isDMHalf,isLOADS};
+%Warning-IMPLICIT: cpu/control/Controller.sv:25:70: Signal definition not found, creating implicitly: 'isLOADS'
+   25 |     assign i_controller.WB_CTRL={regWrite,memToReg,isDMByte,isDMHalf,isLOADS};
       |                                                                      ^~~~~~~
-%Warning-IMPLICIT: cpu/control/Controller.sv:30:29: Signal definition not found, creating implicitly: 'ExlClr'
-   30 |     assign CP0_CTRL={ExlSet,ExlClr};
+%Warning-IMPLICIT: cpu/control/Controller.sv:27:29: Signal definition not found, creating implicitly: 'ExlClr'
+   27 |     assign CP0_CTRL={ExlSet,ExlClr};
       |                             ^~~~~~
-%Warning-IMPLICIT: cpu/control/Controller.sv:33:12: Signal definition not found, creating implicitly: 'add'
-   33 |     assign add  =(op==0)    &&(func==6'b100000);
+%Warning-IMPLICIT: cpu/control/Controller.sv:30:12: Signal definition not found, creating implicitly: 'add'
+   30 |     assign add  =(op==0)    &&(func==6'b100000);
       |            ^~~
-%Warning-IMPLICIT: cpu/control/Controller.sv:34:12: Signal definition not found, creating implicitly: 'sub'
-   34 |     assign sub  =(op==0)    &&(func==6'b100010);
+%Warning-IMPLICIT: cpu/control/Controller.sv:31:12: Signal definition not found, creating implicitly: 'sub'
+   31 |     assign sub  =(op==0)    &&(func==6'b100010);
       |            ^~~
-%Warning-IMPLICIT: cpu/control/Controller.sv:35:12: Signal definition not found, creating implicitly: 'ori'
-   35 |     assign ori  =op==6'b001101;
+%Warning-IMPLICIT: cpu/control/Controller.sv:32:12: Signal definition not found, creating implicitly: 'ori'
+   32 |     assign ori  =op==6'b001101;
       |            ^~~
-%Warning-IMPLICIT: cpu/control/Controller.sv:36:12: Signal definition not found, creating implicitly: 'beq'
-   36 |     assign beq  =op==6'b000100;
+%Warning-IMPLICIT: cpu/control/Controller.sv:33:12: Signal definition not found, creating implicitly: 'beq'
+   33 |     assign beq  =op==6'b000100;
       |            ^~~
-%Warning-IMPLICIT: cpu/control/Controller.sv:37:12: Signal definition not found, creating implicitly: 'sw'
-   37 |     assign sw   =op==6'b101011;
+%Warning-IMPLICIT: cpu/control/Controller.sv:34:12: Signal definition not found, creating implicitly: 'sw'
+   34 |     assign sw   =op==6'b101011;
       |            ^~
-%Warning-IMPLICIT: cpu/control/Controller.sv:38:12: Signal definition not found, creating implicitly: 'lw'
+%Warning-IMPLICIT: cpu/control/Controller.sv:35:12: Signal definition not found, creating implicitly: 'lw'
                                                   : ... Suggested alternative: 'sw'
-   38 |     assign lw   =op==6'b100011;
+   35 |     assign lw   =op==6'b100011;
       |            ^~
-%Warning-IMPLICIT: cpu/control/Controller.sv:39:12: Signal definition not found, creating implicitly: 'lui'
-   39 |     assign lui  =op==6'b001111;
+%Warning-IMPLICIT: cpu/control/Controller.sv:36:12: Signal definition not found, creating implicitly: 'lui'
+   36 |     assign lui  =op==6'b001111;
       |            ^~~
-%Warning-IMPLICIT: cpu/control/Controller.sv:40:12: Signal definition not found, creating implicitly: 'j'
-   40 |     assign j    =op==6'b000010;
+%Warning-IMPLICIT: cpu/control/Controller.sv:37:12: Signal definition not found, creating implicitly: 'j'
+   37 |     assign j    =op==6'b000010;
       |            ^
-%Warning-IMPLICIT: cpu/control/Controller.sv:41:12: Signal definition not found, creating implicitly: 'jal'
-   41 |     assign jal  =op==6'b000011;
+%Warning-IMPLICIT: cpu/control/Controller.sv:38:12: Signal definition not found, creating implicitly: 'jal'
+   38 |     assign jal  =op==6'b000011;
       |            ^~~
-%Warning-IMPLICIT: cpu/control/Controller.sv:42:12: Signal definition not found, creating implicitly: 'jr'
+%Warning-IMPLICIT: cpu/control/Controller.sv:39:12: Signal definition not found, creating implicitly: 'jr'
                                                   : ... Suggested alternative: 'j'
-   42 |     assign jr   =(op==0)    &&(func==6'b001000);
+   39 |     assign jr   =(op==0)    &&(func==6'b001000);
       |            ^~
-%Warning-IMPLICIT: cpu/control/Controller.sv:43:12: Signal definition not found, creating implicitly: 'addi'
+%Warning-IMPLICIT: cpu/control/Controller.sv:40:12: Signal definition not found, creating implicitly: 'addi'
                                                   : ... Suggested alternative: 'add'
-   43 |     assign addi =op==6'b001000;
+   40 |     assign addi =op==6'b001000;
       |            ^~~~
-%Warning-IMPLICIT: cpu/control/Controller.sv:44:12: Signal definition not found, creating implicitly: 'addiu'
+%Warning-IMPLICIT: cpu/control/Controller.sv:41:12: Signal definition not found, creating implicitly: 'addiu'
                                                   : ... Suggested alternative: 'addi'
-   44 |     assign addiu=op==6'b001001;
+   41 |     assign addiu=op==6'b001001;
       |            ^~~~~
-%Warning-IMPLICIT: cpu/control/Controller.sv:45:12: Signal definition not found, creating implicitly: 'slt'
+%Warning-IMPLICIT: cpu/control/Controller.sv:42:12: Signal definition not found, creating implicitly: 'slt'
                                                   : ... Suggested alternative: 'isSlt'
-   45 |     assign slt  =(op==0)    &&(func==6'b101010);
+   42 |     assign slt  =(op==0)    &&(func==6'b101010);
       |            ^~~
-%Warning-IMPLICIT: cpu/control/Controller.sv:46:12: Signal definition not found, creating implicitly: 'slti'
+%Warning-IMPLICIT: cpu/control/Controller.sv:43:12: Signal definition not found, creating implicitly: 'slti'
                                                   : ... Suggested alternative: 'slt'
-   46 |     assign slti =op==6'b001010;
+   43 |     assign slti =op==6'b001010;
       |            ^~~~
-%Warning-IMPLICIT: cpu/control/Controller.sv:47:12: Signal definition not found, creating implicitly: 'lb'
+%Warning-IMPLICIT: cpu/control/Controller.sv:44:12: Signal definition not found, creating implicitly: 'lb'
                                                   : ... Suggested alternative: 'lw'
-   47 |     assign lb   =op==6'b100000;
+   44 |     assign lb   =op==6'b100000;
       |            ^~
-%Warning-IMPLICIT: cpu/control/Controller.sv:48:12: Signal definition not found, creating implicitly: 'lbu'
+%Warning-IMPLICIT: cpu/control/Controller.sv:45:12: Signal definition not found, creating implicitly: 'lbu'
                                                   : ... Suggested alternative: 'lb'
-   48 |     assign lbu  =op==6'b100100;
+   45 |     assign lbu  =op==6'b100100;
       |            ^~~
-%Warning-IMPLICIT: cpu/control/Controller.sv:49:12: Signal definition not found, creating implicitly: 'lh'
+%Warning-IMPLICIT: cpu/control/Controller.sv:46:12: Signal definition not found, creating implicitly: 'lh'
                                                   : ... Suggested alternative: 'lb'
-   49 |     assign lh   =op==6'b100001;
+   46 |     assign lh   =op==6'b100001;
       |            ^~
-%Warning-IMPLICIT: cpu/control/Controller.sv:50:12: Signal definition not found, creating implicitly: 'lhu'
+%Warning-IMPLICIT: cpu/control/Controller.sv:47:12: Signal definition not found, creating implicitly: 'lhu'
                                                   : ... Suggested alternative: 'lbu'
-   50 |     assign lhu  =op==6'b100101;
+   47 |     assign lhu  =op==6'b100101;
       |            ^~~
-%Warning-IMPLICIT: cpu/control/Controller.sv:51:12: Signal definition not found, creating implicitly: 'sb'
+%Warning-IMPLICIT: cpu/control/Controller.sv:48:12: Signal definition not found, creating implicitly: 'sb'
                                                   : ... Suggested alternative: 'lb'
-   51 |     assign sb   =op==6'b101000;
+   48 |     assign sb   =op==6'b101000;
       |            ^~
-%Warning-IMPLICIT: cpu/control/Controller.sv:52:12: Signal definition not found, creating implicitly: 'sh'
+%Warning-IMPLICIT: cpu/control/Controller.sv:49:12: Signal definition not found, creating implicitly: 'sh'
                                                   : ... Suggested alternative: 'lh'
-   52 |     assign sh   =op==6'b101001;
+   49 |     assign sh   =op==6'b101001;
       |            ^~
-%Warning-IMPLICIT: cpu/control/Controller.sv:54:12: Signal definition not found, creating implicitly: 'addu'
+%Warning-IMPLICIT: cpu/control/Controller.sv:51:12: Signal definition not found, creating implicitly: 'addu'
                                                   : ... Suggested alternative: 'add'
-   54 |     assign addu =(op==0)    &&(func==6'b100001);
+   51 |     assign addu =(op==0)    &&(func==6'b100001);
       |            ^~~~
-%Warning-IMPLICIT: cpu/control/Controller.sv:55:12: Signal definition not found, creating implicitly: 'subu'
+%Warning-IMPLICIT: cpu/control/Controller.sv:52:12: Signal definition not found, creating implicitly: 'subu'
                                                   : ... Suggested alternative: 'sub'
-   55 |     assign subu =(op==0)    &&(func==6'b100011);
+   52 |     assign subu =(op==0)    &&(func==6'b100011);
       |            ^~~~
-%Warning-IMPLICIT: cpu/control/Controller.sv:56:12: Signal definition not found, creating implicitly: 'AND'
-   56 |     assign AND  =(op==0)    &&(func==6'b100100);
+%Warning-IMPLICIT: cpu/control/Controller.sv:53:12: Signal definition not found, creating implicitly: 'AND'
+   53 |     assign AND  =(op==0)    &&(func==6'b100100);
       |            ^~~
-%Warning-IMPLICIT: cpu/control/Controller.sv:57:12: Signal definition not found, creating implicitly: 'andi'
+%Warning-IMPLICIT: cpu/control/Controller.sv:54:12: Signal definition not found, creating implicitly: 'andi'
                                                   : ... Suggested alternative: 'addi'
-   57 |     assign andi =op==6'b001100;
+   54 |     assign andi =op==6'b001100;
       |            ^~~~
-%Warning-IMPLICIT: cpu/control/Controller.sv:58:12: Signal definition not found, creating implicitly: 'OR'
-   58 |     assign OR   =(op==0)    &&(func==6'b100101);
+%Warning-IMPLICIT: cpu/control/Controller.sv:55:12: Signal definition not found, creating implicitly: 'OR'
+   55 |     assign OR   =(op==0)    &&(func==6'b100101);
       |            ^~
-%Warning-IMPLICIT: cpu/control/Controller.sv:59:12: Signal definition not found, creating implicitly: 'XOR'
+%Warning-IMPLICIT: cpu/control/Controller.sv:56:12: Signal definition not found, creating implicitly: 'XOR'
                                                   : ... Suggested alternative: 'OR'
-   59 |     assign XOR  =(op==0)    &&(func==6'b100110);
+   56 |     assign XOR  =(op==0)    &&(func==6'b100110);
       |            ^~~
-%Warning-IMPLICIT: cpu/control/Controller.sv:60:12: Signal definition not found, creating implicitly: 'xori'
+%Warning-IMPLICIT: cpu/control/Controller.sv:57:12: Signal definition not found, creating implicitly: 'xori'
                                                   : ... Suggested alternative: 'ori'
-   60 |     assign xori =op==6'b001110;
+   57 |     assign xori =op==6'b001110;
       |            ^~~~
-%Warning-IMPLICIT: cpu/control/Controller.sv:61:12: Signal definition not found, creating implicitly: 'NOR'
+%Warning-IMPLICIT: cpu/control/Controller.sv:58:12: Signal definition not found, creating implicitly: 'NOR'
                                                   : ... Suggested alternative: 'OR'
-   61 |     assign NOR  =(op==0)    &&(func==6'b100111); 
+   58 |     assign NOR  =(op==0)    &&(func==6'b100111); 
       |            ^~~
-%Warning-IMPLICIT: cpu/control/Controller.sv:62:12: Signal definition not found, creating implicitly: 'sll'
+%Warning-IMPLICIT: cpu/control/Controller.sv:59:12: Signal definition not found, creating implicitly: 'sll'
                                                   : ... Suggested alternative: 'slt'
-   62 |     assign sll  =(op==0)    &&(func==6'b000000); 
+   59 |     assign sll  =(op==0)    &&(func==6'b000000); 
       |            ^~~
-%Warning-IMPLICIT: cpu/control/Controller.sv:63:12: Signal definition not found, creating implicitly: 'sllv'
+%Warning-IMPLICIT: cpu/control/Controller.sv:60:12: Signal definition not found, creating implicitly: 'sllv'
                                                   : ... Suggested alternative: 'sll'
-   63 |     assign sllv =(op==0)    &&(func==6'b000100);
+   60 |     assign sllv =(op==0)    &&(func==6'b000100);
       |            ^~~~
-%Warning-IMPLICIT: cpu/control/Controller.sv:64:12: Signal definition not found, creating implicitly: 'srl'
+%Warning-IMPLICIT: cpu/control/Controller.sv:61:12: Signal definition not found, creating implicitly: 'srl'
                                                   : ... Suggested alternative: 'sll'
-   64 |     assign srl  =(op==0)    &&(func==6'b000010);
+   61 |     assign srl  =(op==0)    &&(func==6'b000010);
       |            ^~~
-%Warning-IMPLICIT: cpu/control/Controller.sv:65:12: Signal definition not found, creating implicitly: 'srlv'
+%Warning-IMPLICIT: cpu/control/Controller.sv:62:12: Signal definition not found, creating implicitly: 'srlv'
                                                   : ... Suggested alternative: 'sllv'
-   65 |     assign srlv =(op==0)    &&(func==6'b000110);
+   62 |     assign srlv =(op==0)    &&(func==6'b000110);
       |            ^~~~
-%Warning-IMPLICIT: cpu/control/Controller.sv:66:12: Signal definition not found, creating implicitly: 'sra'
+%Warning-IMPLICIT: cpu/control/Controller.sv:63:12: Signal definition not found, creating implicitly: 'sra'
                                                   : ... Suggested alternative: 'srl'
-   66 |     assign sra  =(op==0)    &&(func==6'b000011);
+   63 |     assign sra  =(op==0)    &&(func==6'b000011);
       |            ^~~
-%Warning-IMPLICIT: cpu/control/Controller.sv:67:12: Signal definition not found, creating implicitly: 'srav'
+%Warning-IMPLICIT: cpu/control/Controller.sv:64:12: Signal definition not found, creating implicitly: 'srav'
                                                   : ... Suggested alternative: 'sra'
-   67 |     assign srav =(op==0)    &&(func==6'b000111);
+   64 |     assign srav =(op==0)    &&(func==6'b000111);
       |            ^~~~
-%Warning-IMPLICIT: cpu/control/Controller.sv:69:12: Signal definition not found, creating implicitly: 'bne'
-   69 |     assign bne  =op==6'b000101;
+%Warning-IMPLICIT: cpu/control/Controller.sv:66:12: Signal definition not found, creating implicitly: 'bne'
+   66 |     assign bne  =op==6'b000101;
       |            ^~~
-%Warning-IMPLICIT: cpu/control/Controller.sv:70:12: Signal definition not found, creating implicitly: 'bgtz'
-   70 |     assign bgtz =op==6'b000111;
+%Warning-IMPLICIT: cpu/control/Controller.sv:67:12: Signal definition not found, creating implicitly: 'bgtz'
+   67 |     assign bgtz =op==6'b000111;
       |            ^~~~
-%Warning-IMPLICIT: cpu/control/Controller.sv:71:12: Signal definition not found, creating implicitly: 'bltz'
+%Warning-IMPLICIT: cpu/control/Controller.sv:68:12: Signal definition not found, creating implicitly: 'bltz'
                                                   : ... Suggested alternative: 'bgtz'
-   71 |     assign bltz =(op==6'b000001)    &&(rt==5'b00000);
+   68 |     assign bltz =(op==6'b000001)    &&(rt==5'b00000);
       |            ^~~~
-%Warning-IMPLICIT: cpu/control/Controller.sv:72:12: Signal definition not found, creating implicitly: 'bgez'
+%Warning-IMPLICIT: cpu/control/Controller.sv:69:12: Signal definition not found, creating implicitly: 'bgez'
                                                   : ... Suggested alternative: 'bgtz'
-   72 |     assign bgez =(op==6'b000001)    &&(rt==5'b00001);
+   69 |     assign bgez =(op==6'b000001)    &&(rt==5'b00001);
       |            ^~~~
-%Warning-IMPLICIT: cpu/control/Controller.sv:73:12: Signal definition not found, creating implicitly: 'blez'
+%Warning-IMPLICIT: cpu/control/Controller.sv:70:12: Signal definition not found, creating implicitly: 'blez'
                                                   : ... Suggested alternative: 'bgez'
-   73 |     assign blez =op==6'b000110;
+   70 |     assign blez =op==6'b000110;
       |            ^~~~
-%Warning-IMPLICIT: cpu/control/Controller.sv:74:12: Signal definition not found, creating implicitly: 'jalr'
+%Warning-IMPLICIT: cpu/control/Controller.sv:71:12: Signal definition not found, creating implicitly: 'jalr'
                                                   : ... Suggested alternative: 'jal'
-   74 |     assign jalr =(op==0)    &&(func==6'b001001);
+   71 |     assign jalr =(op==0)    &&(func==6'b001001);
       |            ^~~~
-%Warning-IMPLICIT: cpu/control/Controller.sv:76:12: Signal definition not found, creating implicitly: 'mthi'
-   76 |     assign mthi =(op==0)    &&(func==6'b010001);
+%Warning-IMPLICIT: cpu/control/Controller.sv:73:12: Signal definition not found, creating implicitly: 'mthi'
+   73 |     assign mthi =(op==0)    &&(func==6'b010001);
       |            ^~~~
-%Warning-IMPLICIT: cpu/control/Controller.sv:77:12: Signal definition not found, creating implicitly: 'mtlo'
-   77 |     assign mtlo =(op==0)    &&(func==6'b010011);
+%Warning-IMPLICIT: cpu/control/Controller.sv:74:12: Signal definition not found, creating implicitly: 'mtlo'
+   74 |     assign mtlo =(op==0)    &&(func==6'b010011);
       |            ^~~~
-%Warning-IMPLICIT: cpu/control/Controller.sv:78:12: Signal definition not found, creating implicitly: 'mfhi'
+%Warning-IMPLICIT: cpu/control/Controller.sv:75:12: Signal definition not found, creating implicitly: 'mfhi'
                                                   : ... Suggested alternative: 'mthi'
-   78 |     assign mfhi =(op==0)    &&(func==6'b010000);
+   75 |     assign mfhi =(op==0)    &&(func==6'b010000);
       |            ^~~~
-%Warning-IMPLICIT: cpu/control/Controller.sv:79:12: Signal definition not found, creating implicitly: 'mflo'
+%Warning-IMPLICIT: cpu/control/Controller.sv:76:12: Signal definition not found, creating implicitly: 'mflo'
                                                   : ... Suggested alternative: 'mtlo'
-   79 |     assign mflo =(op==0)    &&(func==6'b010010);
+   76 |     assign mflo =(op==0)    &&(func==6'b010010);
       |            ^~~~
-%Warning-IMPLICIT: cpu/control/Controller.sv:80:12: Signal definition not found, creating implicitly: 'mult'
-   80 |     assign mult =(op==0)    &&(func==6'b011000);
+%Warning-IMPLICIT: cpu/control/Controller.sv:77:12: Signal definition not found, creating implicitly: 'mult'
+   77 |     assign mult =(op==0)    &&(func==6'b011000);
       |            ^~~~
-%Warning-IMPLICIT: cpu/control/Controller.sv:81:12: Signal definition not found, creating implicitly: 'multu'
+%Warning-IMPLICIT: cpu/control/Controller.sv:78:12: Signal definition not found, creating implicitly: 'multu'
                                                   : ... Suggested alternative: 'mult'
-   81 |     assign multu=(op==0)    &&(func==6'b011001);
+   78 |     assign multu=(op==0)    &&(func==6'b011001);
       |            ^~~~~
-%Warning-IMPLICIT: cpu/control/Controller.sv:82:12: Signal definition not found, creating implicitly: 'div'
-   82 |     assign div  =(op==0)    &&(func==6'b011010);
+%Warning-IMPLICIT: cpu/control/Controller.sv:79:12: Signal definition not found, creating implicitly: 'div'
+   79 |     assign div  =(op==0)    &&(func==6'b011010);
       |            ^~~
-%Warning-IMPLICIT: cpu/control/Controller.sv:83:12: Signal definition not found, creating implicitly: 'divu'
+%Warning-IMPLICIT: cpu/control/Controller.sv:80:12: Signal definition not found, creating implicitly: 'divu'
                                                   : ... Suggested alternative: 'div'
-   83 |     assign divu =(op==0)    &&(func==6'b011011); 
+   80 |     assign divu =(op==0)    &&(func==6'b011011); 
       |            ^~~~
-%Warning-IMPLICIT: cpu/control/Controller.sv:84:12: Signal definition not found, creating implicitly: 'eret'
+%Warning-IMPLICIT: cpu/control/Controller.sv:81:12: Signal definition not found, creating implicitly: 'eret'
                                                   : ... Suggested alternative: 'rt'
-   84 |     assign eret =(op==6'b010000)  && rs[4]==1'b1  &&(func==6'b011000);
+   81 |     assign eret =(op==6'b010000)  && rs[4]==1'b1  &&(func==6'b011000);
       |            ^~~~
-%Warning-IMPLICIT: cpu/control/Controller.sv:85:12: Signal definition not found, creating implicitly: 'mfc0'
-   85 |     assign mfc0 =(op==6'b010000)  && (rs==0);
+%Warning-IMPLICIT: cpu/control/Controller.sv:82:12: Signal definition not found, creating implicitly: 'mfc0'
+   82 |     assign mfc0 =(op==6'b010000)  && (rs==0);
       |            ^~~~
-%Warning-IMPLICIT: cpu/control/Controller.sv:86:12: Signal definition not found, creating implicitly: 'mtc0'
+%Warning-IMPLICIT: cpu/control/Controller.sv:83:12: Signal definition not found, creating implicitly: 'mtc0'
                                                   : ... Suggested alternative: 'mfc0'
-   86 |     assign mtc0 =(op==6'b010000)  && (rs==5'b00100);
+   83 |     assign mtc0 =(op==6'b010000)  && (rs==5'b00100);
       |            ^~~~
-%Warning-IMPLICIT: cpu/control/Controller.sv:88:12: Signal definition not found, creating implicitly: 'Branch'
-   88 |     assign Branch =beq|bne|bgtz|bltz|bgez|blez;
+%Warning-IMPLICIT: cpu/control/Controller.sv:85:12: Signal definition not found, creating implicitly: 'Branch'
+   85 |     assign Branch =beq|bne|bgtz|bltz|bgez|blez;
       |            ^~~~~~
-%Warning-IMPLICIT: cpu/control/Controller.sv:92:12: Signal definition not found, creating implicitly: 'typeR'
-   92 |     assign typeR    =add|addu|sub|subu|slt|AND|OR|XOR|NOR|sll|srl|sra|sllv|srlv|srav;
+%Warning-IMPLICIT: cpu/control/Controller.sv:89:12: Signal definition not found, creating implicitly: 'typeR'
+   89 |     assign typeR    =add|addu|sub|subu|slt|AND|OR|XOR|NOR|sll|srl|sra|sllv|srlv|srav;
       |            ^~~~~
-%Warning-IMPLICIT: cpu/control/Controller.sv:93:12: Signal definition not found, creating implicitly: 'typeIA'
+%Warning-IMPLICIT: cpu/control/Controller.sv:90:12: Signal definition not found, creating implicitly: 'typeIA'
                                                   : ... Suggested alternative: 'typeR'
-   93 |     assign typeIA   =ori|lui|addi|addiu|slti|andi|xori;  
+   90 |     assign typeIA   =ori|lui|addi|addiu|slti|andi|xori;  
       |            ^~~~~~
-%Warning-IMPLICIT: cpu/control/Controller.sv:94:12: Signal definition not found, creating implicitly: 'typeIB'
+%Warning-IMPLICIT: cpu/control/Controller.sv:91:12: Signal definition not found, creating implicitly: 'typeIB'
                                                   : ... Suggested alternative: 'typeIA'
-   94 |     assign typeIB   =Branch;                 
+   91 |     assign typeIB   =Branch;                 
       |            ^~~~~~
-%Warning-IMPLICIT: cpu/control/Controller.sv:95:12: Signal definition not found, creating implicitly: 'typeJ'
+%Warning-IMPLICIT: cpu/control/Controller.sv:92:12: Signal definition not found, creating implicitly: 'typeJ'
                                                   : ... Suggested alternative: 'typeR'
-   95 |     assign typeJ    =j|jal|jr|jalr;
+   92 |     assign typeJ    =j|jal|jr|jalr;
       |            ^~~~~
-%Warning-IMPLICIT: cpu/control/Controller.sv:96:12: Signal definition not found, creating implicitly: 'LOAD'
+%Warning-IMPLICIT: cpu/control/Controller.sv:93:12: Signal definition not found, creating implicitly: 'LOAD'
                                                   : ... Suggested alternative: 'isLOADS'
-   96 |     assign LOAD     =lw|lb|lbu|lh|lhu;
+   93 |     assign LOAD     =lw|lb|lbu|lh|lhu;
       |            ^~~~
-%Warning-IMPLICIT: cpu/control/Controller.sv:97:12: Signal definition not found, creating implicitly: 'STORE'
-   97 |     assign STORE    =sw|sb|sh;
+%Warning-IMPLICIT: cpu/control/Controller.sv:94:12: Signal definition not found, creating implicitly: 'STORE'
+   94 |     assign STORE    =sw|sb|sh;
       |            ^~~~~
-%Warning-IMPLICIT: cpu/control/Controller.sv:98:12: Signal definition not found, creating implicitly: 'ALUAdd'
-   98 |     assign ALUAdd   =add|addu|addi|addiu|LOAD|STORE;
+%Warning-IMPLICIT: cpu/control/Controller.sv:95:12: Signal definition not found, creating implicitly: 'ALUAdd'
+   95 |     assign ALUAdd   =add|addu|addi|addiu|LOAD|STORE;
       |            ^~~~~~
-%Warning-IMPLICIT: cpu/control/Controller.sv:99:12: Signal definition not found, creating implicitly: 'ALUSub'
+%Warning-IMPLICIT: cpu/control/Controller.sv:96:12: Signal definition not found, creating implicitly: 'ALUSub'
                                                   : ... Suggested alternative: 'ALUSrc'
-   99 |     assign ALUSub   =sub|subu|slt|slti|beq|bne;
+   96 |     assign ALUSub   =sub|subu|slt|slti|beq|bne;
       |            ^~~~~~
-%Warning-IMPLICIT: cpu/control/Controller.sv:100:12: Signal definition not found, creating implicitly: 'ALUOr'
-                                                   : ... Suggested alternative: 'ALUSrc'
-  100 |     assign ALUOr    =OR|ori|lui;
+%Warning-IMPLICIT: cpu/control/Controller.sv:97:12: Signal definition not found, creating implicitly: 'ALUOr'
+                                                  : ... Suggested alternative: 'ALUSrc'
+   97 |     assign ALUOr    =OR|ori|lui;
       |            ^~~~~
-%Warning-IMPLICIT: cpu/control/Controller.sv:101:12: Signal definition not found, creating implicitly: 'ALUAnd'
-                                                   : ... Suggested alternative: 'ALUAdd'
-  101 |     assign ALUAnd   =AND|andi;
+%Warning-IMPLICIT: cpu/control/Controller.sv:98:12: Signal definition not found, creating implicitly: 'ALUAnd'
+                                                  : ... Suggested alternative: 'ALUAdd'
+   98 |     assign ALUAnd   =AND|andi;
       |            ^~~~~~
-%Warning-IMPLICIT: cpu/control/Controller.sv:102:12: Signal definition not found, creating implicitly: 'ALUXor'
-                                                   : ... Suggested alternative: 'ALUOr'
-  102 |     assign ALUXor   =XOR|xori;
+%Warning-IMPLICIT: cpu/control/Controller.sv:99:12: Signal definition not found, creating implicitly: 'ALUXor'
+                                                  : ... Suggested alternative: 'ALUOr'
+   99 |     assign ALUXor   =XOR|xori;
       |            ^~~~~~
-%Warning-IMPLICIT: cpu/control/Controller.sv:103:12: Signal definition not found, creating implicitly: 'ALUNor'
+%Warning-IMPLICIT: cpu/control/Controller.sv:100:12: Signal definition not found, creating implicitly: 'ALUNor'
                                                    : ... Suggested alternative: 'ALUXor'
-  103 |     assign ALUNor   =NOR;
+  100 |     assign ALUNor   =NOR;
       |            ^~~~~~
-%Warning-IMPLICIT: cpu/control/Controller.sv:104:12: Signal definition not found, creating implicitly: 'ALURs'
-  104 |     assign ALURs    =bgtz|bltz|bgez|blez;
+%Warning-IMPLICIT: cpu/control/Controller.sv:101:12: Signal definition not found, creating implicitly: 'ALURs'
+  101 |     assign ALURs    =bgtz|bltz|bgez|blez;
       |            ^~~~~
-%Warning-IMPLICIT: cpu/control/Controller.sv:130:12: Signal definition not found, creating implicitly: 'MDMUL'
-  130 |     assign MDMUL=mult|multu;
+%Warning-IMPLICIT: cpu/control/Controller.sv:127:12: Signal definition not found, creating implicitly: 'MDMUL'
+  127 |     assign MDMUL=mult|multu;
       |            ^~~~~
-%Warning-IMPLICIT: cpu/control/Controller.sv:131:12: Signal definition not found, creating implicitly: 'MDDIV'
-  131 |     assign MDDIV=div|divu;
+%Warning-IMPLICIT: cpu/control/Controller.sv:128:12: Signal definition not found, creating implicitly: 'MDDIV'
+  128 |     assign MDDIV=div|divu;
       |            ^~~~~
-%Warning-IMPLICIT: cpu/mips.sv:60:20: Signal definition not found, creating implicitly: 'EX_FLUSH'
-   60 |         .EX_FLUSH (EX_FLUSH),
-      |                    ^~~~~~~~
-%Warning-IMPLICIT: cpu/mips.sv:61:21: Signal definition not found, creating implicitly: 'MEM_FLUSH'
-                                    : ... Suggested alternative: 'EX_FLUSH'
-   61 |         .MEM_FLUSH (MEM_FLUSH),
-      |                     ^~~~~~~~~
+%Warning-IMPLICIT: cpu/control/Controller.sv:153:12: Signal definition not found, creating implicitly: 'EX_FLUSH'
+                                                   : ... Suggested alternative: 'ID_FLUSH'
+  153 |     assign EX_FLUSH=0;
+      |            ^~~~~~~~
+%Warning-IMPLICIT: cpu/control/Controller.sv:154:12: Signal definition not found, creating implicitly: 'MEM_FLUSH'
+                                                   : ... Suggested alternative: 'EX_FLUSH'
+  154 |     assign MEM_FLUSH=0;
+      |            ^~~~~~~~~
 %Warning-IMPLICIT: devices/BRIDGE.sv:31:12: Signal definition not found, creating implicitly: 'HitDEV0'
    31 |     assign HitDEV0 = (PrAddr[31:1+7]=='h7F);
       |            ^~~~~~~
@@ -569,13 +561,21 @@
                                                  : ... In instance top.mips.u_ID.EXT
     8 |              (extop)?A<<16:A;  
       |                     ^
-%Warning-WIDTHEXPAND: cpu/datapath/EX/EX.sv:68:23: Operator COND expects 32 bits on the Conditional True, but Conditional True's SEL generates 1 bits.
+%Warning-WIDTHTRUNC: cpu/datapath/WB/WB.sv:12:18: Operator ASSIGNW expects 1 bits on the Assign RHS, but Assign RHS's COND generates 32 bits.
+                                                : ... In instance top.mips.u_WB
+   12 |     assign MEMout=AddrInDM?i_mem_wb.Dout:PrRD;
+      |                  ^
+%Warning-WIDTHEXPAND: cpu/datapath/WB/WB.sv:15:10: Input port connection 'in_data' expects 32 bits on the pin connection, but pin connection's VARREF 'MEMout' generates 1 bits.
+                                                 : ... In instance top.mips.u_WB
+   15 |         .in_data(MEMout),
+      |          ^~~~~~~
+%Warning-WIDTHEXPAND: cpu/datapath/EX/EX.sv:67:23: Operator COND expects 32 bits on the Conditional True, but Conditional True's SEL generates 1 bits.
                                                  : ... In instance top.mips.u_EX
-   68 |     assign EXout=isSlt?ALUC[31]:
+   67 |     assign EXout=isSlt?ALUC[31]:
       |                       ^
-%Warning-WIDTHEXPAND: cpu/datapath/EX/EX.sv:69:29: Operator SHIFTL expects 32 bits on the LHS, but LHS's VARREF 'PCP1' generates 30 bits.
+%Warning-WIDTHEXPAND: cpu/datapath/EX/EX.sv:68:29: Operator SHIFTL expects 32 bits on the LHS, but LHS's VARREF 'PCP1' generates 30 bits.
                                                  : ... In instance top.mips.u_EX
-   69 |                  savePC?PCP1<<2:
+   68 |                  savePC?PCP1<<2:
       |                             ^~
 %Warning-WIDTHEXPAND: cpu/datapath/CP0.sv:17:21: Operator ASSIGNW expects 32 bits on the Assign RHS, but Assign RHS's VARREF 'Dout' generates 1 bits.
                                                : ... In instance top.mips.u_CP0
@@ -601,9 +601,9 @@
                                               : ... In instance top.mips.u_CP0
    27 |     assign Dout=(Sel==12)?SR:
       |                ^
-%Warning-WIDTHTRUNC: cpu/control/Controller.sv:176:44: Logical operator LOGOR expects 1 bit on the RHS, but RHS's VARREF 'branchType' generates 3 bits.
+%Warning-WIDTHTRUNC: cpu/control/Controller.sv:173:44: Logical operator LOGOR expects 1 bit on the RHS, but RHS's VARREF 'branchType' generates 3 bits.
                                                      : ... In instance top.mips.u_Controller
-  176 |     assign ExlSet=IntReq&&!(jmp||NPCFromGPR||branchType);
+  173 |     assign ExlSet=IntReq&&!(jmp||NPCFromGPR||branchType);
       |                                            ^~
 %Warning-WIDTHTRUNC: devices/seg7.sv:41:18: Operator ASSIGNW expects 8 bits on the Assign RHS, but Assign RHS's SHIFTR generates 32 bits.
                                           : ... In instance top.u_BRIDGE.u_seg7
@@ -631,46 +631,46 @@
                                                : ... This will be executed as a blocking assignment '='!
     9 |         PC<=30'h0000BFF;
       |           ^~
-%Warning-INITIALDLY: cpu/datapath/ID/ID.sv:88:18: Non-blocking assignment '<=' in initial/final block
+%Warning-INITIALDLY: cpu/datapath/ID/ID.sv:88:24: Non-blocking assignment '<=' in initial/final block
                                                 : ... This will be executed as a blocking assignment '='!
-   88 |         o_EX_DATA<=0;
-      |                  ^~
-%Warning-INITIALDLY: cpu/datapath/ID/ID.sv:89:18: Non-blocking assignment '<=' in initial/final block
+   88 |         i_id_ex.EX_DATA<=0;
+      |                        ^~
+%Warning-INITIALDLY: cpu/datapath/ID/ID.sv:89:24: Non-blocking assignment '<=' in initial/final block
                                                 : ... This will be executed as a blocking assignment '='!
-   89 |         o_EX_CTRL<=0;
-      |                  ^~
-%Warning-INITIALDLY: cpu/datapath/ID/ID.sv:90:19: Non-blocking assignment '<=' in initial/final block
+   89 |         i_id_ex.EX_CTRL<=0;
+      |                        ^~
+%Warning-INITIALDLY: cpu/datapath/ID/ID.sv:90:25: Non-blocking assignment '<=' in initial/final block
                                                 : ... This will be executed as a blocking assignment '='!
-   90 |         o_MEM_CTRL<=0;
-      |                   ^~
-%Warning-INITIALDLY: cpu/datapath/ID/ID.sv:91:18: Non-blocking assignment '<=' in initial/final block
+   90 |         i_id_ex.MEM_CTRL<=0;
+      |                         ^~
+%Warning-INITIALDLY: cpu/datapath/ID/ID.sv:91:24: Non-blocking assignment '<=' in initial/final block
                                                 : ... This will be executed as a blocking assignment '='!
-   91 |         o_WB_CTRL<=0;
-      |                  ^~
+   91 |         i_id_ex.WB_CTRL<=0;
+      |                        ^~
 %Warning-INITIALDLY: cpu/datapath/ID/GPR.sv:18:24: Non-blocking assignment '<=' in initial/final block
                                                  : ... This will be executed as a blocking assignment '='!
    18 |             register[i]<=0;
       |                        ^~
-%Warning-INITIALDLY: cpu/datapath/EX/EX.sv:76:19: Non-blocking assignment '<=' in initial/final block
+%Warning-INITIALDLY: cpu/datapath/EX/EX.sv:75:26: Non-blocking assignment '<=' in initial/final block
                                                 : ... This will be executed as a blocking assignment '='!
-   76 |         o_MEM_DATA<=0;
-      |                   ^~
-%Warning-INITIALDLY: cpu/datapath/EX/EX.sv:77:19: Non-blocking assignment '<=' in initial/final block
+   75 |         i_ex_mem.MEM_DATA<=0;
+      |                          ^~
+%Warning-INITIALDLY: cpu/datapath/EX/EX.sv:76:26: Non-blocking assignment '<=' in initial/final block
                                                 : ... This will be executed as a blocking assignment '='!
-   77 |         o_MEM_CTRL<=0;
-      |                   ^~
-%Warning-INITIALDLY: cpu/datapath/EX/EX.sv:78:18: Non-blocking assignment '<=' in initial/final block
+   76 |         i_ex_mem.MEM_CTRL<=0;
+      |                          ^~
+%Warning-INITIALDLY: cpu/datapath/EX/EX.sv:77:25: Non-blocking assignment '<=' in initial/final block
                                                 : ... This will be executed as a blocking assignment '='!
-   78 |         o_WB_CTRL<=0;
-      |                  ^~
-%Warning-INITIALDLY: cpu/datapath/MEM/MEM.sv:61:18: Non-blocking assignment '<=' in initial/final block
-                                                  : ... This will be executed as a blocking assignment '='!
-   61 |         o_WB_CTRL<=0;
-      |                  ^~
-%Warning-INITIALDLY: cpu/datapath/MEM/MEM.sv:62:18: Non-blocking assignment '<=' in initial/final block
-                                                  : ... This will be executed as a blocking assignment '='!
-   62 |         o_WB_DATA<=0;
-      |                  ^~
+   77 |         i_ex_mem.WB_CTRL<=0;
+      |                         ^~
+%Warning-INITIALDLY: cpu/datapath/MEM/newMEM.sv:54:25: Non-blocking assignment '<=' in initial/final block
+                                                     : ... This will be executed as a blocking assignment '='!
+   54 |         i_mem_wb.WB_CTRL<=0;
+      |                         ^~
+%Warning-INITIALDLY: cpu/datapath/MEM/newMEM.sv:55:25: Non-blocking assignment '<=' in initial/final block
+                                                     : ... This will be executed as a blocking assignment '='!
+   55 |         i_mem_wb.WB_DATA<=0;
+      |                         ^~
 %Warning-INITIALDLY: cpu/datapath/CP0.sv:33:11: Non-blocking assignment '<=' in initial/final block
                                               : ... This will be executed as a blocking assignment '='!
    33 |         IM<=6'b000000;

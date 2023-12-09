@@ -15,8 +15,8 @@ class alignas(VL_CACHE_LINE_BYTES) Vtop_IController final : public VerilatedModu
 
     // DESIGN SPECIFIC STATE
     VL_IN8(clk,0,0);
-    CData/*0:0*/ __PVT__EX_FLUSH;
-    CData/*0:0*/ __PVT__MEM_FLUSH;
+    CData/*0:0*/ EX_FLUSH;
+    CData/*0:0*/ MEM_FLUSH;
     CData/*0:0*/ __PVT__WB_FLUSH;
     SData/*8:0*/ ID_CTRL;
     SData/*15:0*/ EX_CTRL;

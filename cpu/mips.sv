@@ -10,22 +10,16 @@ module mips (
 );
     // outports wire
     wire [61:0] 	ID_DATA_from_IF;
-     wire        	IF_CTRL;
-    wire [8:0]  	ID_CTRL;
-    wire [15:0] 	EX_CTRL;
-    wire        	MEM_CTRL;
-    wire [4:0]  	WB_CTRL;
     wire [1:0]      CP0_CTRL;
     wire [31:2] ID_PCP1;
     wire [31:0] ID_instr;
-     wire   	pipeline_stall;
-     wire [157:0] 	EX_DATA_from_ID;
+    wire   	pipeline_stall;
+    wire [157:0] 	EX_DATA_from_ID;
     wire [15:0]     EX_CTRL_from_ID;
     wire         	MEM_CTRL_from_ID;
     wire [4:0]   	WB_CTRL_from_ID;
     wire [31:2]     JPC;
     wire jpcAvail;
-    wire ID_uncertainJump;
     wire         	MEM_CTRL_from_EX;
     wire [4:0]   	WB_CTRL_from_EX;
     wire [68:0] 	MEM_DATA_from_EX;
@@ -41,6 +35,12 @@ module mips (
     wire        	IntReq;
     IController i_controller(clk);
     IIF_ID      i_if_id(clk);
+    IID_EX      i_id_ex(clk);
+    IEX_MEM     i_ex_mem(clk);
+    IMEM_WB     i_mem_wb(clk);
+    IStallDetect i_stallDetect(clk);
+
+    
     IF u_IF(
         .clk         	( clk          ),
         .rst         	( rst          ),
@@ -51,32 +51,19 @@ module mips (
     // outports wire from controller
    
     assign {ID_PCP1,ID_instr}=i_if_id.ID_DATA;
+    assign ID_DATA_from_IF=i_if_id.ID_DATA;
     Controller u_Controller(
         .clk      	( clk       ),
         .reset    	( rst       ), 
-        .pipeline_stall(pipeline_stall),
         .IntReq(IntReq),
         .i_controller,
-        .EX_FLUSH (EX_FLUSH),
-        .MEM_FLUSH (MEM_FLUSH),
         .CP0_CTRL(CP0_CTRL),
-        .o_uncertainJump(ID_uncertainJump)
+        .i_stallDetect
     );
     // outports wire
    
     
-    HazardDetect u_HazardDetect(
-        .ID_rs       	( ID_DATA_from_IF[25:21]        ),
-        .ID_rt       	( ID_DATA_from_IF[20:16]        ),
-        .EX_rw       	( EX_rw_from_EX      ),
-        .MEM_rw         ( MEM_BACK_from_MEM[4:0]),
-        .MEM_memToReg    ( WB_CTRL_from_EX[3]),
-        .EX_regWrite    (WB_CTRL_from_ID[4]),
-        .EX_memToReg 	( WB_CTRL_from_ID[3]  ),
-        .ID_uncertainJump(ID_uncertainJump),
-        .stall       	( pipeline_stall        )
-    );
-    
+
     // outports wire
     
     ID u_ID(
@@ -87,10 +74,8 @@ module mips (
         .WB_BACK       	( WB_BACK_from_WB        ),
         .CP0_EPC        ( ID_EPC_from_CP0),
         .MEM_BACK       ( MEM_BACK_from_MEM),
-        .o_EX_CTRL      ( EX_CTRL_from_ID ),
-        .o_MEM_CTRL     ( MEM_CTRL_from_ID),
-        .o_WB_CTRL      ( WB_CTRL_from_ID ),
-        .o_EX_DATA   	( EX_DATA_from_ID )
+        .i_id_ex,
+        .i_stallDetect
     );
     
     // outports wire
@@ -98,48 +83,39 @@ module mips (
     EX u_EX(
         .clk           	( clk            ),
         .rst           	( rst            ),
-        .EX_FLUSH (EX_FLUSH),
-        .EX_CTRL       	( EX_CTRL_from_ID        ),
-        .MEM_CTRL      	( MEM_CTRL_from_ID       ),
-        .WB_CTRL       	( WB_CTRL_from_ID        ),
-        .EX_DATA       	( EX_DATA_from_ID  ),
+        .i_controller,
+        .i_id_ex,
         .WB_BACK        ( WB_BACK_from_WB),
         .MEM_BACK       ( MEM_BACK_from_MEM),
         .CP0_DATA       ( EX_DATA_from_CP0),
-        .o_MEM_CTRL    	( MEM_CTRL_from_EX     ),
-        .o_WB_CTRL     	( WB_CTRL_from_EX      ),
-        .o_MEM_DATA    	( MEM_DATA_from_EX     ),
+        .i_ex_mem,
         .o_CP0_DATA     ( CP0_DATA_from_EX ),
-        .o_pre_MEM_DATA (pre_MEM_DATA_from_EX),
-        .rw        ( EX_rw_from_EX)
+        .i_stallDetect
     );
     
     // outports wire
-    
+    wire[31:0] Dout;
     MEM u_MEM(
         .clk       	( clk        ),
         .rst       	( rst        ),
-        .MEM_FLUSH (MEM_FLUSH),
-        .MEM_CTRL  	( MEM_CTRL_from_EX   ),
-        .WB_CTRL   	( WB_CTRL_from_EX    ),
-        .MEM_DATA  	( MEM_DATA_from_EX   ),
-        .pre_MEM_DATA (pre_MEM_DATA_from_EX),
+        .i_controller,
+        .i_ex_mem,
         .PrAddr(PrAddr),
         .PrRD(PrRD),
         .PrWD(PrWD),
         .PrBE(PrBE),
         .IOWrite(IOWrite),
-        .o_WB_CTRL 	( WB_CTRL_from_MEM  ),
-        .o_WB_DATA 	( WB_DATA_from_MEM  ),
-        .o_MEM_BACK  ( MEM_BACK_from_MEM )
+        .i_mem_wb,
+        .o_MEM_BACK  ( MEM_BACK_from_MEM ),
+        .i_stallDetect
     );
     
     
     WB u_WB(
         .clk(clk),
         .rst(rst),
-        .WB_CTRL(WB_CTRL_from_MEM),
-        .WB_DATA(WB_DATA_from_MEM),
+        .PrRD(PrRD),
+        .i_mem_wb,
         .o_WB_BACK(WB_BACK_from_WB)
     );
     // outports wire
