@@ -149,12 +149,12 @@ void Vtop::_initial__TOP__1(Vtop__Syms* __restrict vlSymsp) {
     vlSymsp->TOP__top__DOT__mips__DOT__i_ex_mem.MEM_CTRL = 0U;
     vlSymsp->TOP__top__DOT__mips__DOT__i_ex_mem.WB_CTRL = 0U;
     __Vtemp1[0U] = 0x2e747874U;
-    __Vtemp1[1U] = 0x736f7274U;
-    __Vtemp1[2U] = 0x65732f71U;
-    __Vtemp1[3U] = 0x5f636f64U;
-    __Vtemp1[4U] = 0x6d706c65U;
-    __Vtemp1[5U] = 0x2e2f7361U;
-    __Vtemp1[6U] = 0x2eU;
+    __Vtemp1[1U] = 0x65737431U;
+    __Vtemp1[2U] = 0x73656774U;
+    __Vtemp1[3U] = 0x6465732fU;
+    __Vtemp1[4U] = 0x655f636fU;
+    __Vtemp1[5U] = 0x616d706cU;
+    __Vtemp1[6U] = 0x2e2e2f73U;
     VL_READMEM_N(true, 32, 2048, 0, VL_CVT_PACK_STR_NW(7, __Vtemp1)
                  , vlTOPp->top__DOT__mips__DOT__u_IF__DOT__IM__DOT__u_imrom__DOT__rom
                  , 0, ~VL_ULL(0));
@@ -731,7 +731,7 @@ VL_INLINE_OPT void Vtop::_sequent__TOP__3(Vtop__Syms* __restrict vlSymsp) {
                             >> 0x12U))] >> (0x18U & 
                                             (vlTOPp->top__DOT__u_BRIDGE__DOT__u_seg7__DOT__cnt 
                                              >> 0xdU))));
-    vlTOPp->top__DOT__u_BRIDGE__DOT__PrAddr = (0xfffU 
+    vlTOPp->top__DOT__u_BRIDGE__DOT__PrAddr = (0x3fffffffU 
                                                & (vlTOPp->top__DOT__mips__DOT__u_EX__DOT__accessAddr 
                                                   >> 2U));
     vlTOPp->top__DOT__u_BRIDGE__DOT__PrWD = (vlTOPp->top__DOT__mips__DOT__u_EX__DOT__f_rd2 

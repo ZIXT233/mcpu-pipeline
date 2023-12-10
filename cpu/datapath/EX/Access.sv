@@ -26,7 +26,7 @@ module Access(
         .douta(DMout)  // output wire [31 : 0] douta
     );
     assign i_bridge.IOWrite=memWrite&&!AddrInDM;
-    assign i_bridge.PrAddr=addr[13:2];
+    assign i_bridge.PrAddr=addr[31:2];
     assign i_bridge.PrWD=f_rd2<<{addr[1:0],3'b0};
     assign i_bridge.PrBE=be;
 endmodule

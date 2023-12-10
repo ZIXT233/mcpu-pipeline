@@ -535,10 +535,6 @@
                                         : ... In instance top.mips.u_ID.EXT
              (extop)?A<<16:A;  
                     ^
-%Warning-WIDTH: cpu/datapath/EX/Access.sv:29: Operator ASSIGNW expects 30 bits on the Assign RHS, but Assign RHS's SEL generates 12 bits.
-                                            : ... In instance top.mips.u_EX.u_Access
-    assign i_bridge.PrAddr=addr[13:2];
-                          ^
 %Warning-WIDTH: cpu/datapath/EX/EX.sv:72: Operator COND expects 32 bits on the Conditional True, but Conditional True's SEL generates 1 bits.
                                         : ... In instance top.mips.u_EX
     assign EXout=isSlt?ALUC[31]:
