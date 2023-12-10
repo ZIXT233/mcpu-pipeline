@@ -20,6 +20,7 @@
 #include "Vtop_IMEM_WB.h"
 #include "Vtop_IBypass.h"
 #include "Vtop_ICP0.h"
+#include "Vtop_IBridge.h"
 
 // SYMS CLASS
 class Vtop__Syms : public VerilatedSyms {
@@ -32,6 +33,7 @@ class Vtop__Syms : public VerilatedSyms {
     
     // SUBCELL STATE
     Vtop*                          TOPp;
+    Vtop_IBridge                   TOP__top__DOT__i_bridge;
     Vtop_IBypass                   TOP__top__DOT__mips__DOT__i_bypass;
     Vtop_IController               TOP__top__DOT__mips__DOT__i_controller;
     Vtop_ICP0                      TOP__top__DOT__mips__DOT__i_cp0;

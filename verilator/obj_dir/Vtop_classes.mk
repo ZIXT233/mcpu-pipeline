@@ -27,6 +27,7 @@ VM_CLASSES_FAST += \
 	Vtop_IMEM_WB \
 	Vtop_IBypass \
 	Vtop_ICP0 \
+	Vtop_IBridge \
 
 # Generated module classes, non-fast-path, compile with low/medium optimization
 VM_CLASSES_SLOW += \

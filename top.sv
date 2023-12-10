@@ -19,7 +19,7 @@
 // 
 //////////////////////////////////////////////////////////////////////////////////
 
-
+`include "cpu/pipelineInterfaces.sv"
 module top(
     input clk,
     input rst,
@@ -28,31 +28,23 @@ module top(
     output [7:0]seg7_seg1,
     output [7:0]seg7_select
     );
-    wire [31:2]PrAddr;
-    wire [31:0]PrRD,PrWD;
-    wire [3:0]PrBE;
-    wire [7:2]HWInt;
-    wire IOWrite;
+
+    IBridge i_bridge(clk);
     mips mips(
         .clk(clk),
         .rst(rst),
-        .PrAddr(PrAddr),
-        .PrRD(PrRD),
-        .PrWD(PrWD),
-        .PrBE(PrBE),
-        .IOWrite(IOWrite),
-        .HWInt(HWInt)
+        .i_bridge
     );
     
 
     BRIDGE u_BRIDGE(
         .clk    	( clk     ),
-        .PrAddrWire 	( PrAddr  ),
-        .PrRD   	( PrRD    ),
-        .PrWDWire   	( PrWD    ),
-        .PrBEWire       ( PrBE    ),
-        .WeCPUWire  	( IOWrite   ),
-        .HWInt      ( HWInt ),
+        .PrAddrWire 	( i_bridge.PrAddr  ),
+        .PrRD   	( i_bridge.PrRD    ),
+        .PrWDWire   	( i_bridge.PrWD    ),
+        .PrBEWire       ( i_bridge.PrBE    ),
+        .WeCPUWire  	( i_bridge.IOWrite   ),
+        .HWInt      ( i_bridge.HWInt ),
         .o_led (led),
         .seg7_seg(seg7_seg),
         .seg7_select(seg7_select)

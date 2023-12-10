@@ -37,11 +37,12 @@ typedef struct packed {
 } type_EX_DATA;
 typedef struct packed {
     logic [4:0] rw;
-    logic [31:0] EXout,f_rd2;
-} type_MEM_DATA;
-typedef struct packed {
-    logic [4:0] rw;
     logic [31:0] EXout;
+} type_MEM_DATA;
+
+typedef struct packed {
+    logic [31:0] WB_Wd;
+    logic [4:0] rw;
 } type_WB_DATA;
 typedef struct packed {
     logic regWrite;
@@ -111,15 +112,28 @@ interface IEX_MEM(input clk);
     type_MEM_CTRL MEM_CTRL;
     type_WB_CTRL WB_CTRL;
     type_MEM_DATA MEM_DATA;
-    modport EX(output MEM_CTRL,WB_CTRL,MEM_DATA);
-    modport MEM(input  MEM_CTRL,WB_CTRL,MEM_DATA);
+    wire [31:0] DMout;
+    modport EX(output MEM_CTRL,WB_CTRL,MEM_DATA,DMout);
+    modport MEM(input  MEM_CTRL,WB_CTRL,MEM_DATA,DMout);
 endinterface
 interface IMEM_WB(input clk); 
     type_WB_CTRL WB_CTRL;
     type_WB_DATA WB_DATA;
-    wire [31:0] Dout;
-    modport MEM(output WB_CTRL,WB_DATA,Dout);
-    modport WB(input  WB_CTRL,WB_DATA,Dout);
+    
+    modport MEM(output WB_CTRL,WB_DATA);
+    modport WB(input  WB_CTRL,WB_DATA);
+endinterface
+interface IBridge(input clk);
+    logic [31:0]PrWD,PrRD;
+    logic [31:2]PrAddr;
+    logic [3:0]PrBE;
+    logic [7:2]HWInt;
+    logic IOWrite;
+    modport CPU(input PrRD,HWInt,
+                output PrWD,PrAddr,PrBE,IOWrite);
+    modport Access(output PrWD,PrAddr,PrBE,IOWrite);
+    modport MEM(input PrRD);
+    modport CP0(input HWInt);
 endinterface
 interface IBypass(input clk);
     type_Bypass_DATA MEM_BACK,WB_BACK;
@@ -128,15 +142,14 @@ interface IBypass(input clk);
     modport MEM(output MEM_BACK);
     modport WB(output WB_BACK);
 endinterface
-interface ICP0(input clk);
-    wire [7:2 ]HWInt;
+interface ICP0(input clk); 
     wire [31:2] ID_PCP1;
     logic [31:2] EPC;
     wire [37:0] EX_TO_CP0;
     wire [31:0] CP0_TO_EX;
     wire [1:0]CP0_CTRL;
     wire IntReq;
-    modport CP0(input HWInt,ID_PCP1,EX_TO_CP0,CP0_CTRL,
+    modport CP0(input ID_PCP1,EX_TO_CP0,CP0_CTRL,
                 output IntReq,EPC,CP0_TO_EX);
     modport Controller(input IntReq,output CP0_CTRL);
     modport ID(input EPC,output ID_PCP1);

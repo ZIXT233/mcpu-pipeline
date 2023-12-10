@@ -2,13 +2,14 @@
 module CP0 (
     input      clk,
     input      rst,
-    ICP0.CP0   i_cp0
+    ICP0.CP0   i_cp0,
+    IBridge.CP0 i_bridge
 );
     wire[7:2 ]HWInt;
     wire [31:2] ID_PCP1;
     wire [37:0] EX_DATA;
     wire [1:0]CP0_CTRL;
-    assign HWInt=i_cp0.HWInt;
+    assign HWInt=i_bridge.HWInt;
     assign ID_PCP1=i_cp0.ID_PCP1;
     assign EX_DATA=i_cp0.EX_TO_CP0;
     assign CP0_CTRL=i_cp0.CP0_CTRL;

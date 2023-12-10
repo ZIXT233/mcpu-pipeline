@@ -2,12 +2,7 @@
 module mips (
     input clk,
     input rst,
-    input [7:2]HWInt,
-    output [31:2]PrAddr,
-    input [31:0]PrRD,
-    output [31:0]PrWD,
-    output [3:0]PrBE,
-    output IOWrite
+    IBridge.CPU i_bridge
 );
 
     IController i_controller(clk);
@@ -18,7 +13,6 @@ module mips (
     IBypass     i_bypass(clk);
     ICP0        i_cp0(clk);
     IStallDetect i_stallDetect(clk);
-    assign i_cp0.HWInt=HWInt;
     
     IF u_IF(
         .clk         	( clk          ),
@@ -26,7 +20,6 @@ module mips (
         .i_controller,
         .i_if_id
     );
-    
 
     Controller u_Controller(
         .clk      	( clk       ),
@@ -62,7 +55,8 @@ module mips (
         .i_bypass,
         .i_cp0,
         .i_ex_mem, 
-        .i_stallDetect
+        .i_stallDetect,
+        .i_bridge
     );
     
     MEM u_MEM(
@@ -73,18 +67,13 @@ module mips (
         .i_mem_wb,
         .i_bypass,
         .i_stallDetect,
-        .PrAddr(PrAddr),
-        .PrRD(PrRD),
-        .PrWD(PrWD),
-        .PrBE(PrBE),
-        .IOWrite(IOWrite)
+        .i_bridge
     );
     
     
     WB u_WB(
         .clk(clk),
         .rst(rst),
-        .PrRD(PrRD),
         .i_mem_wb,
         .i_bypass
     );
@@ -94,7 +83,8 @@ module mips (
     CP0 u_CP0(
         .clk       	( clk        ),
         .rst       	( rst        ),
-        .i_cp0
+        .i_cp0,
+        .i_bridge
     );
     
 endmodule //mips

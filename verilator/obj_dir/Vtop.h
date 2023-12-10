@@ -14,6 +14,7 @@
 
 class Vtop__Syms;
 class Vtop_VerilatedVcd;
+class Vtop_IBridge;
 class Vtop_IController;
 class Vtop_IIF_ID;
 class Vtop_IID_EX;
@@ -31,6 +32,7 @@ VL_MODULE(Vtop) {
     // CELLS
     // Public to allow access to /*verilator_public*/ items;
     // otherwise the application code can consider these internals.
+    Vtop_IBridge* __PVT__top__DOT__i_bridge;
     Vtop_IController* __PVT__top__DOT__mips__DOT__i_controller;
     Vtop_IIF_ID* __PVT__top__DOT__mips__DOT__i_if_id;
     Vtop_IID_EX* __PVT__top__DOT__mips__DOT__i_id_ex;
@@ -54,7 +56,6 @@ VL_MODULE(Vtop) {
     // Internals; generally not touched by application code
     // Anonymous structures to workaround compiler member-count bugs
     struct {
-        CData/*5:0*/ top__DOT__HWInt;
         CData/*0:0*/ top__DOT__mips__DOT__u_IF__DOT__firstFetch;
         CData/*2:0*/ top__DOT__mips__DOT__u_Controller__DOT__branchType;
         CData/*0:0*/ top__DOT__mips__DOT__u_Controller__DOT__ExlSet;
@@ -103,10 +104,8 @@ VL_MODULE(Vtop) {
         CData/*0:0*/ top__DOT__mips__DOT__u_EX__DOT__u_EX_FORWARD__DOT__AFromWB;
         CData/*0:0*/ top__DOT__mips__DOT__u_EX__DOT__u_EX_FORWARD__DOT__BFromMEM;
         CData/*0:0*/ top__DOT__mips__DOT__u_EX__DOT__u_EX_FORWARD__DOT__BFromWB;
-        CData/*3:0*/ top__DOT__mips__DOT__u_MEM__DOT__be;
-        CData/*0:0*/ top__DOT__mips__DOT__u_MEM__DOT__isDMByte;
-        CData/*0:0*/ top__DOT__mips__DOT__u_MEM__DOT__isDMHalf;
-        CData/*7:0*/ top__DOT__mips__DOT__u_WB__DOT__U_DREXT__DOT___byte;
+        CData/*3:0*/ top__DOT__mips__DOT__u_EX__DOT__u_Access__DOT__be;
+        CData/*7:0*/ top__DOT__mips__DOT__u_MEM__DOT__U_DREXT__DOT___byte;
         CData/*5:0*/ top__DOT__mips__DOT__u_CP0__DOT__IM;
         CData/*0:0*/ top__DOT__mips__DOT__u_CP0__DOT__EXL;
         CData/*0:0*/ top__DOT__mips__DOT__u_CP0__DOT__IE;
@@ -117,12 +116,12 @@ VL_MODULE(Vtop) {
         CData/*3:0*/ top__DOT__u_BRIDGE__DOT__WeDEV;
         CData/*7:0*/ top__DOT__u_BRIDGE__DOT__u_seg7__DOT__newSeg;
         CData/*7:0*/ top__DOT__u_BRIDGE__DOT__u_seg7__DOT__newSelect;
-        SData/*15:0*/ top__DOT__mips__DOT__u_WB__DOT__U_DREXT__DOT__half;
-    };
-    struct {
+        SData/*15:0*/ top__DOT__mips__DOT__u_MEM__DOT__U_DREXT__DOT__half;
         SData/*9:0*/ top__DOT__u_BRIDGE__DOT__u_seg7__DOT__pause;
         IData/*31:0*/ top__DOT__mips__DOT__u_IF__DOT__reg_index;
         IData/*25:0*/ top__DOT__mips__DOT__u_IF__DOT__EX_instr;
+    };
+    struct {
         IData/*29:0*/ top__DOT__mips__DOT__u_IF__DOT__IF_PC;
         IData/*29:0*/ top__DOT__mips__DOT__u_IF__DOT__NPC;
         IData/*31:0*/ top__DOT__mips__DOT__u_IF__DOT__IF_instr;
@@ -136,8 +135,8 @@ VL_MODULE(Vtop) {
         IData/*31:0*/ top__DOT__mips__DOT__u_EX__DOT__ALUC;
         IData/*31:0*/ top__DOT__mips__DOT__u_EX__DOT__MDHI;
         IData/*31:0*/ top__DOT__mips__DOT__u_EX__DOT__MDLO;
+        IData/*31:0*/ top__DOT__mips__DOT__u_EX__DOT__accessAddr;
         IData/*31:0*/ top__DOT__mips__DOT__u_MEM__DOT__MEMout;
-        IData/*31:0*/ top__DOT__mips__DOT__u_WB__DOT__MEMout;
         IData/*31:0*/ top__DOT__mips__DOT__u_CP0__DOT__PrID;
         IData/*29:0*/ top__DOT__u_BRIDGE__DOT__PrAddr;
         IData/*31:0*/ top__DOT__u_BRIDGE__DOT__PrWD;
@@ -147,24 +146,25 @@ VL_MODULE(Vtop) {
         IData/*18:0*/ top__DOT__u_BRIDGE__DOT__u_seg7__DOT__cnt;
         IData/*31:0*/ top__DOT__mips__DOT__u_IF__DOT__IM__DOT__u_imrom__DOT__rom[2048];
         IData/*31:0*/ top__DOT__mips__DOT__u_ID__DOT__GPR__DOT__register[32];
-        IData/*31:0*/ top__DOT__mips__DOT__u_MEM__DOT__u_dm_ram__DOT__ram[3072];
+        IData/*31:0*/ top__DOT__mips__DOT__u_EX__DOT__u_Access__DOT__u_dm_ram__DOT__ram[3072];
         IData/*31:0*/ top__DOT__u_BRIDGE__DOT__u_seg7__DOT__ram[2];
     };
     
     // LOCAL VARIABLES
     // Internals; generally not touched by application code
-    CData/*3:0*/ top__DOT__mips__DOT__u_MEM__DOT____Vcellinp__u_dm_ram__wea;
-    CData/*7:0*/ top__DOT__mips__DOT__u_MEM__DOT__u_dm_ram__DOT____Vlvbound4;
-    CData/*7:0*/ top__DOT__mips__DOT__u_MEM__DOT__u_dm_ram__DOT____Vlvbound5;
-    CData/*7:0*/ top__DOT__mips__DOT__u_MEM__DOT__u_dm_ram__DOT____Vlvbound6;
-    CData/*7:0*/ top__DOT__mips__DOT__u_MEM__DOT__u_dm_ram__DOT____Vlvbound7;
+    CData/*5:0*/ top__DOT____Vcellout__u_BRIDGE__HWInt;
+    CData/*3:0*/ top__DOT__mips__DOT__u_EX__DOT__u_Access__DOT____Vcellinp__u_dm_ram__wea;
+    CData/*7:0*/ top__DOT__mips__DOT__u_EX__DOT__u_Access__DOT__u_dm_ram__DOT____Vlvbound4;
+    CData/*7:0*/ top__DOT__mips__DOT__u_EX__DOT__u_Access__DOT__u_dm_ram__DOT____Vlvbound5;
+    CData/*7:0*/ top__DOT__mips__DOT__u_EX__DOT__u_Access__DOT__u_dm_ram__DOT____Vlvbound6;
+    CData/*7:0*/ top__DOT__mips__DOT__u_EX__DOT__u_Access__DOT__u_dm_ram__DOT____Vlvbound7;
     CData/*0:0*/ __Vclklast__TOP__clk;
     CData/*0:0*/ __Vclklast__TOP__rst;
-    SData/*15:0*/ top__DOT__mips__DOT__u_MEM__DOT__u_dm_ram__DOT____Vlvbound2;
-    SData/*15:0*/ top__DOT__mips__DOT__u_MEM__DOT__u_dm_ram__DOT____Vlvbound3;
-    IData/*31:0*/ top__DOT__mips__DOT__u_MEM__DOT____Vcellout__u_dm_ram__douta;
-    IData/*31:0*/ top__DOT__mips__DOT__u_MEM__DOT____Vcellinp__u_dm_ram__dina;
-    IData/*31:0*/ top__DOT__mips__DOT__u_MEM__DOT__u_dm_ram__DOT____Vlvbound1;
+    SData/*15:0*/ top__DOT__mips__DOT__u_EX__DOT__u_Access__DOT__u_dm_ram__DOT____Vlvbound2;
+    SData/*15:0*/ top__DOT__mips__DOT__u_EX__DOT__u_Access__DOT__u_dm_ram__DOT____Vlvbound3;
+    IData/*31:0*/ top__DOT__mips__DOT__u_EX__DOT____Vcellout__u_Access__DMout;
+    IData/*31:0*/ top__DOT__mips__DOT__u_EX__DOT__u_Access__DOT____Vcellinp__u_dm_ram__dina;
+    IData/*31:0*/ top__DOT__mips__DOT__u_EX__DOT__u_Access__DOT__u_dm_ram__DOT____Vlvbound1;
     IData/*31:0*/ __Vm_traceActivity;
     
     // INTERNAL VARIABLES
@@ -225,6 +225,7 @@ VL_MODULE(Vtop) {
     static void traceFullThis__1(Vtop__Syms* __restrict vlSymsp, VerilatedVcd* vcdp, uint32_t code) VL_ATTR_COLD;
     static void traceInitThis(Vtop__Syms* __restrict vlSymsp, VerilatedVcd* vcdp, uint32_t code) VL_ATTR_COLD;
     static void traceInitThis__1(Vtop__Syms* __restrict vlSymsp, VerilatedVcd* vcdp, uint32_t code) VL_ATTR_COLD;
+    static void traceInitThis__1__10(Vtop__Syms* __restrict vlSymsp, VerilatedVcd* vcdp, uint32_t code, const char* scopep) VL_ATTR_COLD;
     static void traceInitThis__1__2(Vtop__Syms* __restrict vlSymsp, VerilatedVcd* vcdp, uint32_t code, const char* scopep) VL_ATTR_COLD;
     static void traceInitThis__1__3(Vtop__Syms* __restrict vlSymsp, VerilatedVcd* vcdp, uint32_t code, const char* scopep) VL_ATTR_COLD;
     static void traceInitThis__1__4(Vtop__Syms* __restrict vlSymsp, VerilatedVcd* vcdp, uint32_t code, const char* scopep) VL_ATTR_COLD;
