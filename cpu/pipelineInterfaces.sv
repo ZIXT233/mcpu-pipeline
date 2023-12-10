@@ -13,7 +13,7 @@ typedef struct packed {
 } type_MEM_CTRL;
 typedef struct packed {
     logic CP0WB,CP0Write,regDst,isSlt,savePC,ALUSrc;
-    logic [3:0]ALUSrc;
+    logic [3:0]aluop;
     logic MDSign;
     logic [2:0]MDFunc;
     logic MDHIWB,MDLOWB;

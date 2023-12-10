@@ -80,6 +80,6 @@ module seg7(
     end
      always @(ram[0] or ram[1]) begin
 
-        $display("7seg:%x%x",ram[1],ram[0]);
+        //$display("7seg:%x%x",ram[1],ram[0]);
      end
 endmodule

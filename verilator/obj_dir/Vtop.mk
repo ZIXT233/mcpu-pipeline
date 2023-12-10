@@ -10,15 +10,13 @@ default: Vtop
 # Perl executable (from $PERL)
 PERL = perl
 # Path to Verilator kit (from $VERILATOR_ROOT)
-VERILATOR_ROOT = /opt/homebrew/Cellar/verilator/5.016/share/verilator
+VERILATOR_ROOT = /usr/share/verilator
 # SystemC include directory with systemc.h (from $SYSTEMC_INCLUDE)
-SYSTEMC_INCLUDE ?= 
+SYSTEMC_INCLUDE ?= /usr/include
 # SystemC library directory with libsystemc.a (from $SYSTEMC_LIBDIR)
-SYSTEMC_LIBDIR ?= 
+SYSTEMC_LIBDIR ?= /usr/lib/x86_64-linux-gnu
 
 ### Switches...
-# C++ code coverage  0/1 (from --prof-c)
-VM_PROFC = 0
 # SystemC output mode?  0/1 (from --sc)
 VM_SC = 0
 # Legacy or SystemC output mode?  0/1 (from --sc)
@@ -61,8 +59,8 @@ sim_main.o: sim_main.cpp
 	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST) -c -o $@ $<
 
 ### Link rules... (from --exe)
-Vtop: $(VK_USER_OBJS) $(VK_GLOBAL_OBJS) $(VM_PREFIX)__ALL.a $(VM_HIER_LIBS)
-	$(LINK) $(LDFLAGS) $^ $(LOADLIBES) $(LDLIBS) $(LIBS) $(SC_LIBS) -o $@
+Vtop: $(VK_USER_OBJS) $(VK_GLOBAL_OBJS) $(VM_PREFIX)__ALL.a
+	$(LINK) $(LDFLAGS) $^ $(LOADLIBES) $(LDLIBS) -o $@ $(LIBS) $(SC_LIBS)
 
 
 # Verilated -*- Makefile -*-
