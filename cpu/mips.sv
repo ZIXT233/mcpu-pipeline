@@ -2,12 +2,12 @@
 module mips (
     input clk,
     input rst,
-    IBridge.CPU i_bridge
+    IBridge i_bridge
 );
 
     IController i_controller(clk);
     IIF_ID      i_if_id(clk);
-    IID_EX      i_id_ex(clk);
+    IFIFO #(.WIDTH($bits(type_ID_EX_Pack)))  i_fifo(clk);
     IEX_MEM     i_ex_mem(clk);
     IMEM_WB     i_mem_wb(clk);
     IBypass     i_bypass(clk);
@@ -26,7 +26,8 @@ module mips (
         .reset    	( rst       ), 
         .i_cp0,
         .i_controller,
-        .i_stallDetect
+        .i_stallDetect,
+        .i_ID_EX_fifo(i_fifo)
     );
     // outports wire
    
@@ -41,17 +42,22 @@ module mips (
         .i_if_id,
         .i_bypass,
         .i_cp0,
-        .i_id_ex,
+        .i_fifo,
         .i_stallDetect
     );
     
+    FIFO u_FIFO(
+        .clk,
+        .rst,
+        .i_fifo
+    );
     // outports wire
-    
+
     EX u_EX(
         .clk           	( clk            ),
         .rst           	( rst            ),
         .i_controller,
-        .i_id_ex,
+        .i_fifo,
         .i_bypass,
         .i_cp0,
         .i_ex_mem, 
@@ -89,9 +95,9 @@ module mips (
     
 endmodule //mips
 
-//将代码按阶�?�重新封装为几个大模块，从而显现出�??有每�?阶�?�所�??的信号接�??
-//将原�?的中间寄存器拓展为流水线寄存�?
-//将控制器状�?�机改为单指令固定五阶�??,测试依赖流水线寄存器的单指令多周期运�??
-//实现旁路和阻塞解决数�?冒�?
+//将代码按阶�?�重新封装为几个大模块，从而显现出�??有每�?阶�?�所�??的信号接�??
+//将原�?的中间寄存器拓展为流水线寄存�?
+//将控制器状�?�机改为单指令固定五阶�??,测试依赖流水线寄存器的单指令多周期运�??
+//实现旁路和阻塞解决数�?冒�?
 //实现清空解决控制冒险，实现流水线
 //优化控制冒险

@@ -1,3 +1,4 @@
+`include "cpu/pipelineInterfaces.sv"
 module Access(
     input clk,
     input memWrite,

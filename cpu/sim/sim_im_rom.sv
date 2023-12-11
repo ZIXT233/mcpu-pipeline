@@ -7,7 +7,7 @@ module im_rom (
     output reg[31:0]douta);
     reg[31:0] rom[0:2047];
     initial begin
-        $readmemh("../sample_codes/segtest1.txt",rom);
+        $readmemh("../sample_codes/qsort.txt",rom);
     end
     always @(posedge clka)begin
         if(ena)douta<=rom[addra];

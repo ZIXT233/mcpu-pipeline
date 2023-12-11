@@ -3,27 +3,37 @@ module EX (
     input      clk,
     input      rst,
     IController.EX i_controller,
-    IID_EX.EX i_id_ex,
+    IFIFO.EX i_fifo,
     IEX_MEM.EX i_ex_mem,
     IBypass.EX i_bypass,
     ICP0.EX i_cp0,
     IBridge.Access i_bridge,
     IStallDetect.EX i_stallDetect
 );
+    reg issue=1;
+    type_ID_EX_Pack pack;
+    assign pack=issue?i_fifo.rData:0;
+ 
+    assign i_fifo.pop=issue;
+    always @(posedge clk)begin
+
+        issue<=~issue;
+    end 
+
     wire [3:0]aluop;
     wire [2:0]MDFunc;
-    assign {CP0WB,CP0Write,regDst,isSlt,savePC,ALUSrc,aluop,MDSign,MDFunc,MDHIWB,MDLOWB}=i_id_ex.EX_CTRL;
+    assign {CP0WB,CP0Write,regDst,isSlt,savePC,ALUSrc,aluop,MDSign,MDFunc,MDHIWB,MDLOWB}=pack.EX_CTRL;
 
     wire  [31:2]PCP1;
     wire [31:0]instr,rd1,rd2,EXTB;
-    assign {PCP1,instr,rd1,rd2,EXTB}=i_id_ex.EX_DATA;
+    assign {PCP1,instr,rd1,rd2,EXTB}=pack.EX_DATA;
 
     wire[31:0]f_rd1,f_rd2,ALUB,ALUC,EXout,MDHI,MDLO;  
     
     assign i_cp0.EX_TO_CP0={CP0Write,instr[15:11],f_rd2};
     assign i_stallDetect.EX_rw=(savePC&&!regDst)?5'h1F:(regDst?instr[15:11]:instr[20:16]);
-    assign i_stallDetect.EX_regWrite=i_id_ex.WB_CTRL.regWrite;
-    assign i_stallDetect.EX_memToReg=i_id_ex.WB_CTRL.memToReg;
+    assign i_stallDetect.EX_regWrite=pack.WB_CTRL.regWrite;
+    assign i_stallDetect.EX_memToReg=pack.WB_CTRL.memToReg;
     
     wire zero;
     wire[31:0]accessAddr;
@@ -61,9 +71,9 @@ module EX (
 */
     Access u_Access(
         .clk(clk),
-        .memWrite(i_id_ex.MEM_CTRL.memWrite),
-        .isDMByte(i_id_ex.WB_CTRL.isDMByte),
-        .isDMHalf(i_id_ex.WB_CTRL.isDMHalf),
+        .memWrite(pack.MEM_CTRL.memWrite),
+        .isDMByte(pack.WB_CTRL.isDMByte),
+        .isDMHalf(pack.WB_CTRL.isDMHalf),
         .addr(accessAddr),
         .f_rd2,
         .i_bridge,
@@ -81,6 +91,7 @@ module EX (
         i_ex_mem.MEM_CTRL<=0;
         i_ex_mem.WB_CTRL<=0;
     end
+
     always @(posedge clk) begin
         if(i_controller.EX_FLUSH) begin
             //o_MEM_DATA<=0;
@@ -89,8 +100,8 @@ module EX (
         end
         else begin
             i_ex_mem.MEM_DATA<={i_stallDetect.EX_rw,EXout};
-            i_ex_mem.MEM_CTRL<=i_id_ex.MEM_CTRL;
-            i_ex_mem.WB_CTRL<=i_id_ex.WB_CTRL;
+            i_ex_mem.MEM_CTRL<=pack.MEM_CTRL;
+            i_ex_mem.WB_CTRL<=pack.WB_CTRL;
         end
     end
 endmodule //EX

@@ -100,14 +100,27 @@ interface IIF_ID(input clk);
     modport IF(input JPC,jpcAvail,output ID_DATA);
     modport ID(input ID_DATA,output JPC,jpcAvail);
 endinterface
-interface IID_EX(input clk);
+typedef struct packed{
     type_EX_CTRL EX_CTRL;
     type_MEM_CTRL MEM_CTRL;
     type_WB_CTRL WB_CTRL;
     type_EX_DATA EX_DATA;
-    modport ID(output EX_CTRL,MEM_CTRL,WB_CTRL,EX_DATA);
-    modport EX(input  EX_CTRL,MEM_CTRL,WB_CTRL,EX_DATA);
+} type_ID_EX_Pack;
+interface IFIFO
+#(parameter WIDTH = 32)
+(input clk);
+    logic[WIDTH-1:0] wData;
+    logic[WIDTH-1:0] rData;
+    logic wen,pop,isFull,isEmpty;
+    modport ID(input isFull,isEmpty,
+               output wData,wen);
+    modport FIFO(input wData,wen,pop,
+                 output rData,isFull,isEmpty);
+    modport EX(input rData,
+               output pop);
+    modport Controller(input isFull,isEmpty);
 endinterface
+
 interface IEX_MEM(input clk); 
     type_MEM_CTRL MEM_CTRL;
     type_WB_CTRL WB_CTRL;

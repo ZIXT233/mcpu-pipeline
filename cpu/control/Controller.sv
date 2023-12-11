@@ -4,6 +4,7 @@ module Controller (
     input reset,
     IStallDetect.Controller i_stallDetect,
     IController.Controller i_controller,
+    IFIFO.Controller i_ID_EX_fifo,
     ICP0.Controller i_cp0
 );
     wire [3:0]aluop;
@@ -146,9 +147,9 @@ module Controller (
                       0; 
 
     //IF and NPC
-    assign PCWrite  = !i_stallDetect.stall;
+    assign PCWrite  = !i_stallDetect.stall && !i_ID_EX_fifo.isFull;
     assign IF_FLUSH = ExlSet;
-    assign ID_FLUSH =i_stallDetect.stall;
+    assign ID_FLUSH = i_stallDetect.stall;
     assign EX_FLUSH=0;
     assign MEM_FLUSH=0;
     //`S(0); 

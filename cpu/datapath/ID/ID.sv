@@ -6,7 +6,7 @@ module ID (
     IIF_ID.ID i_if_id,
     IBypass.ID i_bypass,
     ICP0.ID i_cp0,
-    IID_EX.ID i_id_ex,
+    IFIFO.ID i_fifo,
     IStallDetect.ID i_stallDetect
 );  
     wire [2:0]branchType;
@@ -83,24 +83,12 @@ module ID (
     );
 
     assign i_if_id.jpcAvail=ExlSet|NPCFromEPC||NPCFromGPR||jmp||branchAvail;
-    initial begin
-        i_id_ex.EX_DATA<=0;
-        i_id_ex.EX_CTRL<=0;
-        i_id_ex.MEM_CTRL<=0;
-        i_id_ex.WB_CTRL<=0;
-    end
-    always @(posedge clk) begin
-        if(i_controller.ID_FLUSH) begin
-            //o_EX_DATA<=0;
-            i_id_ex.EX_CTRL<=0;
-            i_id_ex.MEM_CTRL<=0;
-            i_id_ex.WB_CTRL<=0;
-        end
-        else begin
-            i_id_ex.EX_DATA<={PCP1,instr,f_rd1,f_rd2,EXTB};
-            i_id_ex.EX_CTRL<=i_controller.EX_CTRL;
-            i_id_ex.MEM_CTRL<=i_controller.MEM_CTRL;
-            i_id_ex.WB_CTRL<=i_controller.WB_CTRL;
-        end
-    end
+
+    type_ID_EX_Pack pack;
+    assign pack.EX_DATA={PCP1,instr,f_rd1,f_rd2,EXTB};
+    assign pack.EX_CTRL=i_controller.EX_CTRL;
+    assign pack.MEM_CTRL=i_controller.MEM_CTRL;
+    assign pack.WB_CTRL=i_controller.WB_CTRL;
+    assign i_fifo.wData=pack;
+    assign i_fifo.wen=!i_controller.ID_FLUSH;
 endmodule //ID
