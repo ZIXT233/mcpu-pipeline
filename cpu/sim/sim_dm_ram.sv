@@ -1,4 +1,4 @@
-module dm_ram (
+module sim_dm_ram (
     input[13:2]addra,
     input ena,
     input [3:0]wea,
@@ -19,6 +19,7 @@ module dm_ram (
             4'b0010: ram[addra][15:8]<=dina[15:8];
             4'b0100: ram[addra][23:16]<=dina[23:16];
             4'b1000: ram[addra][31:24]<=dina[31:24];
+            default:;
             endcase
         end
         douta<=ram[addra];

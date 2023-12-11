@@ -1,5 +1,8 @@
 `ifndef PIPELINE_INTERFACES_H
 `define PIPELINE_INTERFACES_H
+
+//verilator lint_off DECLFILENAME
+
 typedef struct packed{
     logic PCWrite;
 } type_IF_CTRL;

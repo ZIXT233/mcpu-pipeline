@@ -6,8 +6,6 @@ module IF (
     IIF_ID.IF i_if_id,
     IBranchCorrect.IF i_branchCorrect
 );
-    wire [31:0]reg_index;
-    wire [25:0]EX_instr;
     wire[31:2] IF_PC,NPC;
     wire[31:0] IF_instr;
     assign NPC=i_branchCorrect.correctAtMEM?i_branchCorrect.correctPCAtMEM:
@@ -30,8 +28,8 @@ module IF (
     reg [31:0] ID_instr; 
     reg firstFetch;
     initial begin 
-        ID_instr<=0;
-        firstFetch<=1'b1;
+        ID_instr=0;
+        firstFetch=1'b1;
     end
     always @(posedge clk or negedge rst) begin
         if(!rst) begin

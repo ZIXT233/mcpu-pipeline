@@ -1,4 +1,4 @@
-module MDPROC (
+module MDProc (
     input      clk,
     input isSign,
     input [31:0]A,

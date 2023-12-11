@@ -14,6 +14,6 @@ module counter (
         else if(cnt>0) cnt<=cnt-1;
     end
     initial begin
-        cnt<=-1;
+        cnt=-1;
     end
 endmodule

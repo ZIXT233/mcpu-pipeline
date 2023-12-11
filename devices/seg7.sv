@@ -38,17 +38,19 @@ module seg7(
     wire [7:0] newSeg,newSelect;
     assign Dout=ram[A];
     assign lightDig=cnt[18:16];
+    // verilator lint_off WIDTH
     assign newSeg=ram[lightDig[2]]>>{lightDig[1:0],{3'b0}};
+    // verilator lint_off WIDTH
     assign newSelect=(8'h80)>>lightDig;
     
     initial begin
-        ram[0]<=32'h0;
-        ram[1]<=32'h0;
-        select<=0;
-        seg<=0;
+        ram[0]=32'h0;
+        ram[1]=32'h0;
+        select=0;
+        seg=0;
     end
     always @(posedge clk) begin
-        if(pause) pause<=pause+1;
+        if(|pause) pause<=pause+1;
         else begin
             cnt<=cnt+1;
             if(select==0)begin
@@ -75,6 +77,7 @@ module seg7(
             4'b0010: ram[A][15:8]<=D[15:8];
             4'b0100: ram[A][23:16]<=D[23:16];
             4'b1000: ram[A][31:24]<=D[31:24];
+            default: ;
             endcase
         end
     end

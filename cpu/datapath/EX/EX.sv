@@ -1,7 +1,9 @@
 `include "cpu/pipelineInterfaces.sv"
 module EX (
     input      clk,
+    // verilator lint_off UNUSED
     input      rst,
+    // verilator lint_on UNUSED
     IController.EX i_controller,
     IID_EX.EX i_id_ex,
     IEX_MEM.EX i_ex_mem,
@@ -12,21 +14,25 @@ module EX (
     IBranchCorrect.EX i_branchCorrect
 );
     wire [3:0]aluop;
+    // verilator lint_off UNUSED
     wire [2:0]MDFunc,branchType;
+    wire CP0WB,CP0Write,regDst,isSlt,savePC,ALUSrc,MDHIWB,MDLOWB,MDSign,zero;
+    // verilator lint_on UNUSED
     assign {branchType,CP0WB,CP0Write,regDst,isSlt,savePC,ALUSrc,aluop,MDSign,MDFunc,MDHIWB,MDLOWB}=i_id_ex.EX_CTRL;
 
     wire  [31:2]PCP1;
+    // verilator lint_off UNUSED
     wire [31:0]instr,rd1,rd2,EXTB;
+    // verilator lint_on UNUSED
     assign {PCP1,instr,rd1,rd2,EXTB}=i_id_ex.EX_DATA;
 
-    wire[31:0]f_rd1,f_rd2,ALUB,ALUC,EXout,MDHI,MDLO;  
+    wire[31:0]f_rd1,f_rd2,ALUB,ALUC,EXout;//MDHI,MDLO;  
     
     assign i_cp0.EX_TO_CP0={CP0Write,instr[15:11],f_rd2};
     assign i_stallDetect.EX_rw=(savePC&&!regDst)?5'h1F:(regDst?instr[15:11]:instr[20:16]);
     assign i_stallDetect.EX_regWrite=i_id_ex.WB_CTRL.regWrite;
     assign i_stallDetect.EX_memToReg=i_id_ex.WB_CTRL.memToReg;
     
-    wire zero;
     wire[31:0]accessAddr;
     assign ALUB=ALUSrc?EXTB:f_rd2;
     FORWARD u_EX_FORWARD(
@@ -44,8 +50,8 @@ module EX (
 
     assign i_branchCorrect.correctAtEX = !i_id_ex.branchCommitAtMEM && branchType!=0 && !i_id_ex.exBranchAvail;
     assign i_branchCorrect.correctPCAtEX = PCP1+1;
-    
-     BRANCH u_BRANCH(
+    wire memBranchAvail;
+    BRANCH u_BRANCH(
          .rd1          	( f_rd1           ),
          .rd2        	( f_rd2         ),
          .branchType  	( branchType   ),
@@ -81,17 +87,17 @@ module EX (
         .i_bridge,
         .DMout(i_ex_mem.DMout)
     );
-    assign EXout=isSlt?ALUC[31]:
-                 savePC?PCP1<<2:
+    assign EXout=isSlt?{31'b0,ALUC[31]}:
+                 savePC?{2'b0,PCP1<<2}:
                  CP0WB?i_cp0.CP0_TO_EX:
                //  MDHIWB?MDHI:
                //  MDLOWB?MDLO:
                  ALUC;
 
     initial begin
-        i_ex_mem.MEM_DATA<=0;
-        i_ex_mem.MEM_CTRL<=0;
-        i_ex_mem.WB_CTRL<=0;
+        i_ex_mem.MEM_DATA=0;
+        i_ex_mem.MEM_CTRL=0;
+        i_ex_mem.WB_CTRL=0;
     end
     always @(posedge clk) begin
         if(i_controller.EX_FLUSH) begin

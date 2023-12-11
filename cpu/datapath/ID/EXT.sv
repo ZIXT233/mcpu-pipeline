@@ -5,5 +5,5 @@ module EXT (
     output [31:0]B
 );
     assign B=(exsign)?{{16{A[15]}},A}:
-             (extop)?A<<16:A;  
+             (extop)?{A,16'b0}:{16'b0,A};  
 endmodule //EXT

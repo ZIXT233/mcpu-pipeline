@@ -6,7 +6,7 @@ module pc(
     input PCWrite,
     output reg[31:2] PC);
     initial begin
-        PC<=`START_ADDR;
+        PC=`START_ADDR;
     end
     wire [29:0] line;
     assign line=PC<<2;

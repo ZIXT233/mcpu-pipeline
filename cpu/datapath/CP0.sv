@@ -1,7 +1,9 @@
 `include "cpu/pipelineInterfaces.sv"
 module CP0 (
     input      clk,
+    // verilator lint_off UNUSED
     input      rst,
+    // verilator lint_on UNUSED
     ICP0.CP0   i_cp0,
     IBridge.CP0 i_bridge
 );
@@ -13,7 +15,7 @@ module CP0 (
     assign ID_PCP1=i_cp0.ID_PCP1;
     assign EX_DATA=i_cp0.EX_TO_CP0;
     assign CP0_CTRL=i_cp0.CP0_CTRL;
-
+    wire ExlSet,ExlClr;
     assign {ExlSet,ExlClr}=CP0_CTRL;
     wire [31:0]DIn;
     wire [4:0] Sel;
@@ -29,16 +31,16 @@ module CP0 (
     wire [31:0]Dout;
     assign SR={16'b0,IM,8'b0,EXL,IE};
     assign Cause={16'b0,hwint_pend,10'b0};
-    assign i_cp0.IntReq=HWInt[7:2]&IM[15:10]&IE&!EXL;
+    assign i_cp0.IntReq=(|HWInt[7:2])&(|IM[15:10])&IE&!EXL;
     assign Dout=(Sel==12)?SR:
                 (Sel==13)?Cause:
-                (Sel==14)?i_cp0.EPC:
+                (Sel==14)?{2'b0,i_cp0.EPC}:
                 (Sel==15)?PrID:
                 0;
     initial begin
-        IM<=6'b000000;
-        hwint_pend<=6'b000000;
-        PrID<=32'hbbaaccff;
+        IM=6'b000000;
+        hwint_pend=6'b000000;
+        PrID=32'hbbaaccff;
     end
     always @(posedge clk) begin
         if(Wen)begin
@@ -51,7 +53,7 @@ module CP0 (
         end
         else if(ExlClr) EXL<=1'b0;
     end
-    always @(*)begin
-        if(!EXL)hwint_pend<=HWInt;
+    always_latch begin
+        if(!EXL)hwint_pend=HWInt;
     end
 endmodule //CP0

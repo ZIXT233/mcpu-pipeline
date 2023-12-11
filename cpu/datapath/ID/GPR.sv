@@ -15,7 +15,7 @@ module GPR(
     integer i;
     initial begin
         for(i=0;i<32;i=i+1) begin
-            register[i]<=0;
+            register[i]=0;
         end
     end
     //reg d=0;

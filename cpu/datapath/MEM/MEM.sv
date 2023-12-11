@@ -1,7 +1,9 @@
 `include "cpu/pipelineInterfaces.sv"
 module MEM (
     input      clk,
+    // verilator lint_off UNUSED
     input      rst,
+    // verilator lint_on UNUSED
     IController.Controller i_controller,
     IBridge.MEM i_bridge,
     IEX_MEM.MEM i_ex_mem,
@@ -12,13 +14,16 @@ module MEM (
 );
     wire [31:0] EXout;
     assign EXout=i_ex_mem.MEM_DATA.EXout;
+    // verilator lint_off UNUSED
+    wire regWrite,memToReg,isDMByte,isDMHalf,isLOADS;
+    // verilator lint_on UNUSED
     assign {regWrite,memToReg,isDMByte,isDMHalf,isLOADS}=i_ex_mem.WB_CTRL;
 
     assign i_bypass.MEM_BACK={i_ex_mem.WB_CTRL.regWrite,EXout,i_ex_mem.MEM_DATA.rw}; //regWrite,Wd,rw
     assign i_stallDetect.MEM_rw=i_ex_mem.MEM_DATA.rw;
     assign i_stallDetect.MEM_memToReg=i_ex_mem.WB_CTRL.memToReg;
 
-    assign AddrInDM=(EXout[15:0]<'h3000);
+    wire AddrInDM=(EXout[15:0]<'h3000);
     wire [31:0]MEMout,EXT_MEMout;
     assign MEMout=AddrInDM?i_ex_mem.DMout:i_bridge.PrRD;
 

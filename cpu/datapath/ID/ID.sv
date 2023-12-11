@@ -8,8 +8,9 @@ module ID (
     ICP0.ID i_cp0,
     IID_EX.ID i_id_ex,
     IStallDetect.ID i_stallDetect
-);  
+);   
     wire [2:0]branchType;
+    wire NPCFromEPC,ExlSet,jmp,NPCFromGPR,extop,exsign;
     assign {NPCFromEPC,ExlSet,jmp,NPCFromGPR,branchType,extop,exsign}=i_controller.ID_CTRL;
     wire [31:2] PCP1;
     wire [31:0] instr;
@@ -20,6 +21,7 @@ module ID (
     assign i_cp0.ID_PCP1=PCP1;
     wire [31:0] WB_Wd;
     wire [4:0] WB_rw;
+    wire WB_regWrite;
     assign {WB_regWrite,WB_Wd,WB_rw}=i_bypass.WB_BACK;
 
     wire [31:0]rd1,rd2,EXTB;
@@ -60,7 +62,7 @@ module ID (
     );
     // outports wire
 
-    
+    wire exBranchAvail;    
      BRANCH u_BRANCH(
          .rd1          	( f_rd1           ),
          .rd2        	( f_rd2         ),
@@ -85,11 +87,11 @@ module ID (
 
     assign i_if_id.jpcAvail=ExlSet|NPCFromEPC||NPCFromGPR||jmp||branchAvail;
     initial begin
-        i_id_ex.EX_DATA<=0;
-        i_id_ex.EX_CTRL<=0;
-        i_id_ex.MEM_CTRL<=0;
-        i_id_ex.WB_CTRL<=0;
-        i_id_ex.exBranchAvail<=0;
+        i_id_ex.EX_DATA=0;
+        i_id_ex.EX_CTRL=0;
+        i_id_ex.MEM_CTRL=0;
+        i_id_ex.WB_CTRL=0;
+        i_id_ex.exBranchAvail=0;
     end
     always @(posedge clk) begin
         if(i_controller.ID_FLUSH) begin

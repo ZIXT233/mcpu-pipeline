@@ -1,8 +1,10 @@
 
 `include "cpu/pipelineInterfaces.sv"
 module WB (
+    // verilator lint_off UNUSED
     input      clk,
     input      rst,
+    // verilator lint_on UNUSED
     IMEM_WB.WB i_mem_wb,
     IBypass.WB i_bypass
 );

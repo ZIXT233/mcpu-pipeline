@@ -12,6 +12,6 @@ module screenBoard (
         end
     end
     initial begin
-        show<=0;
+        show=0;
     end
 endmodule //screenBoard
