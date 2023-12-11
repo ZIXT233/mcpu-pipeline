@@ -13,12 +13,14 @@ module mips (
     IBypass     i_bypass(clk);
     ICP0        i_cp0(clk);
     IStallDetect i_stallDetect(clk);
+    IBranchCorrect i_branchCorrect(clk);
     
     IF u_IF(
         .clk         	( clk          ),
         .rst         	( rst          ),
         .i_controller,
-        .i_if_id
+        .i_if_id,
+        .i_branchCorrect
     );
 
     Controller u_Controller(
@@ -26,7 +28,8 @@ module mips (
         .reset    	( rst       ), 
         .i_cp0,
         .i_controller,
-        .i_stallDetect
+        .i_stallDetect,
+        .i_branchCorrect
     );
     // outports wire
    
@@ -56,7 +59,8 @@ module mips (
         .i_cp0,
         .i_ex_mem, 
         .i_stallDetect,
-        .i_bridge
+        .i_bridge,
+        .i_branchCorrect
     );
     
     MEM u_MEM(
@@ -67,7 +71,8 @@ module mips (
         .i_mem_wb,
         .i_bypass,
         .i_stallDetect,
-        .i_bridge
+        .i_bridge,
+        .i_branchCorrect
     );
     
     

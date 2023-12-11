@@ -59,15 +59,16 @@ module ID (
         .f_rd2    	( f_rd2     )
     );
     // outports wire
-    wire       	branchAvail;
+
     
-    BRANCH u_BRANCH(
-        .rd1          	( f_rd1           ),
-        .rd2        	( f_rd2         ),
-        .branchType  	( branchType   ),
-        .branchAvail 	( branchAvail  )
-    );
+     BRANCH u_BRANCH(
+         .rd1          	( f_rd1           ),
+         .rd2        	( f_rd2         ),
+         .branchType  	( branchType   ),
+         .branchAvail 	( exBranchAvail  )
+     );
     
+    wire       	branchAvail=branchType!=0;  //always branch
     jpc jpc (
         .PC(PCP1),
         .branchAvail(branchAvail), 
@@ -88,6 +89,7 @@ module ID (
         i_id_ex.EX_CTRL<=0;
         i_id_ex.MEM_CTRL<=0;
         i_id_ex.WB_CTRL<=0;
+        i_id_ex.exBranchAvail<=0;
     end
     always @(posedge clk) begin
         if(i_controller.ID_FLUSH) begin
@@ -95,12 +97,15 @@ module ID (
             i_id_ex.EX_CTRL<=0;
             i_id_ex.MEM_CTRL<=0;
             i_id_ex.WB_CTRL<=0;
+            i_id_ex.exBranchAvail<=0;
         end
         else begin
             i_id_ex.EX_DATA<={PCP1,instr,f_rd1,f_rd2,EXTB};
             i_id_ex.EX_CTRL<=i_controller.EX_CTRL;
             i_id_ex.MEM_CTRL<=i_controller.MEM_CTRL;
             i_id_ex.WB_CTRL<=i_controller.WB_CTRL;
+            i_id_ex.exBranchAvail<=exBranchAvail;
+            i_id_ex.branchCommitAtMEM<=i_stallDetect.branchCommitAtMEM;
         end
     end
 endmodule //ID

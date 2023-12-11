@@ -4,7 +4,8 @@ module Controller (
     input reset,
     IStallDetect.Controller i_stallDetect,
     IController.Controller i_controller,
-    ICP0.Controller i_cp0
+    ICP0.Controller i_cp0,
+    IBranchCorrect.Controller i_branchCorrect
 );
     wire [3:0]aluop;
     wire [2:0]branchType,MDFunc;
@@ -19,7 +20,7 @@ module Controller (
     assign i_controller.IF_CTRL={PCWrite};
     assign i_controller.ID_FLUSH=ID_FLUSH;
     assign i_controller.ID_CTRL={NPCFromEPC,ExlSet,jmp,NPCFromGPR,branchType,extop,exsign};
-    assign i_controller.EX_CTRL={CP0WB,CP0Write,regDst,isSlt,savePC,ALUSrc,aluop,MDSign,MDFunc,MDHIWB,MDLOWB};
+    assign i_controller.EX_CTRL={branchType,CP0WB,CP0Write,regDst,isSlt,savePC,ALUSrc,aluop,MDSign,MDFunc,MDHIWB,MDLOWB};
     assign i_controller.MEM_CTRL={memWrite};
     assign i_controller.WB_CTRL={regWrite,memToReg,isDMByte,isDMHalf,isLOADS};
     assign i_stallDetect.ID_uncertainJump=NPCFromGPR||(branchType!=0);
@@ -136,7 +137,7 @@ module Controller (
     //  status strict signal 
     //写使能信号是状�?�严格的
     //由于s0每个命令必须经过，且s0赋�?�依赖于npc
-    //若npc跳转信号在s0出现，会影响npc（�?�且此时npc跳转信号是上�?个指令的），故npc跳转信号要排除S0
+    //�?npc跳转信号在s0出现，会影响npc（�?�且此时npc跳转信号�?上�?�?指令的），故npc跳转信号要排�?S0
     assign branchType=beq?1:
                       bne?2:  
                       bgtz?3: 
@@ -147,8 +148,8 @@ module Controller (
 
     //IF and NPC
     assign PCWrite  = !i_stallDetect.stall;
-    assign IF_FLUSH = ExlSet;
-    assign ID_FLUSH =i_stallDetect.stall;
+    assign IF_FLUSH = ExlSet || i_branchCorrect.correctAtEX || i_branchCorrect.correctAtMEM;
+    assign ID_FLUSH =i_stallDetect.stall || i_branchCorrect.correctAtMEM;
     assign EX_FLUSH=0;
     assign MEM_FLUSH=0;
     //`S(0); 

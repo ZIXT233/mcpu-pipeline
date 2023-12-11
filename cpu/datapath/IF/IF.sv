@@ -3,13 +3,16 @@ module IF (
     input clk,
     input rst,
     IController.IF i_controller,
-    IIF_ID.IF i_if_id
+    IIF_ID.IF i_if_id,
+    IBranchCorrect.IF i_branchCorrect
 );
     wire [31:0]reg_index;
     wire [25:0]EX_instr;
     wire[31:2] IF_PC,NPC;
     wire[31:0] IF_instr;
-    assign NPC=i_if_id.jpcAvail?i_if_id.JPC:IF_PC+1;
+    assign NPC=i_branchCorrect.correctAtMEM?i_branchCorrect.correctPCAtMEM:
+               i_branchCorrect.correctAtEX?i_branchCorrect.correctPCAtEX:
+               i_if_id.jpcAvail?i_if_id.JPC:IF_PC+1;
     pc pc (
         .NPC(NPC),
         .clk(clk),

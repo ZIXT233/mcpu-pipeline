@@ -22,6 +22,7 @@ VM_CLASSES_FAST += \
 	Vtop_IController \
 	Vtop_IStallDetect \
 	Vtop_IIF_ID \
+	Vtop_IBranchCorrect \
 	Vtop_IID_EX \
 	Vtop_IEX_MEM \
 	Vtop_IMEM_WB \

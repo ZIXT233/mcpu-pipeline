@@ -19,6 +19,7 @@ VL_CTOR_IMP(Vtop) {
     VL_CELL(__PVT__top__DOT__mips__DOT__i_bypass, Vtop_IBypass);
     VL_CELL(__PVT__top__DOT__mips__DOT__i_cp0, Vtop_ICP0);
     VL_CELL(__PVT__top__DOT__mips__DOT__i_stallDetect, Vtop_IStallDetect);
+    VL_CELL(__PVT__top__DOT__mips__DOT__i_branchCorrect, Vtop_IBranchCorrect);
     // Reset internal values
     
     // Reset structure values
@@ -135,6 +136,8 @@ void Vtop::_initial__TOP__1(Vtop__Syms* __restrict vlSymsp) {
     vlTOPp->top__DOT__mips__DOT__u_ID__DOT__GPR__DOT__i = 0x20U;
     vlSymsp->TOP__top__DOT__mips__DOT__i_mem_wb.WB_CTRL = 0U;
     vlSymsp->TOP__top__DOT__mips__DOT__i_mem_wb.WB_DATA = VL_ULL(0);
+    vlTOPp->top__DOT__mips__DOT__u_IF__DOT__pc__DOT__clkCnt = 0U;
+    vlTOPp->top__DOT__mips__DOT__u_IF__DOT__pc__DOT__fCnt = 0U;
     vlTOPp->top__DOT__u_BRIDGE__DOT__u_seg7__DOT__pause = 0U;
     vlTOPp->top__DOT__u_BRIDGE__DOT__u_seg7__DOT__cnt = 0U;
     vlTOPp->top__DOT__u_BRIDGE__DOT__u_seg7__DOT__ram[0U] = 0U;
@@ -145,19 +148,21 @@ void Vtop::_initial__TOP__1(Vtop__Syms* __restrict vlSymsp) {
     vlTOPp->top__DOT__mips__DOT__u_IF__DOT__ID_instr = 0U;
     vlTOPp->top__DOT__mips__DOT__u_IF__DOT__firstFetch = 1U;
     vlTOPp->top__DOT__mips__DOT__u_IF__DOT__IF_PC = 0xbffU;
-    vlSymsp->TOP__top__DOT__mips__DOT__i_ex_mem.MEM_DATA = VL_ULL(0);
-    vlSymsp->TOP__top__DOT__mips__DOT__i_ex_mem.MEM_CTRL = 0U;
-    vlSymsp->TOP__top__DOT__mips__DOT__i_ex_mem.WB_CTRL = 0U;
     __Vtemp1[0U] = 0x2e747874U;
-    __Vtemp1[1U] = 0x65737431U;
-    __Vtemp1[2U] = 0x73656774U;
-    __Vtemp1[3U] = 0x6465732fU;
-    __Vtemp1[4U] = 0x655f636fU;
-    __Vtemp1[5U] = 0x616d706cU;
-    __Vtemp1[6U] = 0x2e2e2f73U;
+    __Vtemp1[1U] = 0x736f7274U;
+    __Vtemp1[2U] = 0x65732f71U;
+    __Vtemp1[3U] = 0x5f636f64U;
+    __Vtemp1[4U] = 0x6d706c65U;
+    __Vtemp1[5U] = 0x2e2f7361U;
+    __Vtemp1[6U] = 0x2eU;
     VL_READMEM_N(true, 32, 2048, 0, VL_CVT_PACK_STR_NW(7, __Vtemp1)
                  , vlTOPp->top__DOT__mips__DOT__u_IF__DOT__IM__DOT__u_imrom__DOT__rom
                  , 0, ~VL_ULL(0));
+    vlSymsp->TOP__top__DOT__mips__DOT__i_ex_mem.MEM_DATA[0U] = 0U;
+    vlSymsp->TOP__top__DOT__mips__DOT__i_ex_mem.MEM_DATA[1U] = 0U;
+    vlSymsp->TOP__top__DOT__mips__DOT__i_ex_mem.MEM_DATA[2U] = 0U;
+    vlSymsp->TOP__top__DOT__mips__DOT__i_ex_mem.MEM_CTRL = 0U;
+    vlSymsp->TOP__top__DOT__mips__DOT__i_ex_mem.WB_CTRL = 0U;
     vlTOPp->top__DOT__mips__DOT__u_CP0__DOT__IM = 0U;
     vlTOPp->top__DOT__mips__DOT__u_CP0__DOT__hwint_pend = 0U;
     vlTOPp->top__DOT__mips__DOT__u_CP0__DOT__PrID = 0xbbaaccffU;
@@ -169,6 +174,7 @@ void Vtop::_initial__TOP__1(Vtop__Syms* __restrict vlSymsp) {
     vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL = 0U;
     vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.MEM_CTRL = 0U;
     vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.WB_CTRL = 0U;
+    vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.exBranchAvail = 0U;
 }
 
 VL_INLINE_OPT void Vtop::_sequent__TOP__2(Vtop__Syms* __restrict vlSymsp) {
@@ -178,10 +184,12 @@ VL_INLINE_OPT void Vtop::_sequent__TOP__2(Vtop__Syms* __restrict vlSymsp) {
     CData/*4:0*/ __Vdlyvdim0__top__DOT__mips__DOT__u_ID__DOT__GPR__DOT__register__v0;
     CData/*0:0*/ __Vdlyvset__top__DOT__mips__DOT__u_ID__DOT__GPR__DOT__register__v0;
     CData/*0:0*/ __Vdlyvset__top__DOT__mips__DOT__u_ID__DOT__GPR__DOT__register__v1;
+    IData/*29:0*/ __Vdly__top__DOT__mips__DOT__u_IF__DOT__IF_PC;
     IData/*31:0*/ __Vdlyvval__top__DOT__mips__DOT__u_ID__DOT__GPR__DOT__register__v0;
     // Body
     __Vdlyvset__top__DOT__mips__DOT__u_ID__DOT__GPR__DOT__register__v0 = 0U;
     __Vdlyvset__top__DOT__mips__DOT__u_ID__DOT__GPR__DOT__register__v1 = 0U;
+    __Vdly__top__DOT__mips__DOT__u_IF__DOT__IF_PC = vlTOPp->top__DOT__mips__DOT__u_IF__DOT__IF_PC;
     if ((1U & (~ (IData)(vlTOPp->rst)))) {
         vlTOPp->top__DOT__mips__DOT__u_ID__DOT__GPR__DOT__i = 0x20U;
     }
@@ -199,11 +207,13 @@ VL_INLINE_OPT void Vtop::_sequent__TOP__2(Vtop__Syms* __restrict vlSymsp) {
         __Vdlyvset__top__DOT__mips__DOT__u_ID__DOT__GPR__DOT__register__v1 = 1U;
     }
     if (vlTOPp->rst) {
-        if (((IData)(vlTOPp->top__DOT__mips__DOT__u_Controller__DOT__ExlSet) 
+        if (((((IData)(vlTOPp->top__DOT__mips__DOT__u_Controller__DOT__ExlSet) 
+               | (IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_branchCorrect.correctAtEX)) 
+              | (IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_branchCorrect.correctAtMEM)) 
              | (IData)(vlTOPp->top__DOT__mips__DOT__u_IF__DOT__firstFetch))) {
             vlTOPp->top__DOT__mips__DOT__u_IF__DOT__ID_instr = 0U;
         } else {
-            if ((1U & (~ (IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_stallDetect.stall)))) {
+            if ((1U & (~ (IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_stallDetect.__PVT__LOAD)))) {
                 vlTOPp->top__DOT__mips__DOT__u_IF__DOT__ID_instr 
                     = vlTOPp->top__DOT__mips__DOT__u_IF__DOT__IF_instr;
             }
@@ -212,15 +222,20 @@ VL_INLINE_OPT void Vtop::_sequent__TOP__2(Vtop__Syms* __restrict vlSymsp) {
         vlTOPp->top__DOT__mips__DOT__u_IF__DOT__ID_instr = 0U;
     }
     if (vlTOPp->rst) {
+        if (VL_UNLIKELY((1U & (~ (IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_stallDetect.__PVT__LOAD))))) {
+            vlTOPp->top__DOT__mips__DOT__u_IF__DOT__pc__DOT__fCnt 
+                = ((IData)(1U) + vlTOPp->top__DOT__mips__DOT__u_IF__DOT__pc__DOT__fCnt);
+            VL_WRITEF("--%x\n",30,vlTOPp->top__DOT__mips__DOT__u_IF__DOT__pc__DOT__line);
+            __Vdly__top__DOT__mips__DOT__u_IF__DOT__IF_PC 
+                = vlTOPp->top__DOT__mips__DOT__u_IF__DOT__NPC;
+        }
+        vlTOPp->top__DOT__mips__DOT__u_IF__DOT__pc__DOT__clkCnt 
+            = ((IData)(1U) + vlTOPp->top__DOT__mips__DOT__u_IF__DOT__pc__DOT__clkCnt);
         if (VL_UNLIKELY((0xbffU == vlTOPp->top__DOT__mips__DOT__u_IF__DOT__IF_PC))) {
             VL_WRITEF("start\n");
         }
-        if ((1U & (~ (IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_stallDetect.stall)))) {
-            vlTOPp->top__DOT__mips__DOT__u_IF__DOT__IF_PC 
-                = vlTOPp->top__DOT__mips__DOT__u_IF__DOT__NPC;
-        }
     } else {
-        vlTOPp->top__DOT__mips__DOT__u_IF__DOT__IF_PC = 0xbffU;
+        __Vdly__top__DOT__mips__DOT__u_IF__DOT__IF_PC = 0xbffU;
     }
     if (__Vdlyvset__top__DOT__mips__DOT__u_ID__DOT__GPR__DOT__register__v0) {
         vlTOPp->top__DOT__mips__DOT__u_ID__DOT__GPR__DOT__register[__Vdlyvdim0__top__DOT__mips__DOT__u_ID__DOT__GPR__DOT__register__v0] 
@@ -260,8 +275,12 @@ VL_INLINE_OPT void Vtop::_sequent__TOP__2(Vtop__Syms* __restrict vlSymsp) {
         vlTOPp->top__DOT__mips__DOT__u_ID__DOT__GPR__DOT__register[0x1eU] = 0U;
         vlTOPp->top__DOT__mips__DOT__u_ID__DOT__GPR__DOT__register[0x1fU] = 0U;
     }
+    vlTOPp->top__DOT__mips__DOT__u_IF__DOT__IF_PC = __Vdly__top__DOT__mips__DOT__u_IF__DOT__IF_PC;
     vlTOPp->top__DOT__mips__DOT__u_IF__DOT__firstFetch 
         = (1U & (~ (IData)(vlTOPp->rst)));
+    vlTOPp->top__DOT__mips__DOT__u_IF__DOT__pc__DOT__line 
+        = (0x3fffffffU & (vlTOPp->top__DOT__mips__DOT__u_IF__DOT__IF_PC 
+                          << 2U));
 }
 
 VL_INLINE_OPT void Vtop::_sequent__TOP__3(Vtop__Syms* __restrict vlSymsp) {
@@ -324,6 +343,7 @@ VL_INLINE_OPT void Vtop::_sequent__TOP__3(Vtop__Syms* __restrict vlSymsp) {
     IData/*31:0*/ __Vdlyvval__top__DOT__mips__DOT__u_EX__DOT__u_Access__DOT__u_dm_ram__DOT__ram__v0;
     IData/*31:0*/ __Vdly__top__DOT__u_BRIDGE__DOT__u_counter__DOT__cnt;
     IData/*31:0*/ __Vdlyvval__top__DOT__u_BRIDGE__DOT__u_seg7__DOT__ram__v0;
+    WData/*95:0*/ __Vtemp6[3];
     // Body
     __Vdly__seg7_select = vlTOPp->seg7_select;
     __Vdly__top__DOT__u_BRIDGE__DOT__u_counter__DOT__cnt 
@@ -342,7 +362,7 @@ VL_INLINE_OPT void Vtop::_sequent__TOP__3(Vtop__Syms* __restrict vlSymsp) {
     __Vdlyvset__top__DOT__u_BRIDGE__DOT__u_seg7__DOT__ram__v4 = 0U;
     __Vdlyvset__top__DOT__u_BRIDGE__DOT__u_seg7__DOT__ram__v5 = 0U;
     __Vdlyvset__top__DOT__u_BRIDGE__DOT__u_seg7__DOT__ram__v6 = 0U;
-    if ((1U & (~ (IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_stallDetect.stall)))) {
+    if ((1U & (~ (IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_stallDetect.__PVT__LOAD)))) {
         vlTOPp->top__DOT__mips__DOT__u_IF__DOT__IF_instr 
             = vlTOPp->top__DOT__mips__DOT__u_IF__DOT__IM__DOT__u_imrom__DOT__rom
             [(0x7ffU & ((0x3fffU & vlTOPp->top__DOT__mips__DOT__u_IF__DOT__NPC) 
@@ -370,6 +390,27 @@ VL_INLINE_OPT void Vtop::_sequent__TOP__3(Vtop__Syms* __restrict vlSymsp) {
                                  >> 2U))) ? vlTOPp->top__DOT__mips__DOT__u_EX__DOT__u_Access__DOT__u_dm_ram__DOT__ram
            [(0xfffU & (vlTOPp->top__DOT__mips__DOT__u_EX__DOT__accessAddr 
                        >> 2U))] : 0U);
+    vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.exBranchAvail 
+        = ((~ (IData)(vlTOPp->top__DOT__mips__DOT__u_Controller__DOT__ID_FLUSH)) 
+           & (((((((1U == (7U & ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_controller.ID_CTRL) 
+                                 >> 2U))) & (IData)(vlTOPp->top__DOT__mips__DOT__u_ID__DOT__u_BRANCH__DOT__eq)) 
+                  | ((2U == (7U & ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_controller.ID_CTRL) 
+                                   >> 2U))) & (~ (IData)(vlTOPp->top__DOT__mips__DOT__u_ID__DOT__u_BRANCH__DOT__eq)))) 
+                 | ((3U == (7U & ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_controller.ID_CTRL) 
+                                  >> 2U))) & ((~ (vlTOPp->top__DOT__mips__DOT__u_ID__DOT__f_rd1 
+                                                  >> 0x1fU)) 
+                                              & (0U 
+                                                 != vlTOPp->top__DOT__mips__DOT__u_ID__DOT__f_rd1)))) 
+                | ((4U == (7U & ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_controller.ID_CTRL) 
+                                 >> 2U))) & (vlTOPp->top__DOT__mips__DOT__u_ID__DOT__f_rd1 
+                                             >> 0x1fU))) 
+               | ((5U == (7U & ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_controller.ID_CTRL) 
+                                >> 2U))) & (~ (vlTOPp->top__DOT__mips__DOT__u_ID__DOT__f_rd1 
+                                               >> 0x1fU)))) 
+              | ((6U == (7U & ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_controller.ID_CTRL) 
+                               >> 2U))) & ((vlTOPp->top__DOT__mips__DOT__u_ID__DOT__f_rd1 
+                                            >> 0x1fU) 
+                                           | (0U == vlTOPp->top__DOT__mips__DOT__u_ID__DOT__f_rd1)))));
     if (VL_UNLIKELY((2U & (IData)(vlTOPp->top__DOT__u_BRIDGE__DOT__WeDEV)))) {
         VL_WRITEF("%11d\n",32,vlTOPp->top__DOT__u_BRIDGE__DOT__PrWD);
         vlTOPp->top__DOT__u_BRIDGE__DOT__DEV1_RD = vlTOPp->top__DOT__u_BRIDGE__DOT__PrWD;
@@ -385,9 +426,12 @@ VL_INLINE_OPT void Vtop::_sequent__TOP__3(Vtop__Syms* __restrict vlSymsp) {
         }
     }
     if ((0x3000U > (0xffffU & vlTOPp->top__DOT__mips__DOT__u_EX__DOT__accessAddr))) {
-        if ((0xfU == (IData)(vlTOPp->top__DOT__mips__DOT__u_EX__DOT__u_Access__DOT____Vcellinp__u_dm_ram__wea))) {
+        if (VL_UNLIKELY((0xfU == (IData)(vlTOPp->top__DOT__mips__DOT__u_EX__DOT__u_Access__DOT____Vcellinp__u_dm_ram__wea)))) {
             vlTOPp->top__DOT__mips__DOT__u_EX__DOT__u_Access__DOT__u_dm_ram__DOT____Vlvbound1 
                 = vlTOPp->top__DOT__mips__DOT__u_EX__DOT__u_Access__DOT____Vcellinp__u_dm_ram__dina;
+            VL_WRITEF("[%4#]%10#\n",12,(0xfffU & (vlTOPp->top__DOT__mips__DOT__u_EX__DOT__accessAddr 
+                                                  >> 2U)),
+                      32,vlTOPp->top__DOT__mips__DOT__u_EX__DOT__u_Access__DOT____Vcellinp__u_dm_ram__dina);
             if ((0xbffU >= (0xfffU & (vlTOPp->top__DOT__mips__DOT__u_EX__DOT__accessAddr 
                                       >> 2U)))) {
                 __Vdlyvval__top__DOT__mips__DOT__u_EX__DOT__u_Access__DOT__u_dm_ram__DOT__ram__v0 
@@ -576,6 +620,35 @@ VL_INLINE_OPT void Vtop::_sequent__TOP__3(Vtop__Syms* __restrict vlSymsp) {
             }
         }
     }
+    if ((1U & (~ (IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_controller.EX_FLUSH)))) {
+        vlSymsp->TOP__top__DOT__mips__DOT__i_ex_mem.branchType 
+            = (7U & (vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL 
+                     >> 0x10U));
+    }
+    if ((1U & (~ (IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_controller.EX_FLUSH)))) {
+        vlSymsp->TOP__top__DOT__mips__DOT__i_ex_mem.memBranchAvail 
+            = (((((((1U == (7U & (vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL 
+                                  >> 0x10U))) & (IData)(vlTOPp->top__DOT__mips__DOT__u_EX__DOT__u_BRANCH__DOT__eq)) 
+                   | ((2U == (7U & (vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL 
+                                    >> 0x10U))) & (~ (IData)(vlTOPp->top__DOT__mips__DOT__u_EX__DOT__u_BRANCH__DOT__eq)))) 
+                  | ((3U == (7U & (vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL 
+                                   >> 0x10U))) & ((~ 
+                                                   (vlTOPp->top__DOT__mips__DOT__u_EX__DOT__f_rd1 
+                                                    >> 0x1fU)) 
+                                                  & (0U 
+                                                     != vlTOPp->top__DOT__mips__DOT__u_EX__DOT__f_rd1)))) 
+                 | ((4U == (7U & (vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL 
+                                  >> 0x10U))) & (vlTOPp->top__DOT__mips__DOT__u_EX__DOT__f_rd1 
+                                                 >> 0x1fU))) 
+                | ((5U == (7U & (vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL 
+                                 >> 0x10U))) & (~ (vlTOPp->top__DOT__mips__DOT__u_EX__DOT__f_rd1 
+                                                   >> 0x1fU)))) 
+               | ((6U == (7U & (vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL 
+                                >> 0x10U))) & ((vlTOPp->top__DOT__mips__DOT__u_EX__DOT__f_rd1 
+                                                >> 0x1fU) 
+                                               | (0U 
+                                                  == vlTOPp->top__DOT__mips__DOT__u_EX__DOT__f_rd1))));
+    }
     vlSymsp->TOP__top__DOT__mips__DOT__i_mem_wb.WB_CTRL 
         = ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_controller.MEM_FLUSH)
             ? 0U : (IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_ex_mem.WB_CTRL));
@@ -601,10 +674,12 @@ VL_INLINE_OPT void Vtop::_sequent__TOP__3(Vtop__Syms* __restrict vlSymsp) {
                                                  << 0x10U)) 
                                              | (IData)(vlTOPp->top__DOT__mips__DOT__u_MEM__DOT__U_DREXT__DOT__half))
                                           : vlTOPp->top__DOT__mips__DOT__u_MEM__DOT__MEMout))
-                                  : (IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_ex_mem.MEM_DATA)))) 
-                << 5U) | (QData)((IData)((0x1fU & (IData)(
-                                                          (vlSymsp->TOP__top__DOT__mips__DOT__i_ex_mem.MEM_DATA 
-                                                           >> 0x20U))))));
+                                  : vlSymsp->TOP__top__DOT__mips__DOT__i_ex_mem.MEM_DATA[0U]))) 
+                << 5U) | (QData)((IData)((0x1fU & vlSymsp->TOP__top__DOT__mips__DOT__i_ex_mem.MEM_DATA[1U]))));
+    }
+    if ((1U & (~ (IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_controller.EX_FLUSH)))) {
+        vlSymsp->TOP__top__DOT__mips__DOT__i_ex_mem.branchCommitAtMEM 
+            = vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.branchCommitAtMEM;
     }
     vlTOPp->seg7_select = __Vdly__seg7_select;
     vlTOPp->top__DOT__u_BRIDGE__DOT__u_counter__DOT__cnt 
@@ -722,7 +797,7 @@ VL_INLINE_OPT void Vtop::_sequent__TOP__3(Vtop__Syms* __restrict vlSymsp) {
         ((0x3eU & (IData)(vlTOPp->top__DOT____Vcellout__u_BRIDGE__HWInt)) 
          | (0U == vlTOPp->top__DOT__u_BRIDGE__DOT__u_counter__DOT__cnt));
     vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.MEM_CTRL 
-        = ((~ (IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_stallDetect.stall)) 
+        = ((~ (IData)(vlTOPp->top__DOT__mips__DOT__u_Controller__DOT__ID_FLUSH)) 
            & (IData)(vlTOPp->top__DOT__mips__DOT__u_Controller__DOT__STORE));
     vlTOPp->top__DOT__u_BRIDGE__DOT__PrBE = vlTOPp->top__DOT__mips__DOT__u_EX__DOT__u_Access__DOT__be;
     vlTOPp->top__DOT__u_BRIDGE__DOT__u_seg7__DOT__newSeg 
@@ -742,67 +817,31 @@ VL_INLINE_OPT void Vtop::_sequent__TOP__3(Vtop__Syms* __restrict vlSymsp) {
         = (((QData)((IData)((1U & ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_mem_wb.WB_CTRL) 
                                    >> 4U)))) << 0x25U) 
            | vlSymsp->TOP__top__DOT__mips__DOT__i_mem_wb.WB_DATA);
-    vlSymsp->TOP__top__DOT__mips__DOT__i_ex_mem.WB_CTRL 
-        = ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_controller.EX_FLUSH)
-            ? 0U : (IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.WB_CTRL));
-    if ((1U & (~ (IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_controller.EX_FLUSH)))) {
-        vlSymsp->TOP__top__DOT__mips__DOT__i_ex_mem.MEM_DATA 
-            = (((QData)((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_stallDetect.EX_rw)) 
-                << 0x20U) | (QData)((IData)(((0x1000U 
-                                              & (IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL))
-                                              ? (1U 
-                                                 & (vlTOPp->top__DOT__mips__DOT__u_EX__DOT__ALUC 
-                                                    >> 0x1fU))
-                                              : ((0x800U 
-                                                  & (IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL))
-                                                  ? 
-                                                 (0xfffffffcU 
-                                                  & (vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_DATA[4U] 
-                                                     << 2U))
-                                                  : 
-                                                 ((0x8000U 
-                                                   & (IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL))
-                                                   ? 
-                                                  ((0xcU 
-                                                    == 
-                                                    (0x1fU 
-                                                     & (IData)(
-                                                               (vlSymsp->TOP__top__DOT__mips__DOT__i_cp0.EX_TO_CP0 
-                                                                >> 0x20U))))
-                                                    ? 
-                                                   (((IData)(vlTOPp->top__DOT__mips__DOT__u_CP0__DOT__IM) 
-                                                     << 0xaU) 
-                                                    | (((IData)(vlTOPp->top__DOT__mips__DOT__u_CP0__DOT__EXL) 
-                                                        << 1U) 
-                                                       | (IData)(vlTOPp->top__DOT__mips__DOT__u_CP0__DOT__IE)))
-                                                    : 
-                                                   ((0xdU 
-                                                     == 
-                                                     (0x1fU 
-                                                      & (IData)(
-                                                                (vlSymsp->TOP__top__DOT__mips__DOT__i_cp0.EX_TO_CP0 
-                                                                 >> 0x20U))))
-                                                     ? 
-                                                    ((IData)(vlTOPp->top__DOT__mips__DOT__u_CP0__DOT__hwint_pend) 
-                                                     << 0xaU)
-                                                     : 
-                                                    ((0xeU 
-                                                      == 
-                                                      (0x1fU 
-                                                       & (IData)(
-                                                                 (vlSymsp->TOP__top__DOT__mips__DOT__i_cp0.EX_TO_CP0 
-                                                                  >> 0x20U))))
-                                                      ? vlSymsp->TOP__top__DOT__mips__DOT__i_cp0.EPC
-                                                      : 
-                                                     ((0xfU 
-                                                       == 
-                                                       (0x1fU 
-                                                        & (IData)(
-                                                                  (vlSymsp->TOP__top__DOT__mips__DOT__i_cp0.EX_TO_CP0 
-                                                                   >> 0x20U))))
-                                                       ? vlTOPp->top__DOT__mips__DOT__u_CP0__DOT__PrID
-                                                       : 0U))))
-                                                   : vlTOPp->top__DOT__mips__DOT__u_EX__DOT__ALUC))))));
+    vlSymsp->TOP__top__DOT__mips__DOT__i_branchCorrect.correctAtMEM 
+        = ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_ex_mem.branchCommitAtMEM) 
+           & (~ (IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_ex_mem.memBranchAvail)));
+    if ((1U & (~ (IData)(vlTOPp->top__DOT__mips__DOT__u_Controller__DOT__ID_FLUSH)))) {
+        vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.branchCommitAtMEM 
+            = (((((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_stallDetect.ID_uncertainJump) 
+                  & (((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.WB_CTRL) 
+                      >> 3U) | ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.WB_CTRL) 
+                                >> 4U))) & (0U != (IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_stallDetect.EX_rw))) 
+                & (((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_stallDetect.EX_rw) 
+                    == (0x1fU & (IData)((vlSymsp->TOP__top__DOT__mips__DOT__i_if_id.ID_DATA 
+                                         >> 0x15U)))) 
+                   | ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_stallDetect.EX_rw) 
+                      == (0x1fU & (IData)((vlSymsp->TOP__top__DOT__mips__DOT__i_if_id.ID_DATA 
+                                           >> 0x10U)))))) 
+               | (((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_stallDetect.ID_uncertainJump) 
+                   & ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_ex_mem.WB_CTRL) 
+                      >> 3U)) & (((0x1fU & vlSymsp->TOP__top__DOT__mips__DOT__i_ex_mem.MEM_DATA[1U]) 
+                                  == (0x1fU & (IData)(
+                                                      (vlSymsp->TOP__top__DOT__mips__DOT__i_if_id.ID_DATA 
+                                                       >> 0x15U)))) 
+                                 | ((0x1fU & vlSymsp->TOP__top__DOT__mips__DOT__i_ex_mem.MEM_DATA[1U]) 
+                                    == (0x1fU & (IData)(
+                                                        (vlSymsp->TOP__top__DOT__mips__DOT__i_if_id.ID_DATA 
+                                                         >> 0x10U)))))));
     }
     vlTOPp->top__DOT__mips__DOT__u_ID__DOT__u_ID_FORWARD__DOT__WB_EN 
         = ((IData)((vlSymsp->TOP__top__DOT__mips__DOT__i_bypass.WB_BACK 
@@ -828,8 +867,142 @@ VL_INLINE_OPT void Vtop::_sequent__TOP__3(Vtop__Syms* __restrict vlSymsp) {
                                                        (0xffffffU 
                                                         & (vlTOPp->top__DOT__u_BRIDGE__DOT__PrAddr 
                                                            >> 6U))))));
+    vlSymsp->TOP__top__DOT__mips__DOT__i_ex_mem.WB_CTRL 
+        = ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_controller.EX_FLUSH)
+            ? 0U : (IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.WB_CTRL));
+    if ((1U & (~ (IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_controller.EX_FLUSH)))) {
+        __Vtemp6[0U] = (IData)((((QData)((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_stallDetect.EX_rw)) 
+                                 << 0x20U) | (QData)((IData)(
+                                                             ((0x1000U 
+                                                               & vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL)
+                                                               ? 
+                                                              (1U 
+                                                               & (vlTOPp->top__DOT__mips__DOT__u_EX__DOT__ALUC 
+                                                                  >> 0x1fU))
+                                                               : 
+                                                              ((0x800U 
+                                                                & vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL)
+                                                                ? 
+                                                               (0xfffffffcU 
+                                                                & (vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_DATA[4U] 
+                                                                   << 2U))
+                                                                : 
+                                                               ((0x8000U 
+                                                                 & vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL)
+                                                                 ? 
+                                                                ((0xcU 
+                                                                  == 
+                                                                  (0x1fU 
+                                                                   & (IData)(
+                                                                             (vlSymsp->TOP__top__DOT__mips__DOT__i_cp0.EX_TO_CP0 
+                                                                              >> 0x20U))))
+                                                                  ? 
+                                                                 (((IData)(vlTOPp->top__DOT__mips__DOT__u_CP0__DOT__IM) 
+                                                                   << 0xaU) 
+                                                                  | (((IData)(vlTOPp->top__DOT__mips__DOT__u_CP0__DOT__EXL) 
+                                                                      << 1U) 
+                                                                     | (IData)(vlTOPp->top__DOT__mips__DOT__u_CP0__DOT__IE)))
+                                                                  : 
+                                                                 ((0xdU 
+                                                                   == 
+                                                                   (0x1fU 
+                                                                    & (IData)(
+                                                                              (vlSymsp->TOP__top__DOT__mips__DOT__i_cp0.EX_TO_CP0 
+                                                                               >> 0x20U))))
+                                                                   ? 
+                                                                  ((IData)(vlTOPp->top__DOT__mips__DOT__u_CP0__DOT__hwint_pend) 
+                                                                   << 0xaU)
+                                                                   : 
+                                                                  ((0xeU 
+                                                                    == 
+                                                                    (0x1fU 
+                                                                     & (IData)(
+                                                                               (vlSymsp->TOP__top__DOT__mips__DOT__i_cp0.EX_TO_CP0 
+                                                                                >> 0x20U))))
+                                                                    ? vlSymsp->TOP__top__DOT__mips__DOT__i_cp0.EPC
+                                                                    : 
+                                                                   ((0xfU 
+                                                                     == 
+                                                                     (0x1fU 
+                                                                      & (IData)(
+                                                                                (vlSymsp->TOP__top__DOT__mips__DOT__i_cp0.EX_TO_CP0 
+                                                                                >> 0x20U))))
+                                                                     ? vlTOPp->top__DOT__mips__DOT__u_CP0__DOT__PrID
+                                                                     : 0U))))
+                                                                 : vlTOPp->top__DOT__mips__DOT__u_EX__DOT__ALUC)))))));
+        __Vtemp6[1U] = ((0xffffffe0U & (vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_DATA[4U] 
+                                        << 5U)) | (IData)(
+                                                          ((((QData)((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_stallDetect.EX_rw)) 
+                                                             << 0x20U) 
+                                                            | (QData)((IData)(
+                                                                              ((0x1000U 
+                                                                                & vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL)
+                                                                                ? 
+                                                                               (1U 
+                                                                                & (vlTOPp->top__DOT__mips__DOT__u_EX__DOT__ALUC 
+                                                                                >> 0x1fU))
+                                                                                : 
+                                                                               ((0x800U 
+                                                                                & vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL)
+                                                                                 ? 
+                                                                                (0xfffffffcU 
+                                                                                & (vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_DATA[4U] 
+                                                                                << 2U))
+                                                                                 : 
+                                                                                ((0x8000U 
+                                                                                & vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL)
+                                                                                 ? 
+                                                                                ((0xcU 
+                                                                                == 
+                                                                                (0x1fU 
+                                                                                & (IData)(
+                                                                                (vlSymsp->TOP__top__DOT__mips__DOT__i_cp0.EX_TO_CP0 
+                                                                                >> 0x20U))))
+                                                                                 ? 
+                                                                                (((IData)(vlTOPp->top__DOT__mips__DOT__u_CP0__DOT__IM) 
+                                                                                << 0xaU) 
+                                                                                | (((IData)(vlTOPp->top__DOT__mips__DOT__u_CP0__DOT__EXL) 
+                                                                                << 1U) 
+                                                                                | (IData)(vlTOPp->top__DOT__mips__DOT__u_CP0__DOT__IE)))
+                                                                                 : 
+                                                                                ((0xdU 
+                                                                                == 
+                                                                                (0x1fU 
+                                                                                & (IData)(
+                                                                                (vlSymsp->TOP__top__DOT__mips__DOT__i_cp0.EX_TO_CP0 
+                                                                                >> 0x20U))))
+                                                                                 ? 
+                                                                                ((IData)(vlTOPp->top__DOT__mips__DOT__u_CP0__DOT__hwint_pend) 
+                                                                                << 0xaU)
+                                                                                 : 
+                                                                                ((0xeU 
+                                                                                == 
+                                                                                (0x1fU 
+                                                                                & (IData)(
+                                                                                (vlSymsp->TOP__top__DOT__mips__DOT__i_cp0.EX_TO_CP0 
+                                                                                >> 0x20U))))
+                                                                                 ? vlSymsp->TOP__top__DOT__mips__DOT__i_cp0.EPC
+                                                                                 : 
+                                                                                ((0xfU 
+                                                                                == 
+                                                                                (0x1fU 
+                                                                                & (IData)(
+                                                                                (vlSymsp->TOP__top__DOT__mips__DOT__i_cp0.EX_TO_CP0 
+                                                                                >> 0x20U))))
+                                                                                 ? vlTOPp->top__DOT__mips__DOT__u_CP0__DOT__PrID
+                                                                                 : 0U))))
+                                                                                 : vlTOPp->top__DOT__mips__DOT__u_EX__DOT__ALUC)))))) 
+                                                           >> 0x20U)));
+        vlSymsp->TOP__top__DOT__mips__DOT__i_ex_mem.MEM_DATA[0U] 
+            = __Vtemp6[0U];
+        vlSymsp->TOP__top__DOT__mips__DOT__i_ex_mem.MEM_DATA[1U] 
+            = __Vtemp6[1U];
+        vlSymsp->TOP__top__DOT__mips__DOT__i_ex_mem.MEM_DATA[2U] 
+            = (7U & (vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_DATA[4U] 
+                     >> 0x1bU));
+    }
     vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.WB_CTRL 
-        = ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_stallDetect.stall)
+        = ((IData)(vlTOPp->top__DOT__mips__DOT__u_Controller__DOT__ID_FLUSH)
             ? 0U : ((((((((IData)(vlTOPp->top__DOT__mips__DOT__u_Controller__DOT__typeIA) 
                           | (IData)(vlTOPp->top__DOT__mips__DOT__u_Controller__DOT__typeR)) 
                          | (IData)(vlTOPp->top__DOT__mips__DOT__u_Controller__DOT__mfhi)) 
@@ -934,228 +1107,218 @@ VL_INLINE_OPT void Vtop::_sequent__TOP__3(Vtop__Syms* __restrict vlSymsp) {
                                       >> 0x20U)));
     }
     vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL 
-        = ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_stallDetect.stall)
-            ? 0U : ((((0x10U == (0x3fU & (IData)((vlSymsp->TOP__top__DOT__mips__DOT__i_if_id.ID_DATA 
-                                                  >> 0x1aU)))) 
-                      & (0U == (0x1fU & (IData)((vlSymsp->TOP__top__DOT__mips__DOT__i_if_id.ID_DATA 
-                                                 >> 0x15U))))) 
-                     << 0xfU) | ((((0x10U == (0x3fU 
+        = ((IData)(vlTOPp->top__DOT__mips__DOT__u_Controller__DOT__ID_FLUSH)
+            ? 0U : (((IData)(vlTOPp->top__DOT__mips__DOT__u_Controller__DOT__branchType) 
+                     << 0x10U) | ((((0x10U == (0x3fU 
+                                               & (IData)(
+                                                         (vlSymsp->TOP__top__DOT__mips__DOT__i_if_id.ID_DATA 
+                                                          >> 0x1aU)))) 
+                                    & (0U == (0x1fU 
                                               & (IData)(
                                                         (vlSymsp->TOP__top__DOT__mips__DOT__i_if_id.ID_DATA 
-                                                         >> 0x1aU)))) 
-                                   & (4U == (0x1fU 
-                                             & (IData)(
-                                                       (vlSymsp->TOP__top__DOT__mips__DOT__i_if_id.ID_DATA 
-                                                        >> 0x15U))))) 
-                                  << 0xeU) | ((((((IData)(vlTOPp->top__DOT__mips__DOT__u_Controller__DOT__typeR) 
-                                                  | (IData)(vlTOPp->top__DOT__mips__DOT__u_Controller__DOT__jalr)) 
-                                                 | (IData)(vlTOPp->top__DOT__mips__DOT__u_Controller__DOT__mfhi)) 
-                                                | (IData)(vlTOPp->top__DOT__mips__DOT__u_Controller__DOT__mflo)) 
-                                               << 0xdU) 
-                                              | ((((IData)(vlTOPp->top__DOT__mips__DOT__u_Controller__DOT__slt) 
-                                                   | (0xaU 
-                                                      == 
-                                                      (0x3fU 
-                                                       & (IData)(
-                                                                 (vlSymsp->TOP__top__DOT__mips__DOT__i_if_id.ID_DATA 
-                                                                  >> 0x1aU))))) 
-                                                  << 0xcU) 
-                                                 | (((IData)(vlTOPp->top__DOT__mips__DOT__u_Controller__DOT__savePC) 
-                                                     << 0xbU) 
-                                                    | (((((IData)(vlTOPp->top__DOT__mips__DOT__u_Controller__DOT__typeIA) 
-                                                          | (IData)(vlTOPp->top__DOT__mips__DOT__u_Controller__DOT__LOAD)) 
-                                                         | (IData)(vlTOPp->top__DOT__mips__DOT__u_Controller__DOT__STORE)) 
-                                                        << 0xaU) 
-                                                       | ((((IData)(vlTOPp->top__DOT__mips__DOT__u_Controller__DOT__sll)
-                                                             ? 0U
-                                                             : 
-                                                            ((((IData)(vlTOPp->top__DOT__mips__DOT__u_Controller__DOT__OR) 
-                                                               | (0xdU 
-                                                                  == 
-                                                                  (0x3fU 
-                                                                   & (IData)(
-                                                                             (vlSymsp->TOP__top__DOT__mips__DOT__i_if_id.ID_DATA 
-                                                                              >> 0x1aU))))) 
-                                                              | (0xfU 
-                                                                 == 
-                                                                 (0x3fU 
-                                                                  & (IData)(
-                                                                            (vlSymsp->TOP__top__DOT__mips__DOT__i_if_id.ID_DATA 
-                                                                             >> 0x1aU)))))
-                                                              ? 1U
-                                                              : 
-                                                             (((((((IData)(vlTOPp->top__DOT__mips__DOT__u_Controller__DOT__sub) 
-                                                                   | (IData)(vlTOPp->top__DOT__mips__DOT__u_Controller__DOT__subu)) 
-                                                                  | (IData)(vlTOPp->top__DOT__mips__DOT__u_Controller__DOT__slt)) 
-                                                                 | (0xaU 
-                                                                    == 
-                                                                    (0x3fU 
-                                                                     & (IData)(
-                                                                               (vlSymsp->TOP__top__DOT__mips__DOT__i_if_id.ID_DATA 
-                                                                                >> 0x1aU))))) 
-                                                                | (4U 
-                                                                   == 
-                                                                   (0x3fU 
-                                                                    & (IData)(
-                                                                              (vlSymsp->TOP__top__DOT__mips__DOT__i_if_id.ID_DATA 
-                                                                               >> 0x1aU))))) 
-                                                               | (5U 
-                                                                  == 
-                                                                  (0x3fU 
-                                                                   & (IData)(
-                                                                             (vlSymsp->TOP__top__DOT__mips__DOT__i_if_id.ID_DATA 
-                                                                              >> 0x1aU)))))
-                                                               ? 2U
-                                                               : 
-                                                              (((((((IData)(vlTOPp->top__DOT__mips__DOT__u_Controller__DOT__add) 
-                                                                    | (IData)(vlTOPp->top__DOT__mips__DOT__u_Controller__DOT__addu)) 
-                                                                   | (8U 
+                                                         >> 0x15U))))) 
+                                   << 0xfU) | ((((0x10U 
+                                                  == 
+                                                  (0x3fU 
+                                                   & (IData)(
+                                                             (vlSymsp->TOP__top__DOT__mips__DOT__i_if_id.ID_DATA 
+                                                              >> 0x1aU)))) 
+                                                 & (4U 
+                                                    == 
+                                                    (0x1fU 
+                                                     & (IData)(
+                                                               (vlSymsp->TOP__top__DOT__mips__DOT__i_if_id.ID_DATA 
+                                                                >> 0x15U))))) 
+                                                << 0xeU) 
+                                               | ((((((IData)(vlTOPp->top__DOT__mips__DOT__u_Controller__DOT__typeR) 
+                                                      | (IData)(vlTOPp->top__DOT__mips__DOT__u_Controller__DOT__jalr)) 
+                                                     | (IData)(vlTOPp->top__DOT__mips__DOT__u_Controller__DOT__mfhi)) 
+                                                    | (IData)(vlTOPp->top__DOT__mips__DOT__u_Controller__DOT__mflo)) 
+                                                   << 0xdU) 
+                                                  | ((((IData)(vlTOPp->top__DOT__mips__DOT__u_Controller__DOT__slt) 
+                                                       | (0xaU 
+                                                          == 
+                                                          (0x3fU 
+                                                           & (IData)(
+                                                                     (vlSymsp->TOP__top__DOT__mips__DOT__i_if_id.ID_DATA 
+                                                                      >> 0x1aU))))) 
+                                                      << 0xcU) 
+                                                     | (((IData)(vlTOPp->top__DOT__mips__DOT__u_Controller__DOT__savePC) 
+                                                         << 0xbU) 
+                                                        | (((((IData)(vlTOPp->top__DOT__mips__DOT__u_Controller__DOT__typeIA) 
+                                                              | (IData)(vlTOPp->top__DOT__mips__DOT__u_Controller__DOT__LOAD)) 
+                                                             | (IData)(vlTOPp->top__DOT__mips__DOT__u_Controller__DOT__STORE)) 
+                                                            << 0xaU) 
+                                                           | ((((IData)(vlTOPp->top__DOT__mips__DOT__u_Controller__DOT__sll)
+                                                                 ? 0U
+                                                                 : 
+                                                                ((((IData)(vlTOPp->top__DOT__mips__DOT__u_Controller__DOT__OR) 
+                                                                   | (0xdU 
                                                                       == 
                                                                       (0x3fU 
                                                                        & (IData)(
                                                                                 (vlSymsp->TOP__top__DOT__mips__DOT__i_if_id.ID_DATA 
                                                                                 >> 0x1aU))))) 
-                                                                  | (9U 
+                                                                  | (0xfU 
                                                                      == 
                                                                      (0x3fU 
                                                                       & (IData)(
+                                                                                (vlSymsp->TOP__top__DOT__mips__DOT__i_if_id.ID_DATA 
+                                                                                >> 0x1aU)))))
+                                                                  ? 1U
+                                                                  : 
+                                                                 (((((((IData)(vlTOPp->top__DOT__mips__DOT__u_Controller__DOT__sub) 
+                                                                       | (IData)(vlTOPp->top__DOT__mips__DOT__u_Controller__DOT__subu)) 
+                                                                      | (IData)(vlTOPp->top__DOT__mips__DOT__u_Controller__DOT__slt)) 
+                                                                     | (0xaU 
+                                                                        == 
+                                                                        (0x3fU 
+                                                                         & (IData)(
                                                                                 (vlSymsp->TOP__top__DOT__mips__DOT__i_if_id.ID_DATA 
                                                                                 >> 0x1aU))))) 
-                                                                 | (IData)(vlTOPp->top__DOT__mips__DOT__u_Controller__DOT__LOAD)) 
-                                                                | (IData)(vlTOPp->top__DOT__mips__DOT__u_Controller__DOT__STORE))
-                                                                ? 3U
-                                                                : 
-                                                               (((IData)(vlTOPp->top__DOT__mips__DOT__u_Controller__DOT__AND) 
-                                                                 | (0xcU 
-                                                                    == 
-                                                                    (0x3fU 
-                                                                     & (IData)(
-                                                                               (vlSymsp->TOP__top__DOT__mips__DOT__i_if_id.ID_DATA 
-                                                                                >> 0x1aU)))))
-                                                                 ? 4U
-                                                                 : 
-                                                                (((IData)(vlTOPp->top__DOT__mips__DOT__u_Controller__DOT__XOR) 
-                                                                  | (0xeU 
-                                                                     == 
-                                                                     (0x3fU 
-                                                                      & (IData)(
-                                                                                (vlSymsp->TOP__top__DOT__mips__DOT__i_if_id.ID_DATA 
-                                                                                >> 0x1aU)))))
-                                                                  ? 5U
-                                                                  : 
-                                                                 ((IData)(vlTOPp->top__DOT__mips__DOT__u_Controller__DOT__NOR)
-                                                                   ? 6U
-                                                                   : 
-                                                                  ((IData)(vlTOPp->top__DOT__mips__DOT__u_Controller__DOT__srl)
-                                                                    ? 7U
-                                                                    : 
-                                                                   ((IData)(vlTOPp->top__DOT__mips__DOT__u_Controller__DOT__sra)
-                                                                     ? 8U
-                                                                     : 
-                                                                    ((IData)(vlTOPp->top__DOT__mips__DOT__u_Controller__DOT__sllv)
-                                                                      ? 9U
-                                                                      : 
-                                                                     ((IData)(vlTOPp->top__DOT__mips__DOT__u_Controller__DOT__srlv)
-                                                                       ? 0xaU
-                                                                       : 
-                                                                      ((IData)(vlTOPp->top__DOT__mips__DOT__u_Controller__DOT__srav)
-                                                                        ? 0xbU
-                                                                        : 
-                                                                       (((((7U 
-                                                                            == 
-                                                                            (0x3fU 
-                                                                             & (IData)(
-                                                                                (vlSymsp->TOP__top__DOT__mips__DOT__i_if_id.ID_DATA 
-                                                                                >> 0x1aU)))) 
-                                                                           | (IData)(vlTOPp->top__DOT__mips__DOT__u_Controller__DOT__bltz)) 
-                                                                          | (IData)(vlTOPp->top__DOT__mips__DOT__u_Controller__DOT__bgez)) 
-                                                                         | (6U 
-                                                                            == 
-                                                                            (0x3fU 
-                                                                             & (IData)(
-                                                                                (vlSymsp->TOP__top__DOT__mips__DOT__i_if_id.ID_DATA 
-                                                                                >> 0x1aU)))))
-                                                                         ? 0xcU
-                                                                         : 0U))))))))))))) 
-                                                           << 6U) 
-                                                          | ((((IData)(vlTOPp->top__DOT__mips__DOT__u_Controller__DOT__mult) 
-                                                               | (IData)(vlTOPp->top__DOT__mips__DOT__u_Controller__DOT__div)) 
-                                                              << 5U) 
-                                                             | (((((0U 
-                                                                    == 
-                                                                    (0x3fU 
-                                                                     & (IData)(
-                                                                               (vlSymsp->TOP__top__DOT__mips__DOT__i_if_id.ID_DATA 
-                                                                                >> 0x1aU)))) 
-                                                                   & (0x11U 
-                                                                      == 
-                                                                      (0x3fU 
-                                                                       & (IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_if_id.ID_DATA))))
-                                                                   ? 1U
-                                                                   : 
-                                                                  (((0U 
-                                                                     == 
-                                                                     (0x3fU 
-                                                                      & (IData)(
-                                                                                (vlSymsp->TOP__top__DOT__mips__DOT__i_if_id.ID_DATA 
-                                                                                >> 0x1aU)))) 
-                                                                    & (0x13U 
+                                                                    | (4U 
                                                                        == 
                                                                        (0x3fU 
-                                                                        & (IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_if_id.ID_DATA))))
-                                                                    ? 2U
+                                                                        & (IData)(
+                                                                                (vlSymsp->TOP__top__DOT__mips__DOT__i_if_id.ID_DATA 
+                                                                                >> 0x1aU))))) 
+                                                                   | (5U 
+                                                                      == 
+                                                                      (0x3fU 
+                                                                       & (IData)(
+                                                                                (vlSymsp->TOP__top__DOT__mips__DOT__i_if_id.ID_DATA 
+                                                                                >> 0x1aU)))))
+                                                                   ? 2U
+                                                                   : 
+                                                                  (((((((IData)(vlTOPp->top__DOT__mips__DOT__u_Controller__DOT__add) 
+                                                                        | (IData)(vlTOPp->top__DOT__mips__DOT__u_Controller__DOT__addu)) 
+                                                                       | (8U 
+                                                                          == 
+                                                                          (0x3fU 
+                                                                           & (IData)(
+                                                                                (vlSymsp->TOP__top__DOT__mips__DOT__i_if_id.ID_DATA 
+                                                                                >> 0x1aU))))) 
+                                                                      | (9U 
+                                                                         == 
+                                                                         (0x3fU 
+                                                                          & (IData)(
+                                                                                (vlSymsp->TOP__top__DOT__mips__DOT__i_if_id.ID_DATA 
+                                                                                >> 0x1aU))))) 
+                                                                     | (IData)(vlTOPp->top__DOT__mips__DOT__u_Controller__DOT__LOAD)) 
+                                                                    | (IData)(vlTOPp->top__DOT__mips__DOT__u_Controller__DOT__STORE))
+                                                                    ? 3U
                                                                     : 
-                                                                   (((IData)(vlTOPp->top__DOT__mips__DOT__u_Controller__DOT__mult) 
-                                                                     | ((0U 
+                                                                   (((IData)(vlTOPp->top__DOT__mips__DOT__u_Controller__DOT__AND) 
+                                                                     | (0xcU 
+                                                                        == 
+                                                                        (0x3fU 
+                                                                         & (IData)(
+                                                                                (vlSymsp->TOP__top__DOT__mips__DOT__i_if_id.ID_DATA 
+                                                                                >> 0x1aU)))))
+                                                                     ? 4U
+                                                                     : 
+                                                                    (((IData)(vlTOPp->top__DOT__mips__DOT__u_Controller__DOT__XOR) 
+                                                                      | (0xeU 
+                                                                         == 
+                                                                         (0x3fU 
+                                                                          & (IData)(
+                                                                                (vlSymsp->TOP__top__DOT__mips__DOT__i_if_id.ID_DATA 
+                                                                                >> 0x1aU)))))
+                                                                      ? 5U
+                                                                      : 
+                                                                     ((IData)(vlTOPp->top__DOT__mips__DOT__u_Controller__DOT__NOR)
+                                                                       ? 6U
+                                                                       : 
+                                                                      ((IData)(vlTOPp->top__DOT__mips__DOT__u_Controller__DOT__srl)
+                                                                        ? 7U
+                                                                        : 
+                                                                       ((IData)(vlTOPp->top__DOT__mips__DOT__u_Controller__DOT__sra)
+                                                                         ? 8U
+                                                                         : 
+                                                                        ((IData)(vlTOPp->top__DOT__mips__DOT__u_Controller__DOT__sllv)
+                                                                          ? 9U
+                                                                          : 
+                                                                         ((IData)(vlTOPp->top__DOT__mips__DOT__u_Controller__DOT__srlv)
+                                                                           ? 0xaU
+                                                                           : 
+                                                                          ((IData)(vlTOPp->top__DOT__mips__DOT__u_Controller__DOT__srav)
+                                                                            ? 0xbU
+                                                                            : 
+                                                                           (((((7U 
+                                                                                == 
+                                                                                (0x3fU 
+                                                                                & (IData)(
+                                                                                (vlSymsp->TOP__top__DOT__mips__DOT__i_if_id.ID_DATA 
+                                                                                >> 0x1aU)))) 
+                                                                               | (IData)(vlTOPp->top__DOT__mips__DOT__u_Controller__DOT__bltz)) 
+                                                                              | (IData)(vlTOPp->top__DOT__mips__DOT__u_Controller__DOT__bgez)) 
+                                                                             | (6U 
+                                                                                == 
+                                                                                (0x3fU 
+                                                                                & (IData)(
+                                                                                (vlSymsp->TOP__top__DOT__mips__DOT__i_if_id.ID_DATA 
+                                                                                >> 0x1aU)))))
+                                                                             ? 0xcU
+                                                                             : 0U))))))))))))) 
+                                                               << 6U) 
+                                                              | ((((IData)(vlTOPp->top__DOT__mips__DOT__u_Controller__DOT__mult) 
+                                                                   | (IData)(vlTOPp->top__DOT__mips__DOT__u_Controller__DOT__div)) 
+                                                                  << 5U) 
+                                                                 | (((((0U 
+                                                                        == 
+                                                                        (0x3fU 
+                                                                         & (IData)(
+                                                                                (vlSymsp->TOP__top__DOT__mips__DOT__i_if_id.ID_DATA 
+                                                                                >> 0x1aU)))) 
+                                                                       & (0x11U 
+                                                                          == 
+                                                                          (0x3fU 
+                                                                           & (IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_if_id.ID_DATA))))
+                                                                       ? 1U
+                                                                       : 
+                                                                      (((0U 
                                                                          == 
                                                                          (0x3fU 
                                                                           & (IData)(
                                                                                 (vlSymsp->TOP__top__DOT__mips__DOT__i_if_id.ID_DATA 
                                                                                 >> 0x1aU)))) 
-                                                                        & (0x19U 
+                                                                        & (0x13U 
                                                                            == 
                                                                            (0x3fU 
-                                                                            & (IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_if_id.ID_DATA)))))
-                                                                     ? 3U
-                                                                     : 
-                                                                    (((IData)(vlTOPp->top__DOT__mips__DOT__u_Controller__DOT__div) 
-                                                                      | ((0U 
-                                                                          == 
-                                                                          (0x3fU 
-                                                                           & (IData)(
+                                                                            & (IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_if_id.ID_DATA))))
+                                                                        ? 2U
+                                                                        : 
+                                                                       (((IData)(vlTOPp->top__DOT__mips__DOT__u_Controller__DOT__mult) 
+                                                                         | ((0U 
+                                                                             == 
+                                                                             (0x3fU 
+                                                                              & (IData)(
                                                                                 (vlSymsp->TOP__top__DOT__mips__DOT__i_if_id.ID_DATA 
                                                                                 >> 0x1aU)))) 
-                                                                         & (0x1bU 
-                                                                            == 
-                                                                            (0x3fU 
-                                                                             & (IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_if_id.ID_DATA)))))
-                                                                      ? 4U
-                                                                      : 0U)))) 
-                                                                 << 2U) 
-                                                                | (((IData)(vlTOPp->top__DOT__mips__DOT__u_Controller__DOT__mfhi) 
-                                                                    << 1U) 
-                                                                   | (IData)(vlTOPp->top__DOT__mips__DOT__u_Controller__DOT__mflo))))))))))));
-    vlTOPp->top__DOT__mips__DOT__u_MEM__DOT__MEMout 
-        = ((0x3000U > (0xffffU & (IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_ex_mem.MEM_DATA)))
-            ? vlTOPp->top__DOT__mips__DOT__u_EX__DOT____Vcellout__u_Access__DMout
-            : ((0x7fU == (0xffffffU & (vlTOPp->top__DOT__u_BRIDGE__DOT__PrAddr 
-                                       >> 6U))) ? vlTOPp->top__DOT__u_BRIDGE__DOT__DEV0_RD
-                : ((0x80U == (0xffffffU & (vlTOPp->top__DOT__u_BRIDGE__DOT__PrAddr 
-                                           >> 6U)))
-                    ? vlTOPp->top__DOT__u_BRIDGE__DOT__DEV1_RD
-                    : ((0x81U == (0xffffffU & (vlTOPp->top__DOT__u_BRIDGE__DOT__PrAddr 
-                                               >> 6U)))
-                        ? vlTOPp->top__DOT__u_BRIDGE__DOT__u_seg7__DOT__ram
-                       [(1U & vlTOPp->top__DOT__u_BRIDGE__DOT__PrAddr)]
-                        : 0U))));
-    vlSymsp->TOP__top__DOT__mips__DOT__i_bypass.MEM_BACK 
-        = (((QData)((IData)((1U & ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_ex_mem.WB_CTRL) 
-                                   >> 4U)))) << 0x25U) 
-           | (((QData)((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_ex_mem.MEM_DATA)) 
-               << 5U) | (QData)((IData)((0x1fU & (IData)(
-                                                         (vlSymsp->TOP__top__DOT__mips__DOT__i_ex_mem.MEM_DATA 
-                                                          >> 0x20U)))))));
-    if ((1U & (~ (IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_stallDetect.stall)))) {
+                                                                            & (0x19U 
+                                                                               == 
+                                                                               (0x3fU 
+                                                                                & (IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_if_id.ID_DATA)))))
+                                                                         ? 3U
+                                                                         : 
+                                                                        (((IData)(vlTOPp->top__DOT__mips__DOT__u_Controller__DOT__div) 
+                                                                          | ((0U 
+                                                                              == 
+                                                                              (0x3fU 
+                                                                               & (IData)(
+                                                                                (vlSymsp->TOP__top__DOT__mips__DOT__i_if_id.ID_DATA 
+                                                                                >> 0x1aU)))) 
+                                                                             & (0x1bU 
+                                                                                == 
+                                                                                (0x3fU 
+                                                                                & (IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_if_id.ID_DATA)))))
+                                                                          ? 4U
+                                                                          : 0U)))) 
+                                                                     << 2U) 
+                                                                    | (((IData)(vlTOPp->top__DOT__mips__DOT__u_Controller__DOT__mfhi) 
+                                                                        << 1U) 
+                                                                       | (IData)(vlTOPp->top__DOT__mips__DOT__u_Controller__DOT__mflo)))))))))))));
+    if ((1U & (~ (IData)(vlTOPp->top__DOT__mips__DOT__u_Controller__DOT__ID_FLUSH)))) {
         vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_DATA[0U] 
             = ((1U & (IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_controller.ID_CTRL))
                 ? ((0xffff0000U & (VL_NEGATE_I((IData)(
@@ -1182,13 +1345,31 @@ VL_INLINE_OPT void Vtop::_sequent__TOP__3(Vtop__Syms* __restrict vlSymsp) {
             = (0x3fffffffU & (IData)((vlSymsp->TOP__top__DOT__mips__DOT__i_if_id.ID_DATA 
                                       >> 0x20U)));
     }
+    vlTOPp->top__DOT__mips__DOT__u_MEM__DOT__MEMout 
+        = ((0x3000U > (0xffffU & vlSymsp->TOP__top__DOT__mips__DOT__i_ex_mem.MEM_DATA[0U]))
+            ? vlTOPp->top__DOT__mips__DOT__u_EX__DOT____Vcellout__u_Access__DMout
+            : ((0x7fU == (0xffffffU & (vlTOPp->top__DOT__u_BRIDGE__DOT__PrAddr 
+                                       >> 6U))) ? vlTOPp->top__DOT__u_BRIDGE__DOT__DEV0_RD
+                : ((0x80U == (0xffffffU & (vlTOPp->top__DOT__u_BRIDGE__DOT__PrAddr 
+                                           >> 6U)))
+                    ? vlTOPp->top__DOT__u_BRIDGE__DOT__DEV1_RD
+                    : ((0x81U == (0xffffffU & (vlTOPp->top__DOT__u_BRIDGE__DOT__PrAddr 
+                                               >> 6U)))
+                        ? vlTOPp->top__DOT__u_BRIDGE__DOT__u_seg7__DOT__ram
+                       [(1U & vlTOPp->top__DOT__u_BRIDGE__DOT__PrAddr)]
+                        : 0U))));
+    vlSymsp->TOP__top__DOT__mips__DOT__i_bypass.MEM_BACK 
+        = (((QData)((IData)((1U & ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_ex_mem.WB_CTRL) 
+                                   >> 4U)))) << 0x25U) 
+           | (((QData)((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_ex_mem.MEM_DATA[0U])) 
+               << 5U) | (QData)((IData)((0x1fU & vlSymsp->TOP__top__DOT__mips__DOT__i_ex_mem.MEM_DATA[1U])))));
     vlTOPp->top__DOT__mips__DOT__u_MEM__DOT__U_DREXT__DOT___byte 
         = (0xffU & (vlTOPp->top__DOT__mips__DOT__u_MEM__DOT__MEMout 
-                    >> (0x18U & ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_ex_mem.MEM_DATA) 
+                    >> (0x18U & (vlSymsp->TOP__top__DOT__mips__DOT__i_ex_mem.MEM_DATA[0U] 
                                  << 3U))));
     vlTOPp->top__DOT__mips__DOT__u_MEM__DOT__U_DREXT__DOT__half 
         = (0xffffU & (vlTOPp->top__DOT__mips__DOT__u_MEM__DOT__MEMout 
-                      >> (0x18U & ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_ex_mem.MEM_DATA) 
+                      >> (0x18U & (vlSymsp->TOP__top__DOT__mips__DOT__i_ex_mem.MEM_DATA[0U] 
                                    << 3U))));
     vlTOPp->top__DOT__mips__DOT__u_ID__DOT__u_ID_FORWARD__DOT__MEM_EN 
         = ((IData)((vlSymsp->TOP__top__DOT__mips__DOT__i_bypass.MEM_BACK 
@@ -1200,11 +1381,15 @@ VL_INLINE_OPT void Vtop::_sequent__TOP__3(Vtop__Syms* __restrict vlSymsp) {
         vlTOPp->top__DOT__mips__DOT__u_CP0__DOT__hwint_pend 
             = vlTOPp->top__DOT____Vcellout__u_BRIDGE__HWInt;
     }
+    vlSymsp->TOP__top__DOT__mips__DOT__i_branchCorrect.correctAtEX 
+        = (((~ (IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.branchCommitAtMEM)) 
+            & (0U != (7U & (vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL 
+                            >> 0x10U)))) & (~ (IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.exBranchAvail)));
     vlSymsp->TOP__top__DOT__mips__DOT__i_stallDetect.EX_rw 
-        = ((1U & (((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL) 
-                   >> 0xbU) & (~ ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL) 
+        = ((1U & ((vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL 
+                   >> 0xbU) & (~ (vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL 
                                   >> 0xdU)))) ? 0x1fU
-            : (0x1fU & ((0x2000U & (IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL))
+            : (0x1fU & ((0x2000U & vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL)
                          ? ((vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_DATA[4U] 
                              << 0x15U) | (vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_DATA[3U] 
                                           >> 0xbU))
@@ -1255,8 +1440,11 @@ VL_INLINE_OPT void Vtop::_sequent__TOP__3(Vtop__Syms* __restrict vlSymsp) {
          | (VL_NEGATE_I((IData)((1U & ((~ (IData)(vlTOPp->top__DOT__mips__DOT__u_EX__DOT__u_EX_FORWARD__DOT__BFromMEM)) 
                                        & (~ (IData)(vlTOPp->top__DOT__mips__DOT__u_EX__DOT__u_EX_FORWARD__DOT__BFromWB)))))) 
             & vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_DATA[1U]));
+    vlTOPp->top__DOT__mips__DOT__u_EX__DOT__u_BRANCH__DOT__eq 
+        = (vlTOPp->top__DOT__mips__DOT__u_EX__DOT__f_rd1 
+           == vlTOPp->top__DOT__mips__DOT__u_EX__DOT__f_rd2);
     vlSymsp->TOP__top__DOT__mips__DOT__i_cp0.EX_TO_CP0 
-        = (((QData)((IData)((1U & ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL) 
+        = (((QData)((IData)((1U & (vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL 
                                    >> 0xeU)))) << 0x25U) 
            | (((QData)((IData)((0x1fU & ((vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_DATA[4U] 
                                           << 0x15U) 
@@ -1264,54 +1452,54 @@ VL_INLINE_OPT void Vtop::_sequent__TOP__3(Vtop__Syms* __restrict vlSymsp) {
                                             >> 0xbU))))) 
                << 0x20U) | (QData)((IData)(vlTOPp->top__DOT__mips__DOT__u_EX__DOT__f_rd2))));
     vlTOPp->top__DOT__mips__DOT__u_EX__DOT__ALUB = 
-        ((0x400U & (IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL))
+        ((0x400U & vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL)
           ? vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_DATA[0U]
           : vlTOPp->top__DOT__mips__DOT__u_EX__DOT__f_rd2);
     vlTOPp->top__DOT__mips__DOT__u_EX__DOT__ALUC = 
-        (((((((((0U == (0xfU & ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL) 
+        (((((((((0U == (0xfU & (vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL 
                                 >> 6U))) | (1U == (0xfU 
-                                                   & ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL) 
+                                                   & (vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL 
                                                       >> 6U)))) 
-               | (2U == (0xfU & ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL) 
+               | (2U == (0xfU & (vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL 
                                  >> 6U)))) | (3U == 
                                               (0xfU 
-                                               & ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL) 
+                                               & (vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL 
                                                   >> 6U)))) 
-             | (4U == (0xfU & ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL) 
+             | (4U == (0xfU & (vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL 
                                >> 6U)))) | (5U == (0xfU 
-                                                   & ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL) 
+                                                   & (vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL 
                                                       >> 6U)))) 
-           | (6U == (0xfU & ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL) 
+           | (6U == (0xfU & (vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL 
                              >> 6U)))) | (7U == (0xfU 
-                                                 & ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL) 
+                                                 & (vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL 
                                                     >> 6U))))
-          ? ((0U == (0xfU & ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL) 
+          ? ((0U == (0xfU & (vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL 
                              >> 6U))) ? (vlTOPp->top__DOT__mips__DOT__u_EX__DOT__ALUB 
                                          << (0x1fU 
                                              & ((vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_DATA[4U] 
                                                  << 0x1aU) 
                                                 | (vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_DATA[3U] 
                                                    >> 6U))))
-              : ((1U == (0xfU & ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL) 
+              : ((1U == (0xfU & (vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL 
                                  >> 6U))) ? (vlTOPp->top__DOT__mips__DOT__u_EX__DOT__f_rd1 
                                              | vlTOPp->top__DOT__mips__DOT__u_EX__DOT__ALUB)
-                  : ((2U == (0xfU & ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL) 
+                  : ((2U == (0xfU & (vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL 
                                      >> 6U))) ? (vlTOPp->top__DOT__mips__DOT__u_EX__DOT__f_rd1 
                                                  - vlTOPp->top__DOT__mips__DOT__u_EX__DOT__ALUB)
-                      : ((3U == (0xfU & ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL) 
+                      : ((3U == (0xfU & (vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL 
                                          >> 6U))) ? 
                          (vlTOPp->top__DOT__mips__DOT__u_EX__DOT__f_rd1 
                           + vlTOPp->top__DOT__mips__DOT__u_EX__DOT__ALUB)
-                          : ((4U == (0xfU & ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL) 
+                          : ((4U == (0xfU & (vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL 
                                              >> 6U)))
                               ? (vlTOPp->top__DOT__mips__DOT__u_EX__DOT__f_rd1 
                                  & vlTOPp->top__DOT__mips__DOT__u_EX__DOT__ALUB)
-                              : ((5U == (0xfU & ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL) 
+                              : ((5U == (0xfU & (vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL 
                                                  >> 6U)))
                                   ? (vlTOPp->top__DOT__mips__DOT__u_EX__DOT__f_rd1 
                                      ^ vlTOPp->top__DOT__mips__DOT__u_EX__DOT__ALUB)
                                   : ((6U == (0xfU & 
-                                             ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL) 
+                                             (vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL 
                                               >> 6U)))
                                       ? (~ (vlTOPp->top__DOT__mips__DOT__u_EX__DOT__f_rd1 
                                             | vlTOPp->top__DOT__mips__DOT__u_EX__DOT__ALUB))
@@ -1321,20 +1509,20 @@ VL_INLINE_OPT void Vtop::_sequent__TOP__3(Vtop__Syms* __restrict vlSymsp) {
                                                  << 0x1aU) 
                                                 | (vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_DATA[3U] 
                                                    >> 6U)))))))))))
-          : ((8U == (0xfU & ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL) 
+          : ((8U == (0xfU & (vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL 
                              >> 6U))) ? VL_SHIFTRS_III(32,32,5, vlTOPp->top__DOT__mips__DOT__u_EX__DOT__ALUB, 
                                                        (0x1fU 
                                                         & ((vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_DATA[4U] 
                                                             << 0x1aU) 
                                                            | (vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_DATA[3U] 
                                                               >> 6U))))
-              : ((9U == (0xfU & ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL) 
+              : ((9U == (0xfU & (vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL 
                                  >> 6U))) ? ((0x1fU 
                                               >= vlTOPp->top__DOT__mips__DOT__u_EX__DOT__f_rd1)
                                               ? (vlTOPp->top__DOT__mips__DOT__u_EX__DOT__ALUB 
                                                  << vlTOPp->top__DOT__mips__DOT__u_EX__DOT__f_rd1)
                                               : 0U)
-                  : ((0xaU == (0xfU & ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL) 
+                  : ((0xaU == (0xfU & (vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL 
                                        >> 6U))) ? (
                                                    (0x1fU 
                                                     >= vlTOPp->top__DOT__mips__DOT__u_EX__DOT__f_rd1)
@@ -1342,13 +1530,13 @@ VL_INLINE_OPT void Vtop::_sequent__TOP__3(Vtop__Syms* __restrict vlSymsp) {
                                                    (vlTOPp->top__DOT__mips__DOT__u_EX__DOT__ALUB 
                                                     >> vlTOPp->top__DOT__mips__DOT__u_EX__DOT__f_rd1)
                                                     : 0U)
-                      : ((0xbU == (0xfU & ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL) 
+                      : ((0xbU == (0xfU & (vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL 
                                            >> 6U)))
                           ? ((0x1fU >= vlTOPp->top__DOT__mips__DOT__u_EX__DOT__f_rd1)
                               ? VL_SHIFTRS_III(32,32,32, vlTOPp->top__DOT__mips__DOT__u_EX__DOT__ALUB, vlTOPp->top__DOT__mips__DOT__u_EX__DOT__f_rd1)
                               : VL_NEGATE_I((vlTOPp->top__DOT__mips__DOT__u_EX__DOT__ALUB 
                                              >> 0x1fU)))
-                          : ((0xcU == (0xfU & ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL) 
+                          : ((0xcU == (0xfU & (vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL 
                                                >> 6U)))
                               ? vlTOPp->top__DOT__mips__DOT__u_EX__DOT__f_rd1
                               : 0U))))));
@@ -1376,6 +1564,9 @@ void Vtop::_settle__TOP__4(Vtop__Syms* __restrict vlSymsp) {
     VL_DEBUG_IF(VL_DBG_MSGF("+    Vtop::_settle__TOP__4\n"); );
     Vtop* __restrict vlTOPp VL_ATTR_UNUSED = vlSymsp->TOPp;
     // Body
+    vlSymsp->TOP__top__DOT__mips__DOT__i_branchCorrect.correctAtMEM 
+        = ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_ex_mem.branchCommitAtMEM) 
+           & (~ (IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_ex_mem.memBranchAvail)));
     vlTOPp->top__DOT__u_BRIDGE__DOT__WeDEV = (VL_NEGATE_I((IData)((IData)(vlTOPp->top__DOT__u_BRIDGE__DOT__WeCPU))) 
                                               & (((0x81U 
                                                    == 
@@ -1412,11 +1603,14 @@ void Vtop::_settle__TOP__4(Vtop__Syms* __restrict vlSymsp) {
     vlTOPp->top__DOT____Vcellout__u_BRIDGE__HWInt = 
         ((0x3eU & (IData)(vlTOPp->top__DOT____Vcellout__u_BRIDGE__HWInt)) 
          | (0U == vlTOPp->top__DOT__u_BRIDGE__DOT__u_counter__DOT__cnt));
+    vlTOPp->top__DOT__mips__DOT__u_IF__DOT__pc__DOT__line 
+        = (0x3fffffffU & (vlTOPp->top__DOT__mips__DOT__u_IF__DOT__IF_PC 
+                          << 2U));
     vlSymsp->TOP__top__DOT__mips__DOT__i_if_id.ID_DATA 
         = (((QData)((IData)(vlTOPp->top__DOT__mips__DOT__u_IF__DOT__IF_PC)) 
             << 0x20U) | (QData)((IData)(vlTOPp->top__DOT__mips__DOT__u_IF__DOT__ID_instr)));
     vlTOPp->top__DOT__mips__DOT__u_MEM__DOT__MEMout 
-        = ((0x3000U > (0xffffU & (IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_ex_mem.MEM_DATA)))
+        = ((0x3000U > (0xffffU & vlSymsp->TOP__top__DOT__mips__DOT__i_ex_mem.MEM_DATA[0U]))
             ? vlTOPp->top__DOT__mips__DOT__u_EX__DOT____Vcellout__u_Access__DMout
             : ((0x7fU == (0xffffffU & (vlTOPp->top__DOT__u_BRIDGE__DOT__PrAddr 
                                        >> 6U))) ? vlTOPp->top__DOT__u_BRIDGE__DOT__DEV0_RD
@@ -1431,15 +1625,17 @@ void Vtop::_settle__TOP__4(Vtop__Syms* __restrict vlSymsp) {
     vlSymsp->TOP__top__DOT__mips__DOT__i_bypass.MEM_BACK 
         = (((QData)((IData)((1U & ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_ex_mem.WB_CTRL) 
                                    >> 4U)))) << 0x25U) 
-           | (((QData)((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_ex_mem.MEM_DATA)) 
-               << 5U) | (QData)((IData)((0x1fU & (IData)(
-                                                         (vlSymsp->TOP__top__DOT__mips__DOT__i_ex_mem.MEM_DATA 
-                                                          >> 0x20U)))))));
+           | (((QData)((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_ex_mem.MEM_DATA[0U])) 
+               << 5U) | (QData)((IData)((0x1fU & vlSymsp->TOP__top__DOT__mips__DOT__i_ex_mem.MEM_DATA[1U])))));
+    vlSymsp->TOP__top__DOT__mips__DOT__i_branchCorrect.correctAtEX 
+        = (((~ (IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.branchCommitAtMEM)) 
+            & (0U != (7U & (vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL 
+                            >> 0x10U)))) & (~ (IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.exBranchAvail)));
     vlSymsp->TOP__top__DOT__mips__DOT__i_stallDetect.EX_rw 
-        = ((1U & (((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL) 
-                   >> 0xbU) & (~ ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL) 
+        = ((1U & ((vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL 
+                   >> 0xbU) & (~ (vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL 
                                   >> 0xdU)))) ? 0x1fU
-            : (0x1fU & ((0x2000U & (IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL))
+            : (0x1fU & ((0x2000U & vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL)
                          ? ((vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_DATA[4U] 
                              << 0x15U) | (vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_DATA[3U] 
                                           >> 0xbU))
@@ -1596,11 +1792,11 @@ void Vtop::_settle__TOP__4(Vtop__Syms* __restrict vlSymsp) {
                                     >> 0x10U)))));
     vlTOPp->top__DOT__mips__DOT__u_MEM__DOT__U_DREXT__DOT___byte 
         = (0xffU & (vlTOPp->top__DOT__mips__DOT__u_MEM__DOT__MEMout 
-                    >> (0x18U & ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_ex_mem.MEM_DATA) 
+                    >> (0x18U & (vlSymsp->TOP__top__DOT__mips__DOT__i_ex_mem.MEM_DATA[0U] 
                                  << 3U))));
     vlTOPp->top__DOT__mips__DOT__u_MEM__DOT__U_DREXT__DOT__half 
         = (0xffffU & (vlTOPp->top__DOT__mips__DOT__u_MEM__DOT__MEMout 
-                      >> (0x18U & ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_ex_mem.MEM_DATA) 
+                      >> (0x18U & (vlSymsp->TOP__top__DOT__mips__DOT__i_ex_mem.MEM_DATA[0U] 
                                    << 3U))));
     vlTOPp->top__DOT__mips__DOT__u_ID__DOT__u_ID_FORWARD__DOT__MEM_EN 
         = ((IData)((vlSymsp->TOP__top__DOT__mips__DOT__i_bypass.MEM_BACK 
@@ -1816,8 +2012,89 @@ void Vtop::_settle__TOP__4(Vtop__Syms* __restrict vlSymsp) {
     vlTOPp->top__DOT__mips__DOT__u_ID__DOT__u_BRANCH__DOT__eq 
         = (vlTOPp->top__DOT__mips__DOT__u_ID__DOT__f_rd1 
            == vlTOPp->top__DOT__mips__DOT__u_ID__DOT__f_rd2);
+    vlTOPp->top__DOT__mips__DOT__u_IF__DOT__NPC = (0x3fffffffU 
+                                                   & ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_branchCorrect.correctAtMEM)
+                                                       ? 
+                                                      (0x3fffffffU 
+                                                       & ((IData)(1U) 
+                                                          + 
+                                                          ((vlSymsp->TOP__top__DOT__mips__DOT__i_ex_mem.MEM_DATA[2U] 
+                                                            << 0x1bU) 
+                                                           | (vlSymsp->TOP__top__DOT__mips__DOT__i_ex_mem.MEM_DATA[1U] 
+                                                              >> 5U))))
+                                                       : 
+                                                      ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_branchCorrect.correctAtEX)
+                                                        ? 
+                                                       (0x3fffffffU 
+                                                        & ((IData)(1U) 
+                                                           + 
+                                                           vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_DATA[4U]))
+                                                        : 
+                                                       ((1U 
+                                                         & ((((((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_controller.ID_CTRL) 
+                                                                >> 7U) 
+                                                               | ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_controller.ID_CTRL) 
+                                                                  >> 8U)) 
+                                                              | ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_controller.ID_CTRL) 
+                                                                 >> 5U)) 
+                                                             | ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_controller.ID_CTRL) 
+                                                                >> 6U)) 
+                                                            | (0U 
+                                                               != 
+                                                               (7U 
+                                                                & ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_controller.ID_CTRL) 
+                                                                   >> 2U)))))
+                                                         ? 
+                                                        (0x3fffffffU 
+                                                         & (((((0x1060U 
+                                                                & VL_NEGATE_I((IData)(
+                                                                                (1U 
+                                                                                & ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_controller.ID_CTRL) 
+                                                                                >> 7U))))) 
+                                                               | (VL_NEGATE_I((IData)(
+                                                                                (1U 
+                                                                                & ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_controller.ID_CTRL) 
+                                                                                >> 8U)))) 
+                                                                  & vlSymsp->TOP__top__DOT__mips__DOT__i_cp0.EPC)) 
+                                                              | (VL_NEGATE_I((IData)(
+                                                                                (1U 
+                                                                                & ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_controller.ID_CTRL) 
+                                                                                >> 5U)))) 
+                                                                 & (vlTOPp->top__DOT__mips__DOT__u_ID__DOT__f_rd1 
+                                                                    >> 2U))) 
+                                                             | (0x3ffffffU 
+                                                                & (VL_NEGATE_I((IData)(
+                                                                                (1U 
+                                                                                & ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_controller.ID_CTRL) 
+                                                                                >> 6U)))) 
+                                                                   & (IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_if_id.ID_DATA)))) 
+                                                            | (VL_NEGATE_I((IData)(
+                                                                                (0U 
+                                                                                != 
+                                                                                (7U 
+                                                                                & ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_controller.ID_CTRL) 
+                                                                                >> 2U))))) 
+                                                               & ((IData)(
+                                                                          (vlSymsp->TOP__top__DOT__mips__DOT__i_if_id.ID_DATA 
+                                                                           >> 0x20U)) 
+                                                                  + 
+                                                                  ((0x3fff0000U 
+                                                                    & (VL_NEGATE_I((IData)(
+                                                                                (1U 
+                                                                                & (IData)(
+                                                                                (vlSymsp->TOP__top__DOT__mips__DOT__i_if_id.ID_DATA 
+                                                                                >> 0xfU))))) 
+                                                                       << 0x10U)) 
+                                                                   | (0xffffU 
+                                                                      & (IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_if_id.ID_DATA)))))))
+                                                         : 
+                                                        ((IData)(1U) 
+                                                         + vlTOPp->top__DOT__mips__DOT__u_IF__DOT__IF_PC)))));
+    vlTOPp->top__DOT__mips__DOT__u_EX__DOT__u_BRANCH__DOT__eq 
+        = (vlTOPp->top__DOT__mips__DOT__u_EX__DOT__f_rd1 
+           == vlTOPp->top__DOT__mips__DOT__u_EX__DOT__f_rd2);
     vlSymsp->TOP__top__DOT__mips__DOT__i_cp0.EX_TO_CP0 
-        = (((QData)((IData)((1U & ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL) 
+        = (((QData)((IData)((1U & (vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL 
                                    >> 0xeU)))) << 0x25U) 
            | (((QData)((IData)((0x1fU & ((vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_DATA[4U] 
                                           << 0x15U) 
@@ -1825,73 +2102,54 @@ void Vtop::_settle__TOP__4(Vtop__Syms* __restrict vlSymsp) {
                                             >> 0xbU))))) 
                << 0x20U) | (QData)((IData)(vlTOPp->top__DOT__mips__DOT__u_EX__DOT__f_rd2))));
     vlTOPp->top__DOT__mips__DOT__u_EX__DOT__ALUB = 
-        ((0x400U & (IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL))
+        ((0x400U & vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL)
           ? vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_DATA[0U]
           : vlTOPp->top__DOT__mips__DOT__u_EX__DOT__f_rd2);
-    vlTOPp->top__DOT__mips__DOT__u_ID__DOT__branchAvail 
-        = (((((((1U == (7U & ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_controller.ID_CTRL) 
-                              >> 2U))) & (IData)(vlTOPp->top__DOT__mips__DOT__u_ID__DOT__u_BRANCH__DOT__eq)) 
-               | ((2U == (7U & ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_controller.ID_CTRL) 
-                                >> 2U))) & (~ (IData)(vlTOPp->top__DOT__mips__DOT__u_ID__DOT__u_BRANCH__DOT__eq)))) 
-              | ((3U == (7U & ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_controller.ID_CTRL) 
-                               >> 2U))) & ((~ (vlTOPp->top__DOT__mips__DOT__u_ID__DOT__f_rd1 
-                                               >> 0x1fU)) 
-                                           & (0U != vlTOPp->top__DOT__mips__DOT__u_ID__DOT__f_rd1)))) 
-             | ((4U == (7U & ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_controller.ID_CTRL) 
-                              >> 2U))) & (vlTOPp->top__DOT__mips__DOT__u_ID__DOT__f_rd1 
-                                          >> 0x1fU))) 
-            | ((5U == (7U & ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_controller.ID_CTRL) 
-                             >> 2U))) & (~ (vlTOPp->top__DOT__mips__DOT__u_ID__DOT__f_rd1 
-                                            >> 0x1fU)))) 
-           | ((6U == (7U & ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_controller.ID_CTRL) 
-                            >> 2U))) & ((vlTOPp->top__DOT__mips__DOT__u_ID__DOT__f_rd1 
-                                         >> 0x1fU) 
-                                        | (0U == vlTOPp->top__DOT__mips__DOT__u_ID__DOT__f_rd1))));
     vlTOPp->top__DOT__mips__DOT__u_EX__DOT__ALUC = 
-        (((((((((0U == (0xfU & ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL) 
+        (((((((((0U == (0xfU & (vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL 
                                 >> 6U))) | (1U == (0xfU 
-                                                   & ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL) 
+                                                   & (vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL 
                                                       >> 6U)))) 
-               | (2U == (0xfU & ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL) 
+               | (2U == (0xfU & (vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL 
                                  >> 6U)))) | (3U == 
                                               (0xfU 
-                                               & ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL) 
+                                               & (vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL 
                                                   >> 6U)))) 
-             | (4U == (0xfU & ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL) 
+             | (4U == (0xfU & (vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL 
                                >> 6U)))) | (5U == (0xfU 
-                                                   & ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL) 
+                                                   & (vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL 
                                                       >> 6U)))) 
-           | (6U == (0xfU & ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL) 
+           | (6U == (0xfU & (vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL 
                              >> 6U)))) | (7U == (0xfU 
-                                                 & ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL) 
+                                                 & (vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL 
                                                     >> 6U))))
-          ? ((0U == (0xfU & ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL) 
+          ? ((0U == (0xfU & (vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL 
                              >> 6U))) ? (vlTOPp->top__DOT__mips__DOT__u_EX__DOT__ALUB 
                                          << (0x1fU 
                                              & ((vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_DATA[4U] 
                                                  << 0x1aU) 
                                                 | (vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_DATA[3U] 
                                                    >> 6U))))
-              : ((1U == (0xfU & ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL) 
+              : ((1U == (0xfU & (vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL 
                                  >> 6U))) ? (vlTOPp->top__DOT__mips__DOT__u_EX__DOT__f_rd1 
                                              | vlTOPp->top__DOT__mips__DOT__u_EX__DOT__ALUB)
-                  : ((2U == (0xfU & ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL) 
+                  : ((2U == (0xfU & (vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL 
                                      >> 6U))) ? (vlTOPp->top__DOT__mips__DOT__u_EX__DOT__f_rd1 
                                                  - vlTOPp->top__DOT__mips__DOT__u_EX__DOT__ALUB)
-                      : ((3U == (0xfU & ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL) 
+                      : ((3U == (0xfU & (vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL 
                                          >> 6U))) ? 
                          (vlTOPp->top__DOT__mips__DOT__u_EX__DOT__f_rd1 
                           + vlTOPp->top__DOT__mips__DOT__u_EX__DOT__ALUB)
-                          : ((4U == (0xfU & ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL) 
+                          : ((4U == (0xfU & (vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL 
                                              >> 6U)))
                               ? (vlTOPp->top__DOT__mips__DOT__u_EX__DOT__f_rd1 
                                  & vlTOPp->top__DOT__mips__DOT__u_EX__DOT__ALUB)
-                              : ((5U == (0xfU & ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL) 
+                              : ((5U == (0xfU & (vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL 
                                                  >> 6U)))
                                   ? (vlTOPp->top__DOT__mips__DOT__u_EX__DOT__f_rd1 
                                      ^ vlTOPp->top__DOT__mips__DOT__u_EX__DOT__ALUB)
                                   : ((6U == (0xfU & 
-                                             ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL) 
+                                             (vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL 
                                               >> 6U)))
                                       ? (~ (vlTOPp->top__DOT__mips__DOT__u_EX__DOT__f_rd1 
                                             | vlTOPp->top__DOT__mips__DOT__u_EX__DOT__ALUB))
@@ -1901,20 +2159,20 @@ void Vtop::_settle__TOP__4(Vtop__Syms* __restrict vlSymsp) {
                                                  << 0x1aU) 
                                                 | (vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_DATA[3U] 
                                                    >> 6U)))))))))))
-          : ((8U == (0xfU & ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL) 
+          : ((8U == (0xfU & (vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL 
                              >> 6U))) ? VL_SHIFTRS_III(32,32,5, vlTOPp->top__DOT__mips__DOT__u_EX__DOT__ALUB, 
                                                        (0x1fU 
                                                         & ((vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_DATA[4U] 
                                                             << 0x1aU) 
                                                            | (vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_DATA[3U] 
                                                               >> 6U))))
-              : ((9U == (0xfU & ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL) 
+              : ((9U == (0xfU & (vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL 
                                  >> 6U))) ? ((0x1fU 
                                               >= vlTOPp->top__DOT__mips__DOT__u_EX__DOT__f_rd1)
                                               ? (vlTOPp->top__DOT__mips__DOT__u_EX__DOT__ALUB 
                                                  << vlTOPp->top__DOT__mips__DOT__u_EX__DOT__f_rd1)
                                               : 0U)
-                  : ((0xaU == (0xfU & ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL) 
+                  : ((0xaU == (0xfU & (vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL 
                                        >> 6U))) ? (
                                                    (0x1fU 
                                                     >= vlTOPp->top__DOT__mips__DOT__u_EX__DOT__f_rd1)
@@ -1922,71 +2180,19 @@ void Vtop::_settle__TOP__4(Vtop__Syms* __restrict vlSymsp) {
                                                    (vlTOPp->top__DOT__mips__DOT__u_EX__DOT__ALUB 
                                                     >> vlTOPp->top__DOT__mips__DOT__u_EX__DOT__f_rd1)
                                                     : 0U)
-                      : ((0xbU == (0xfU & ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL) 
+                      : ((0xbU == (0xfU & (vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL 
                                            >> 6U)))
                           ? ((0x1fU >= vlTOPp->top__DOT__mips__DOT__u_EX__DOT__f_rd1)
                               ? VL_SHIFTRS_III(32,32,32, vlTOPp->top__DOT__mips__DOT__u_EX__DOT__ALUB, vlTOPp->top__DOT__mips__DOT__u_EX__DOT__f_rd1)
                               : VL_NEGATE_I((vlTOPp->top__DOT__mips__DOT__u_EX__DOT__ALUB 
                                              >> 0x1fU)))
-                          : ((0xcU == (0xfU & ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL) 
+                          : ((0xcU == (0xfU & (vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_CTRL 
                                                >> 6U)))
                               ? vlTOPp->top__DOT__mips__DOT__u_EX__DOT__f_rd1
                               : 0U))))));
     vlTOPp->top__DOT__mips__DOT__u_EX__DOT__accessAddr 
         = (vlTOPp->top__DOT__mips__DOT__u_EX__DOT__f_rd1 
            + vlTOPp->top__DOT__mips__DOT__u_EX__DOT__ALUB);
-    vlTOPp->top__DOT__mips__DOT__u_IF__DOT__NPC = (0x3fffffffU 
-                                                   & ((1U 
-                                                       & ((((((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_controller.ID_CTRL) 
-                                                              >> 7U) 
-                                                             | ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_controller.ID_CTRL) 
-                                                                >> 8U)) 
-                                                            | ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_controller.ID_CTRL) 
-                                                               >> 5U)) 
-                                                           | ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_controller.ID_CTRL) 
-                                                              >> 6U)) 
-                                                          | (IData)(vlTOPp->top__DOT__mips__DOT__u_ID__DOT__branchAvail)))
-                                                       ? 
-                                                      (0x3fffffffU 
-                                                       & (((((0x1060U 
-                                                              & VL_NEGATE_I((IData)(
-                                                                                (1U 
-                                                                                & ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_controller.ID_CTRL) 
-                                                                                >> 7U))))) 
-                                                             | (VL_NEGATE_I((IData)(
-                                                                                (1U 
-                                                                                & ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_controller.ID_CTRL) 
-                                                                                >> 8U)))) 
-                                                                & vlSymsp->TOP__top__DOT__mips__DOT__i_cp0.EPC)) 
-                                                            | (VL_NEGATE_I((IData)(
-                                                                                (1U 
-                                                                                & ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_controller.ID_CTRL) 
-                                                                                >> 5U)))) 
-                                                               & (vlTOPp->top__DOT__mips__DOT__u_ID__DOT__f_rd1 
-                                                                  >> 2U))) 
-                                                           | (0x3ffffffU 
-                                                              & (VL_NEGATE_I((IData)(
-                                                                                (1U 
-                                                                                & ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_controller.ID_CTRL) 
-                                                                                >> 6U)))) 
-                                                                 & (IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_if_id.ID_DATA)))) 
-                                                          | (VL_NEGATE_I((IData)((IData)(vlTOPp->top__DOT__mips__DOT__u_ID__DOT__branchAvail))) 
-                                                             & ((IData)(
-                                                                        (vlSymsp->TOP__top__DOT__mips__DOT__i_if_id.ID_DATA 
-                                                                         >> 0x20U)) 
-                                                                + 
-                                                                ((0x3fff0000U 
-                                                                  & (VL_NEGATE_I((IData)(
-                                                                                (1U 
-                                                                                & (IData)(
-                                                                                (vlSymsp->TOP__top__DOT__mips__DOT__i_if_id.ID_DATA 
-                                                                                >> 0xfU))))) 
-                                                                     << 0x10U)) 
-                                                                 | (0xffffU 
-                                                                    & (IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_if_id.ID_DATA)))))))
-                                                       : 
-                                                      ((IData)(1U) 
-                                                       + vlTOPp->top__DOT__mips__DOT__u_IF__DOT__IF_PC)));
     vlTOPp->top__DOT__mips__DOT__u_EX__DOT__u_Access__DOT____Vcellinp__u_dm_ram__dina 
         = (vlTOPp->top__DOT__mips__DOT__u_EX__DOT__f_rd2 
            << (0x18U & (vlTOPp->top__DOT__mips__DOT__u_EX__DOT__accessAddr 
@@ -2004,8 +2210,17 @@ void Vtop::_settle__TOP__4(Vtop__Syms* __restrict vlSymsp) {
            & (IData)(vlTOPp->top__DOT__mips__DOT__u_EX__DOT__u_Access__DOT__be));
 }
 
-VL_INLINE_OPT void Vtop::_sequent__TOP__5(Vtop__Syms* __restrict vlSymsp) {
-    VL_DEBUG_IF(VL_DBG_MSGF("+    Vtop::_sequent__TOP__5\n"); );
+VL_INLINE_OPT void Vtop::_settle__TOP__5(Vtop__Syms* __restrict vlSymsp) {
+    VL_DEBUG_IF(VL_DBG_MSGF("+    Vtop::_settle__TOP__5\n"); );
+    Vtop* __restrict vlTOPp VL_ATTR_UNUSED = vlSymsp->TOPp;
+    // Body
+    vlTOPp->top__DOT__mips__DOT__u_Controller__DOT__ID_FLUSH 
+        = ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_stallDetect.__PVT__LOAD) 
+           | (IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_branchCorrect.correctAtMEM));
+}
+
+VL_INLINE_OPT void Vtop::_sequent__TOP__6(Vtop__Syms* __restrict vlSymsp) {
+    VL_DEBUG_IF(VL_DBG_MSGF("+    Vtop::_sequent__TOP__6\n"); );
     Vtop* __restrict vlTOPp VL_ATTR_UNUSED = vlSymsp->TOPp;
     // Body
     vlSymsp->TOP__top__DOT__mips__DOT__i_if_id.ID_DATA 
@@ -2126,16 +2341,16 @@ VL_INLINE_OPT void Vtop::_sequent__TOP__5(Vtop__Syms* __restrict vlSymsp) {
         = ((0U == (0x3fU & (IData)((vlSymsp->TOP__top__DOT__mips__DOT__i_if_id.ID_DATA 
                                     >> 0x1aU)))) & 
            (0x22U == (0x3fU & (IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_if_id.ID_DATA))));
-    vlTOPp->top__DOT__mips__DOT__u_Controller__DOT__jmp 
-        = ((2U == (0x3fU & (IData)((vlSymsp->TOP__top__DOT__mips__DOT__i_if_id.ID_DATA 
-                                    >> 0x1aU)))) | 
-           (3U == (0x3fU & (IData)((vlSymsp->TOP__top__DOT__mips__DOT__i_if_id.ID_DATA 
-                                    >> 0x1aU)))));
     vlTOPp->top__DOT__mips__DOT__u_ID__DOT__u_ID_FORWARD__DOT__BFromMEM 
         = ((IData)(vlTOPp->top__DOT__mips__DOT__u_ID__DOT__u_ID_FORWARD__DOT__MEM_EN) 
            & ((0x1fU & (IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_bypass.MEM_BACK)) 
               == (0x1fU & (IData)((vlSymsp->TOP__top__DOT__mips__DOT__i_if_id.ID_DATA 
                                    >> 0x10U)))));
+    vlTOPp->top__DOT__mips__DOT__u_Controller__DOT__jmp 
+        = ((2U == (0x3fU & (IData)((vlSymsp->TOP__top__DOT__mips__DOT__i_if_id.ID_DATA 
+                                    >> 0x1aU)))) | 
+           (3U == (0x3fU & (IData)((vlSymsp->TOP__top__DOT__mips__DOT__i_if_id.ID_DATA 
+                                    >> 0x1aU)))));
     vlTOPp->top__DOT__mips__DOT__u_ID__DOT__u_ID_FORWARD__DOT__AFromMEM 
         = ((IData)(vlTOPp->top__DOT__mips__DOT__u_ID__DOT__u_ID_FORWARD__DOT__MEM_EN) 
            & ((0x1fU & (IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_bypass.MEM_BACK)) 
@@ -2313,77 +2528,84 @@ VL_INLINE_OPT void Vtop::_sequent__TOP__5(Vtop__Syms* __restrict vlSymsp) {
                                                             & (IData)(
                                                                       (vlSymsp->TOP__top__DOT__mips__DOT__i_if_id.ID_DATA 
                                                                        >> 0x1aU))))))))))));
-    vlTOPp->top__DOT__mips__DOT__u_ID__DOT__branchAvail 
-        = (((((((1U == (7U & ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_controller.ID_CTRL) 
-                              >> 2U))) & (IData)(vlTOPp->top__DOT__mips__DOT__u_ID__DOT__u_BRANCH__DOT__eq)) 
-               | ((2U == (7U & ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_controller.ID_CTRL) 
-                                >> 2U))) & (~ (IData)(vlTOPp->top__DOT__mips__DOT__u_ID__DOT__u_BRANCH__DOT__eq)))) 
-              | ((3U == (7U & ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_controller.ID_CTRL) 
-                               >> 2U))) & ((~ (vlTOPp->top__DOT__mips__DOT__u_ID__DOT__f_rd1 
-                                               >> 0x1fU)) 
-                                           & (0U != vlTOPp->top__DOT__mips__DOT__u_ID__DOT__f_rd1)))) 
-             | ((4U == (7U & ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_controller.ID_CTRL) 
-                              >> 2U))) & (vlTOPp->top__DOT__mips__DOT__u_ID__DOT__f_rd1 
-                                          >> 0x1fU))) 
-            | ((5U == (7U & ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_controller.ID_CTRL) 
-                             >> 2U))) & (~ (vlTOPp->top__DOT__mips__DOT__u_ID__DOT__f_rd1 
-                                            >> 0x1fU)))) 
-           | ((6U == (7U & ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_controller.ID_CTRL) 
-                            >> 2U))) & ((vlTOPp->top__DOT__mips__DOT__u_ID__DOT__f_rd1 
-                                         >> 0x1fU) 
-                                        | (0U == vlTOPp->top__DOT__mips__DOT__u_ID__DOT__f_rd1))));
     vlTOPp->top__DOT__mips__DOT__u_IF__DOT__NPC = (0x3fffffffU 
-                                                   & ((1U 
-                                                       & ((((((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_controller.ID_CTRL) 
-                                                              >> 7U) 
-                                                             | ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_controller.ID_CTRL) 
-                                                                >> 8U)) 
-                                                            | ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_controller.ID_CTRL) 
-                                                               >> 5U)) 
-                                                           | ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_controller.ID_CTRL) 
-                                                              >> 6U)) 
-                                                          | (IData)(vlTOPp->top__DOT__mips__DOT__u_ID__DOT__branchAvail)))
+                                                   & ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_branchCorrect.correctAtMEM)
                                                        ? 
                                                       (0x3fffffffU 
-                                                       & (((((0x1060U 
-                                                              & VL_NEGATE_I((IData)(
+                                                       & ((IData)(1U) 
+                                                          + 
+                                                          ((vlSymsp->TOP__top__DOT__mips__DOT__i_ex_mem.MEM_DATA[2U] 
+                                                            << 0x1bU) 
+                                                           | (vlSymsp->TOP__top__DOT__mips__DOT__i_ex_mem.MEM_DATA[1U] 
+                                                              >> 5U))))
+                                                       : 
+                                                      ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_branchCorrect.correctAtEX)
+                                                        ? 
+                                                       (0x3fffffffU 
+                                                        & ((IData)(1U) 
+                                                           + 
+                                                           vlSymsp->TOP__top__DOT__mips__DOT__i_id_ex.EX_DATA[4U]))
+                                                        : 
+                                                       ((1U 
+                                                         & ((((((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_controller.ID_CTRL) 
+                                                                >> 7U) 
+                                                               | ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_controller.ID_CTRL) 
+                                                                  >> 8U)) 
+                                                              | ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_controller.ID_CTRL) 
+                                                                 >> 5U)) 
+                                                             | ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_controller.ID_CTRL) 
+                                                                >> 6U)) 
+                                                            | (0U 
+                                                               != 
+                                                               (7U 
+                                                                & ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_controller.ID_CTRL) 
+                                                                   >> 2U)))))
+                                                         ? 
+                                                        (0x3fffffffU 
+                                                         & (((((0x1060U 
+                                                                & VL_NEGATE_I((IData)(
                                                                                 (1U 
                                                                                 & ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_controller.ID_CTRL) 
                                                                                 >> 7U))))) 
-                                                             | (VL_NEGATE_I((IData)(
+                                                               | (VL_NEGATE_I((IData)(
                                                                                 (1U 
                                                                                 & ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_controller.ID_CTRL) 
                                                                                 >> 8U)))) 
-                                                                & vlSymsp->TOP__top__DOT__mips__DOT__i_cp0.EPC)) 
-                                                            | (VL_NEGATE_I((IData)(
+                                                                  & vlSymsp->TOP__top__DOT__mips__DOT__i_cp0.EPC)) 
+                                                              | (VL_NEGATE_I((IData)(
                                                                                 (1U 
                                                                                 & ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_controller.ID_CTRL) 
                                                                                 >> 5U)))) 
-                                                               & (vlTOPp->top__DOT__mips__DOT__u_ID__DOT__f_rd1 
-                                                                  >> 2U))) 
-                                                           | (0x3ffffffU 
-                                                              & (VL_NEGATE_I((IData)(
+                                                                 & (vlTOPp->top__DOT__mips__DOT__u_ID__DOT__f_rd1 
+                                                                    >> 2U))) 
+                                                             | (0x3ffffffU 
+                                                                & (VL_NEGATE_I((IData)(
                                                                                 (1U 
                                                                                 & ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_controller.ID_CTRL) 
                                                                                 >> 6U)))) 
-                                                                 & (IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_if_id.ID_DATA)))) 
-                                                          | (VL_NEGATE_I((IData)((IData)(vlTOPp->top__DOT__mips__DOT__u_ID__DOT__branchAvail))) 
-                                                             & ((IData)(
-                                                                        (vlSymsp->TOP__top__DOT__mips__DOT__i_if_id.ID_DATA 
-                                                                         >> 0x20U)) 
-                                                                + 
-                                                                ((0x3fff0000U 
-                                                                  & (VL_NEGATE_I((IData)(
+                                                                   & (IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_if_id.ID_DATA)))) 
+                                                            | (VL_NEGATE_I((IData)(
+                                                                                (0U 
+                                                                                != 
+                                                                                (7U 
+                                                                                & ((IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_controller.ID_CTRL) 
+                                                                                >> 2U))))) 
+                                                               & ((IData)(
+                                                                          (vlSymsp->TOP__top__DOT__mips__DOT__i_if_id.ID_DATA 
+                                                                           >> 0x20U)) 
+                                                                  + 
+                                                                  ((0x3fff0000U 
+                                                                    & (VL_NEGATE_I((IData)(
                                                                                 (1U 
                                                                                 & (IData)(
                                                                                 (vlSymsp->TOP__top__DOT__mips__DOT__i_if_id.ID_DATA 
                                                                                 >> 0xfU))))) 
-                                                                     << 0x10U)) 
-                                                                 | (0xffffU 
-                                                                    & (IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_if_id.ID_DATA)))))))
-                                                       : 
-                                                      ((IData)(1U) 
-                                                       + vlTOPp->top__DOT__mips__DOT__u_IF__DOT__IF_PC)));
+                                                                       << 0x10U)) 
+                                                                   | (0xffffU 
+                                                                      & (IData)(vlSymsp->TOP__top__DOT__mips__DOT__i_if_id.ID_DATA)))))))
+                                                         : 
+                                                        ((IData)(1U) 
+                                                         + vlTOPp->top__DOT__mips__DOT__u_IF__DOT__IF_PC)))));
 }
 
 void Vtop::_eval(Vtop__Syms* __restrict vlSymsp) {
@@ -2401,9 +2623,10 @@ void Vtop::_eval(Vtop__Syms* __restrict vlSymsp) {
     }
     if ((((IData)(vlTOPp->clk) & (~ (IData)(vlTOPp->__Vclklast__TOP__clk))) 
          | ((~ (IData)(vlTOPp->rst)) & (IData)(vlTOPp->__Vclklast__TOP__rst)))) {
-        vlTOPp->_sequent__TOP__5(vlSymsp);
+        vlTOPp->_sequent__TOP__6(vlSymsp);
         vlTOPp->__Vm_traceActivity = (8U | vlTOPp->__Vm_traceActivity);
         vlSymsp->TOP__top__DOT__mips__DOT__i_stallDetect._settle__TOP__top__DOT__mips__DOT__i_stallDetect__1(vlSymsp);
+        vlTOPp->_settle__TOP__5(vlSymsp);
     }
     // Final
     vlTOPp->__Vclklast__TOP__clk = vlTOPp->clk;
@@ -2434,6 +2657,7 @@ void Vtop::_eval_settle(Vtop__Syms* __restrict vlSymsp) {
     vlTOPp->_settle__TOP__4(vlSymsp);
     vlTOPp->__Vm_traceActivity = (1U | vlTOPp->__Vm_traceActivity);
     vlSymsp->TOP__top__DOT__mips__DOT__i_stallDetect._settle__TOP__top__DOT__mips__DOT__i_stallDetect__1(vlSymsp);
+    vlTOPp->_settle__TOP__5(vlSymsp);
 }
 
 VL_INLINE_OPT QData Vtop::_change_request(Vtop__Syms* __restrict vlSymsp) {
@@ -2473,10 +2697,14 @@ void Vtop::_ctor_var_reset() {
     top__DOT__mips__DOT__u_IF__DOT__IF_instr = VL_RAND_RESET_I(32);
     top__DOT__mips__DOT__u_IF__DOT__ID_instr = VL_RAND_RESET_I(32);
     top__DOT__mips__DOT__u_IF__DOT__firstFetch = VL_RAND_RESET_I(1);
+    top__DOT__mips__DOT__u_IF__DOT__pc__DOT__line = VL_RAND_RESET_I(30);
+    top__DOT__mips__DOT__u_IF__DOT__pc__DOT__clkCnt = VL_RAND_RESET_I(32);
+    top__DOT__mips__DOT__u_IF__DOT__pc__DOT__fCnt = VL_RAND_RESET_I(32);
     { int __Vi0=0; for (; __Vi0<2048; ++__Vi0) {
             top__DOT__mips__DOT__u_IF__DOT__IM__DOT__u_imrom__DOT__rom[__Vi0] = VL_RAND_RESET_I(32);
     }}
     top__DOT__mips__DOT__u_Controller__DOT__branchType = VL_RAND_RESET_I(3);
+    top__DOT__mips__DOT__u_Controller__DOT__ID_FLUSH = VL_RAND_RESET_I(1);
     top__DOT__mips__DOT__u_Controller__DOT__ExlSet = VL_RAND_RESET_I(1);
     top__DOT__mips__DOT__u_Controller__DOT__jmp = VL_RAND_RESET_I(1);
     top__DOT__mips__DOT__u_Controller__DOT__NPCFromGPR = VL_RAND_RESET_I(1);
@@ -2511,7 +2739,6 @@ void Vtop::_ctor_var_reset() {
     top__DOT__mips__DOT__u_Controller__DOT__STORE = VL_RAND_RESET_I(1);
     top__DOT__mips__DOT__u_ID__DOT__f_rd1 = VL_RAND_RESET_I(32);
     top__DOT__mips__DOT__u_ID__DOT__f_rd2 = VL_RAND_RESET_I(32);
-    top__DOT__mips__DOT__u_ID__DOT__branchAvail = VL_RAND_RESET_I(1);
     { int __Vi0=0; for (; __Vi0<32; ++__Vi0) {
             top__DOT__mips__DOT__u_ID__DOT__GPR__DOT__register[__Vi0] = VL_RAND_RESET_I(32);
     }}
@@ -2537,6 +2764,7 @@ void Vtop::_ctor_var_reset() {
     top__DOT__mips__DOT__u_EX__DOT__u_EX_FORWARD__DOT__AFromWB = VL_RAND_RESET_I(1);
     top__DOT__mips__DOT__u_EX__DOT__u_EX_FORWARD__DOT__BFromMEM = VL_RAND_RESET_I(1);
     top__DOT__mips__DOT__u_EX__DOT__u_EX_FORWARD__DOT__BFromWB = VL_RAND_RESET_I(1);
+    top__DOT__mips__DOT__u_EX__DOT__u_BRANCH__DOT__eq = VL_RAND_RESET_I(1);
     top__DOT__mips__DOT__u_EX__DOT__u_Access__DOT__be = VL_RAND_RESET_I(4);
     top__DOT__mips__DOT__u_EX__DOT__u_Access__DOT____Vcellinp__u_dm_ram__dina = VL_RAND_RESET_I(32);
     top__DOT__mips__DOT__u_EX__DOT__u_Access__DOT____Vcellinp__u_dm_ram__wea = VL_RAND_RESET_I(4);

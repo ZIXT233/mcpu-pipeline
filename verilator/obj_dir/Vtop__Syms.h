@@ -15,6 +15,7 @@
 #include "Vtop_IController.h"
 #include "Vtop_IStallDetect.h"
 #include "Vtop_IIF_ID.h"
+#include "Vtop_IBranchCorrect.h"
 #include "Vtop_IID_EX.h"
 #include "Vtop_IEX_MEM.h"
 #include "Vtop_IMEM_WB.h"
@@ -34,6 +35,7 @@ class Vtop__Syms : public VerilatedSyms {
     // SUBCELL STATE
     Vtop*                          TOPp;
     Vtop_IBridge                   TOP__top__DOT__i_bridge;
+    Vtop_IBranchCorrect            TOP__top__DOT__mips__DOT__i_branchCorrect;
     Vtop_IBypass                   TOP__top__DOT__mips__DOT__i_bypass;
     Vtop_IController               TOP__top__DOT__mips__DOT__i_controller;
     Vtop_ICP0                      TOP__top__DOT__mips__DOT__i_cp0;

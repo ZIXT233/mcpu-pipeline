@@ -8,11 +8,12 @@ module EX (
     IBypass.EX i_bypass,
     ICP0.EX i_cp0,
     IBridge.Access i_bridge,
-    IStallDetect.EX i_stallDetect
+    IStallDetect.EX i_stallDetect,
+    IBranchCorrect.EX i_branchCorrect
 );
     wire [3:0]aluop;
-    wire [2:0]MDFunc;
-    assign {CP0WB,CP0Write,regDst,isSlt,savePC,ALUSrc,aluop,MDSign,MDFunc,MDHIWB,MDLOWB}=i_id_ex.EX_CTRL;
+    wire [2:0]MDFunc,branchType;
+    assign {branchType,CP0WB,CP0Write,regDst,isSlt,savePC,ALUSrc,aluop,MDSign,MDFunc,MDHIWB,MDLOWB}=i_id_ex.EX_CTRL;
 
     wire  [31:2]PCP1;
     wire [31:0]instr,rd1,rd2,EXTB;
@@ -40,6 +41,17 @@ module EX (
         .f_rd1     	( f_rd1      ),
         .f_rd2     	( f_rd2      )
     );
+
+    assign i_branchCorrect.correctAtEX = !i_id_ex.branchCommitAtMEM && branchType!=0 && !i_id_ex.exBranchAvail;
+    assign i_branchCorrect.correctPCAtEX = PCP1+1;
+    
+     BRANCH u_BRANCH(
+         .rd1          	( f_rd1           ),
+         .rd2        	( f_rd2         ),
+         .branchType  	( branchType   ),
+         .branchAvail 	( memBranchAvail  )
+     );
+
     ALU ALU(
         .A(f_rd1),
         .B(ALUB),
@@ -88,7 +100,10 @@ module EX (
             i_ex_mem.WB_CTRL<=0;
         end
         else begin
-            i_ex_mem.MEM_DATA<={i_stallDetect.EX_rw,EXout};
+            i_ex_mem.branchCommitAtMEM<=i_id_ex.branchCommitAtMEM;
+            i_ex_mem.memBranchAvail<=memBranchAvail;
+            i_ex_mem.branchType<=branchType;
+            i_ex_mem.MEM_DATA<={PCP1,i_stallDetect.EX_rw,EXout};
             i_ex_mem.MEM_CTRL<=i_id_ex.MEM_CTRL;
             i_ex_mem.WB_CTRL<=i_id_ex.WB_CTRL;
         end
