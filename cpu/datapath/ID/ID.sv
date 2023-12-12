@@ -19,6 +19,7 @@ module ID (
     assign i_controller.ID_instr=instr;
     assign i_stallDetect.ID_rs=instr[25:21];
     assign i_stallDetect.ID_rt=instr[20:16];
+    assign i_stallDetect.ID_memWrite=i_controller.MEM_CTRL.memWrite;
     assign i_cp0.ID_PCP1=PCP1;
     wire [31:0] WB_Wd;
     wire [4:0] WB_rw;
@@ -59,7 +60,10 @@ module ID (
         .rd1      	( rd1       ),
         .rd2      	( rd2       ),
         .f_rd1    	( f_rd1     ),
-        .f_rd2    	( f_rd2     )
+        .f_rd2    	( f_rd2     ),
+        .EX_memWrite(0),
+        .MEM_memToReg(0),
+        .MEM_EXT_MEMout(0)
     );
     // outports wire
 

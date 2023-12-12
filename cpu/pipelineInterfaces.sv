@@ -81,6 +81,7 @@ interface IController(input clk);
 endinterface
 interface IStallDetect(input clk);
     logic [4:0] ID_rs,ID_rt;
+    logic ID_memWrite;
     logic NPCFromGPR;
     logic branch;
     logic [4:0] EX_rw;
@@ -88,17 +89,18 @@ interface IStallDetect(input clk);
     logic EX_memToReg;
     logic [4:0] MEM_rw;
     logic MEM_memToReg;
-    logic stall,LOAD,Branch_EX,Branch_LOAD,NFG_EX,NFG_LOAD;
+    logic stall,LOAD,LOAD_STORE_SAME,Branch_EX,Branch_LOAD,NFG_EX,NFG_LOAD;
     logic branchCommitAtMEM;
     assign LOAD=(EX_memToReg)&&(EX_rw==ID_rs||EX_rw==ID_rt)&&EX_rw!=0;
+    assign LOAD_STORE_SAME=(EX_memToReg&&ID_memWrite)&&(EX_rw==ID_rt)&&EX_rw!=0;
     assign Branch_EX=branch&&(EX_memToReg||EX_regWrite)&&EX_rw!=0&&(EX_rw==ID_rs||EX_rw==ID_rt);
     assign Branch_LOAD=branch&&MEM_memToReg&&(MEM_rw==ID_rs||MEM_rw==ID_rt);
     assign NFG_EX=NPCFromGPR&&(EX_memToReg||EX_regWrite)&&EX_rw!=0&&(EX_rw==ID_rs||EX_rw==ID_rt);
     assign NFG_LOAD=NPCFromGPR&&MEM_memToReg&&(MEM_rw==ID_rs||MEM_rw==ID_rt);
-    assign stall=LOAD||NFG_EX||NFG_LOAD;//||Branch_EX||Branch_LOAD;
+    assign stall=(LOAD&&!LOAD_STORE_SAME)||NFG_EX||NFG_LOAD;//||Branch_EX||Branch_LOAD;
     assign branchCommitAtMEM=Branch_EX||Branch_LOAD;
     modport Controller(input stall,output NPCFromGPR,branch);
-    modport ID(output ID_rs,ID_rt,input branchCommitAtMEM);
+    modport ID(output ID_rs,ID_rt,ID_memWrite,input branchCommitAtMEM);
     modport EX(output EX_rw,EX_regWrite,EX_memToReg);
     modport MEM(output MEM_rw,MEM_memToReg);
 endinterface
@@ -169,9 +171,11 @@ interface IBridge(input clk);
 endinterface
 interface IBypass(input clk);
     type_Bypass_DATA MEM_BACK,WB_BACK;
+    logic[31:0]MEM_EXT_MEMout;
+    logic MEM_memToReg;
     modport ID(input MEM_BACK,WB_BACK);
-    modport EX(input MEM_BACK,WB_BACK);
-    modport MEM(output MEM_BACK);
+    modport EX(input MEM_BACK,WB_BACK,MEM_EXT_MEMout,MEM_memToReg);
+    modport MEM(output MEM_BACK,MEM_EXT_MEMout,MEM_memToReg);
     modport WB(output WB_BACK);
 endinterface
 interface ICP0(input clk); 
