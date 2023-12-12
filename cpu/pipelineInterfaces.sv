@@ -81,20 +81,23 @@ interface IController(input clk);
 endinterface
 interface IStallDetect(input clk);
     logic [4:0] ID_rs,ID_rt;
-    logic ID_uncertainJump;
+    logic NPCFromGPR;
+    logic branch;
     logic [4:0] EX_rw;
     logic EX_regWrite;
     logic EX_memToReg;
     logic [4:0] MEM_rw;
     logic MEM_memToReg;
-    logic stall,LOAD,Branch_EX,Branch_LOAD;
+    logic stall,LOAD;
     logic branchCommitAtMEM;
     assign LOAD=(EX_memToReg)&&(EX_rw==ID_rs||EX_rw==ID_rt)&&EX_rw!=0;
-    assign Branch_EX=ID_uncertainJump&&(EX_memToReg||EX_regWrite)&&EX_rw!=0&&(EX_rw==ID_rs||EX_rw==ID_rt);
-    assign Branch_LOAD=ID_uncertainJump&&MEM_memToReg&&(MEM_rw==ID_rs||MEM_rw==ID_rt);
-    assign stall=LOAD;//||Branch_EX||Branch_LOAD;
+    wire Branch_EX=branch&&(EX_memToReg||EX_regWrite)&&EX_rw!=0&&(EX_rw==ID_rs||EX_rw==ID_rt);
+    wire Branch_LOAD=branch&&MEM_memToReg&&(MEM_rw==ID_rs||MEM_rw==ID_rt);
+    wire NFG_EX=NPCFromGPR&&(EX_memToReg||EX_regWrite)&&EX_rw!=0&&(EX_rw==ID_rs||EX_rw==ID_rt);
+    wire NFG_LOAD=NPCFromGPR&&MEM_memToReg&&(MEM_rw==ID_rs||MEM_rw==ID_rt);
+    assign stall=LOAD||NFG_EX||NFG_LOAD;//||Branch_EX||Branch_LOAD;
     assign branchCommitAtMEM=Branch_EX||Branch_LOAD;
-    modport Controller(input stall,output ID_uncertainJump);
+    modport Controller(input stall,output NPCFromGPR,branch);
     modport ID(output ID_rs,ID_rt,input branchCommitAtMEM);
     modport EX(output EX_rw,EX_regWrite,EX_memToReg);
     modport MEM(output MEM_rw,MEM_memToReg);
@@ -102,38 +105,48 @@ endinterface
 
 interface IIF_ID(input clk);
     type_ID_DATA ID_DATA;
-    logic[31:2] JPC;
-    logic jpcAvail;
-    modport IF(input JPC,jpcAvail,output ID_DATA);
-    modport ID(input ID_DATA,output JPC,jpcAvail);
+    logic[31:2] NPC;
+   // logic jpcAvail;
+    modport IF(input NPC,output ID_DATA);
+    modport ID(input ID_DATA,output NPC);
 endinterface
 interface IBranchCorrect(input clk);
     logic[31:2] correctPCAtEX,correctPCAtMEM;
     logic correctAtEX;
     logic correctAtMEM;
     modport IF(input correctPCAtEX,correctAtEX,correctPCAtMEM,correctAtMEM);
+    modport ID(input correctAtEX,correctAtMEM);
     modport EX(output correctPCAtEX,correctAtEX);
     modport MEM(output correctPCAtMEM,correctAtMEM);
     modport Controller(input correctAtEX,correctAtMEM);
 endinterface
+
+typedef struct packed{
+    logic predictBranchAvail;
+    logic [31:2]NOJPC,BPC;
+    logic branchCommitAtMEM;
+    logic [2:0] branchType;
+} type_Branch_Commit;
 interface IID_EX(input clk);
     type_EX_CTRL EX_CTRL;
     type_MEM_CTRL MEM_CTRL;
     type_WB_CTRL WB_CTRL;
     type_EX_DATA EX_DATA;
-    logic exBranchAvail,branchCommitAtMEM;
-    modport ID(output EX_CTRL,MEM_CTRL,WB_CTRL,EX_DATA,exBranchAvail,branchCommitAtMEM);
-    modport EX(input  EX_CTRL,MEM_CTRL,WB_CTRL,EX_DATA,exBranchAvail,branchCommitAtMEM);
+    type_Branch_Commit branchCommit;
+    wire IDBranchAvail;
+    modport ID(output EX_CTRL,MEM_CTRL,WB_CTRL,EX_DATA,branchCommit,IDBranchAvail);
+    modport EX(input  EX_CTRL,MEM_CTRL,WB_CTRL,EX_DATA,branchCommit,IDBranchAvail);
 endinterface
+
 interface IEX_MEM(input clk); 
     type_MEM_CTRL MEM_CTRL;
     type_WB_CTRL WB_CTRL;
     type_MEM_DATA MEM_DATA;
-    logic memBranchAvail,branchCommitAtMEM;
-    logic [2:0]branchType;
+    type_Branch_Commit branchCommit;
+    wire EXBranchAvail;
     wire [31:0] DMout;
-    modport EX(output MEM_CTRL,WB_CTRL,MEM_DATA,DMout,branchCommitAtMEM,memBranchAvail,branchType);
-    modport MEM(input  MEM_CTRL,WB_CTRL,MEM_DATA,DMout,branchCommitAtMEM,memBranchAvail,branchType);
+    modport EX(output MEM_CTRL,WB_CTRL,MEM_DATA,DMout,branchCommit,EXBranchAvail);
+    modport MEM(input  MEM_CTRL,WB_CTRL,MEM_DATA,DMout,branchCommit,EXBranchAvail);
 endinterface
 interface IMEM_WB(input clk); 
     type_WB_CTRL WB_CTRL;

@@ -10,7 +10,7 @@ module IF (
     wire[31:0] IF_instr;
     assign NPC=i_branchCorrect.correctAtMEM?i_branchCorrect.correctPCAtMEM:
                i_branchCorrect.correctAtEX?i_branchCorrect.correctPCAtEX:
-               i_if_id.jpcAvail?i_if_id.JPC:IF_PC+1;
+               i_if_id.NPC;
     pc pc (
         .NPC(NPC),
         .clk(clk),

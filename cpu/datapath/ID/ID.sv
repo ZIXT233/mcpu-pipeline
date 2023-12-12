@@ -7,6 +7,7 @@ module ID (
     IBypass.ID i_bypass,
     ICP0.ID i_cp0,
     IID_EX.ID i_id_ex,
+    IBranchCorrect.ID i_branchCorrect,
     IStallDetect.ID i_stallDetect
 );   
     wire [2:0]branchType;
@@ -62,18 +63,20 @@ module ID (
     );
     // outports wire
 
-    wire exBranchAvail;    
-     BRANCH u_BRANCH(
-         .rd1          	( f_rd1           ),
-         .rd2        	( f_rd2         ),
-         .branchType  	( branchType   ),
-         .branchAvail 	( exBranchAvail  )
-     );
+
     
-    wire       	branchAvail=branchType!=0;  //always branch
-    jpc jpc (
+    wire       	predictBranchAvail;  //always branch
+    BranchPredict u_branch_predict(
+        .clk,
+        .low_addr(PCP1[7:2]),
+        .i_branchCorrect,
+        .branchType,
+        .predictBranchAvail
+    );
+    wire[31:2] NOJPC,BPC;
+    npc npc (
         .PC(PCP1),
-        .branchAvail(branchAvail), 
+        .branchAvail(predictBranchAvail), 
         .jmp(jmp),
         .offset(instr[15:0]),
         .instr_index(instr[25:0]),
@@ -82,16 +85,27 @@ module ID (
         .goExceptionHandler(ExlSet),
         .NPCFromEPC(NPCFromEPC),
         .EPC(i_cp0.EPC),
-        .JPC(i_if_id.JPC)
+        .jpcAvail(ExlSet||NPCFromEPC||NPCFromGPR||jmp||predictBranchAvail),
+        .NPC(i_if_id.NPC),
+        .NOJPC,
+        .BPC
     );
 
-    assign i_if_id.jpcAvail=ExlSet|NPCFromEPC||NPCFromGPR||jmp||branchAvail;
+    wire IDBranchAvail;    
+    BRANCH u_BRANCH(
+        .rd1          	( f_rd1           ),
+        .rd2        	( f_rd2         ),
+        .branchType  	( branchType   ),
+        .branchAvail 	( IDBranchAvail  )
+    );
+    //assign i_if_id.jpcAvail=ExlSet|NPCFromEPC||NPCFromGPR||jmp||branchAvail;
     initial begin
         i_id_ex.EX_DATA=0;
         i_id_ex.EX_CTRL=0;
         i_id_ex.MEM_CTRL=0;
         i_id_ex.WB_CTRL=0;
-        i_id_ex.exBranchAvail=0;
+        i_id_ex.branchCommit=0;
+        i_id_ex.IDBranchAvail=0;
     end
     always @(posedge clk) begin
         if(i_controller.ID_FLUSH) begin
@@ -99,15 +113,20 @@ module ID (
             i_id_ex.EX_CTRL<=0;
             i_id_ex.MEM_CTRL<=0;
             i_id_ex.WB_CTRL<=0;
-            i_id_ex.exBranchAvail<=0;
+            i_id_ex.branchCommit<=0;
+            i_id_ex.IDBranchAvail<=0;
         end
         else begin
             i_id_ex.EX_DATA<={PCP1,instr,f_rd1,f_rd2,EXTB};
             i_id_ex.EX_CTRL<=i_controller.EX_CTRL;
             i_id_ex.MEM_CTRL<=i_controller.MEM_CTRL;
             i_id_ex.WB_CTRL<=i_controller.WB_CTRL;
-            i_id_ex.exBranchAvail<=exBranchAvail;
-            i_id_ex.branchCommitAtMEM<=i_stallDetect.branchCommitAtMEM;
+            i_id_ex.branchCommit.predictBranchAvail<=predictBranchAvail;
+            i_id_ex.IDBranchAvail<=IDBranchAvail;
+            i_id_ex.branchCommit.branchType<=branchType;
+            i_id_ex.branchCommit.NOJPC<=NOJPC;
+            i_id_ex.branchCommit.BPC<=BPC;
+            i_id_ex.branchCommit.branchCommitAtMEM<=i_stallDetect.branchCommitAtMEM;
         end
     end
 endmodule //ID

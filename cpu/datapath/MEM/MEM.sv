@@ -27,8 +27,8 @@ module MEM (
     wire [31:0]MEMout,EXT_MEMout;
     assign MEMout=AddrInDM?i_ex_mem.DMout:i_bridge.PrRD;
 
-    assign i_branchCorrect.correctAtMEM=i_ex_mem.branchCommitAtMEM && !i_ex_mem.memBranchAvail;
-    assign i_branchCorrect.correctPCAtMEM=i_ex_mem.MEM_DATA.PCP1+1;
+    assign i_branchCorrect.correctAtMEM=i_ex_mem.branchCommit.branchCommitAtMEM && (i_ex_mem.EXBranchAvail!=i_ex_mem.branchCommit.predictBranchAvail);
+    assign i_branchCorrect.correctPCAtMEM=i_ex_mem.EXBranchAvail?i_ex_mem.branchCommit.BPC:i_ex_mem.branchCommit.NOJPC;
     DREXT U_DREXT(
         .in_data(MEMout),
         .out_data(EXT_MEMout),

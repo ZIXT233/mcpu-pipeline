@@ -11,7 +11,7 @@ module sim_dm_ram (
         if(ena) begin
             case(wea)
             4'hf:begin
-                ram[addra]<=dina;$display("[%d]%d",addra,dina);
+                ram[addra]<=dina;//$display("[%d]%d",addra,dina);
             end
             4'b0011: ram[addra][15:0]<=dina[15:0];
             4'b1100: ram[addra][31:16]<=dina[31:16];

@@ -47,15 +47,17 @@ module EX (
         .f_rd1     	( f_rd1      ),
         .f_rd2     	( f_rd2      )
     );
+    wire branchCommitAtEX=!i_id_ex.branchCommit.branchCommitAtMEM && i_id_ex.branchCommit.branchType!=0;
+    assign i_branchCorrect.correctAtEX = branchCommitAtEX && (i_id_ex.branchCommit.predictBranchAvail!=i_id_ex.IDBranchAvail);
+    assign i_branchCorrect.correctPCAtEX = i_id_ex.IDBranchAvail?i_id_ex.branchCommit.BPC
+                                           :i_id_ex.branchCommit.NOJPC;
 
-    assign i_branchCorrect.correctAtEX = !i_id_ex.branchCommitAtMEM && branchType!=0 && !i_id_ex.exBranchAvail;
-    assign i_branchCorrect.correctPCAtEX = PCP1+1;
-    wire memBranchAvail;
+    wire EXBranchAvail;
     BRANCH u_BRANCH(
          .rd1          	( f_rd1           ),
          .rd2        	( f_rd2         ),
          .branchType  	( branchType   ),
-         .branchAvail 	( memBranchAvail  )
+         .branchAvail 	( EXBranchAvail  )
      );
 
     ALU ALU(
@@ -98,17 +100,20 @@ module EX (
         i_ex_mem.MEM_DATA=0;
         i_ex_mem.MEM_CTRL=0;
         i_ex_mem.WB_CTRL=0;
+        i_ex_mem.branchCommit=0;
+        i_ex_mem.EXBranchAvail=0;
     end
     always @(posedge clk) begin
         if(i_controller.EX_FLUSH) begin
             //o_MEM_DATA<=0;
             i_ex_mem.MEM_CTRL<=0;
             i_ex_mem.WB_CTRL<=0;
+            i_ex_mem.branchCommit<=0;
+            i_ex_mem.EXBranchAvail<=0;
         end
         else begin
-            i_ex_mem.branchCommitAtMEM<=i_id_ex.branchCommitAtMEM;
-            i_ex_mem.memBranchAvail<=memBranchAvail;
-            i_ex_mem.branchType<=branchType;
+            i_ex_mem.branchCommit<=i_id_ex.branchCommit;
+            i_ex_mem.EXBranchAvail<=EXBranchAvail;
             i_ex_mem.MEM_DATA<={PCP1,i_stallDetect.EX_rw,EXout};
             i_ex_mem.MEM_CTRL<=i_id_ex.MEM_CTRL;
             i_ex_mem.WB_CTRL<=i_id_ex.WB_CTRL;

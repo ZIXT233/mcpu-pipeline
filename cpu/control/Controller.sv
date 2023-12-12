@@ -25,7 +25,8 @@ module Controller (
     assign i_controller.EX_CTRL={branchType,CP0WB,CP0Write,regDst,isSlt,savePC,ALUSrc,aluop,MDSign,MDFunc,MDHIWB,MDLOWB};
     assign i_controller.MEM_CTRL={memWrite};
     assign i_controller.WB_CTRL={regWrite,memToReg,isDMByte,isDMHalf,isLOADS};
-    assign i_stallDetect.ID_uncertainJump=NPCFromGPR||(branchType!=0);
+    assign i_stallDetect.NPCFromGPR=NPCFromGPR;
+    assign i_stallDetect.branch=(branchType!=0);
     assign i_cp0.CP0_CTRL={ExlSet,ExlClr};
     //decode instr
     //wire add,sub,ori,beq,sw,lw,lui,j,jal,jr,addi,addiu,slt,lb,lbu,lh,lhu,sb,sh,slti;

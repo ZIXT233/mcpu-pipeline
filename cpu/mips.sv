@@ -45,7 +45,8 @@ module mips (
         .i_bypass,
         .i_cp0,
         .i_id_ex,
-        .i_stallDetect
+        .i_stallDetect,
+        .i_branchCorrect
     );
     
     // outports wire
