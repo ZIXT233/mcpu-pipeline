@@ -12,8 +12,8 @@ module MEM (
     IStallDetect.MEM i_stallDetect,
     IBranchCorrect.MEM i_branchCorrect
 );
-    wire [31:0] EXout;
-    assign EXout=i_ex_mem.MEM_DATA.EXout;
+    wire [31:0] EXout=i_ex_mem.MEM_DATA.EXout;
+    wire memWrite =i_ex_mem.MEM_CTRL.memWrite;
     // verilator lint_off UNUSED
     wire regWrite,memToReg,isDMByte,isDMHalf,isLOADS;
     // verilator lint_on UNUSED
@@ -23,22 +23,41 @@ module MEM (
     assign i_stallDetect.MEM_rw=i_ex_mem.MEM_DATA.rw;
     assign i_stallDetect.MEM_memToReg=i_ex_mem.WB_CTRL.memToReg;
 
-    wire AddrInDM=(EXout[15:0]<'h3000);
-    wire [31:0]MEMout,EXT_MEMout;
-    assign MEMout=AddrInDM?i_ex_mem.DMout:i_bridge.PrRD;
-
     assign i_branchCorrect.correctAtMEM=i_ex_mem.branchCommit.branchCommitAtMEM && (i_ex_mem.EXBranchAvail!=i_ex_mem.branchCommit.predictBranchAvail);
     assign i_branchCorrect.correctPCAtMEM=i_ex_mem.EXBranchAvail?i_ex_mem.branchCommit.BPC:i_ex_mem.branchCommit.NOJPC;
-    DREXT U_DREXT(
-        .in_data(MEMout),
-        .out_data(EXT_MEMout),
-        .low_addr(EXout[1:0]),
-        .exsign(isLOADS),
+   
+    wire[3:0] be;
+    BEEXT U_BEEXT(
         .isByte(isDMByte),
-        .isHalf(isDMHalf)
-    );  
-    wire [31:0]WB_Wd;
-    assign WB_Wd=memToReg?EXT_MEMout:EXout;
+        .isHalf(isDMHalf),
+        .low_addr(EXout[1:0]),
+        .be(be)
+    );
+    wire AddrInDM=(EXout[15:0]<'h3000);
+    wire DMWrite=memWrite&&AddrInDM;
+`ifdef VERILATOR
+    sim_dm_ram u_dm_ram (
+        .clka(clk),    // input wire clka
+        .ena(AddrInDM),      // input wire ena
+        .wea({4{DMWrite}}&be),      // input wire [3 : 0] wea
+        .addra(EXout[13:2]),  // input wire [11 : 0] addra
+        .dina(i_ex_mem.MEM_DATA.f_rd2<<{EXout[1:0],3'b0}),    // input wire [31 : 0] dina
+        .douta(i_mem_wb.DMout)  // output wire [31 : 0] douta
+    );
+`else
+    dm_ram u_dm_ram (
+        .clka(clk),    // input wire clka
+        .ena(AddrInDM),      // input wire ena
+        .wea({4{DMWrite}}&be),      // input wire [3 : 0] wea
+        .addra(EXout[13:2]),  // input wire [11 : 0] addra
+        .dina(i_ex_mem.MEM_DATA.f_rd2<<{EXout[1:0],3'b0}),    // input wire [31 : 0] dina
+        .douta(i_mem_wb.DMout)  // output wire [31 : 0] douta
+    );
+`endif
+    assign i_bridge.IOWrite=memWrite&&!AddrInDM;
+    assign i_bridge.PrAddr=EXout[31:2];
+    assign i_bridge.PrWD=i_ex_mem.MEM_DATA.f_rd2<<{EXout[1:0],3'b0};
+    assign i_bridge.PrBE=be;
     initial begin
         i_mem_wb.WB_CTRL=0;
         i_mem_wb.WB_DATA=0;
@@ -49,7 +68,7 @@ module MEM (
             //o_WB_DATA<=0;
         end
         else begin
-            i_mem_wb.WB_DATA<={WB_Wd,i_ex_mem.MEM_DATA.rw};
+            i_mem_wb.WB_DATA<={AddrInDM,EXout,i_ex_mem.MEM_DATA.rw};
             i_mem_wb.WB_CTRL<=i_ex_mem.WB_CTRL;
         end
     end

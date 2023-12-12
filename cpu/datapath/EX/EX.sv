@@ -9,7 +9,6 @@ module EX (
     IEX_MEM.EX i_ex_mem,
     IBypass.EX i_bypass,
     ICP0.EX i_cp0,
-    IBridge.Access i_bridge,
     IStallDetect.EX i_stallDetect,
     IBranchCorrect.EX i_branchCorrect
 );
@@ -28,12 +27,11 @@ module EX (
 
     wire[31:0]f_rd1,f_rd2,ALUB,ALUC,EXout;//MDHI,MDLO;  
     
-    assign i_cp0.EX_TO_CP0={CP0Write,instr[15:11],f_rd2};
+    assign i_cp0.EX_TO_CP0={CP0Write&&!i_controller.EX_FLUSH,instr[15:11],f_rd2};
     assign i_stallDetect.EX_rw=(savePC&&!regDst)?5'h1F:(regDst?instr[15:11]:instr[20:16]);
     assign i_stallDetect.EX_regWrite=i_id_ex.WB_CTRL.regWrite;
     assign i_stallDetect.EX_memToReg=i_id_ex.WB_CTRL.memToReg;
     
-    wire[31:0]accessAddr;
     assign ALUB=ALUSrc?EXTB:f_rd2;
     FORWARD u_EX_FORWARD(
         .MEM_BACK (i_bypass.MEM_BACK),
@@ -66,7 +64,6 @@ module EX (
         .F(aluop),
         .sa(instr[10:6]),
         .C(ALUC),
-        .sum(accessAddr),
         .zero(zero)
     );
   /*  MDPROC U_MDPROC(
@@ -79,16 +76,6 @@ module EX (
         .O_LO(MDLO)
     );
 */
-    Access u_Access(
-        .clk(clk),
-        .memWrite(i_id_ex.MEM_CTRL.memWrite),
-        .isDMByte(i_id_ex.WB_CTRL.isDMByte),
-        .isDMHalf(i_id_ex.WB_CTRL.isDMHalf),
-        .addr(accessAddr),
-        .f_rd2,
-        .i_bridge,
-        .DMout(i_ex_mem.DMout)
-    );
     assign EXout=isSlt?{31'b0,ALUC[31]}:
                  savePC?{2'b0,PCP1<<2}:
                  CP0WB?i_cp0.CP0_TO_EX:
@@ -114,7 +101,7 @@ module EX (
         else begin
             i_ex_mem.branchCommit<=i_id_ex.branchCommit;
             i_ex_mem.EXBranchAvail<=EXBranchAvail;
-            i_ex_mem.MEM_DATA<={PCP1,i_stallDetect.EX_rw,EXout};
+            i_ex_mem.MEM_DATA<={PCP1,i_stallDetect.EX_rw,EXout,f_rd2};
             i_ex_mem.MEM_CTRL<=i_id_ex.MEM_CTRL;
             i_ex_mem.WB_CTRL<=i_id_ex.WB_CTRL;
         end

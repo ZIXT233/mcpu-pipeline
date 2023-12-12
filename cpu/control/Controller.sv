@@ -150,6 +150,13 @@ module Controller (
                       0; 
 
     //IF and NPC
+    int stallCnt=1;
+    always @(posedge clk)begin
+        if(i_stallDetect.stall)begin
+            $display("stall:%d",stallCnt);
+            stallCnt<=stallCnt+1;
+        end
+    end
     wire PCWrite  = !i_stallDetect.stall;
     wire IF_FLUSH = ExlSet || i_branchCorrect.correctAtEX || i_branchCorrect.correctAtMEM;
     wire ID_FLUSH =i_stallDetect.stall || i_branchCorrect.correctAtMEM;

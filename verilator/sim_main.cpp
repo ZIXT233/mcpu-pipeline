@@ -20,7 +20,7 @@ int main(int argc, char **argv)
     tfp->open("./wave.vcd"); //打开vcd
     top->rst=1;
     top->clk=1;
-    while (main_time < 1000 && !Verilated::gotFinish()) { //控制仿真时间
+    while (main_time < 1400 && !Verilated::gotFinish()) { //控制仿真时间
         top->clk^=1;
 		top->eval();
 		tfp->dump(main_time); //dump wave

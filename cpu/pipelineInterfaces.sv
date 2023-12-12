@@ -42,11 +42,12 @@ typedef struct packed {
 typedef struct packed {
     logic[31:2] PCP1;
     logic [4:0] rw;
-    logic [31:0] EXout;
+    logic [31:0] EXout,f_rd2;
 } type_MEM_DATA;
 
 typedef struct packed {
-    logic [31:0] WB_Wd;
+    logic AddrInDM;
+    logic [31:0]EXout;
     logic [4:0] rw;
 } type_WB_DATA;
 typedef struct packed {
@@ -88,14 +89,14 @@ interface IStallDetect(input clk);
     logic EX_memToReg;
     logic [4:0] MEM_rw;
     logic MEM_memToReg;
-    logic stall,LOAD,Branch_EX,Branch_LOAD,NFG_EX,NFG_LOAD;
+    logic stall,EX_LOAD,Branch_EX,Branch_LOAD,NFG_EX,NFG_LOAD;
     logic branchCommitAtMEM;
-    assign LOAD=(EX_memToReg)&&(EX_rw==ID_rs||EX_rw==ID_rt)&&EX_rw!=0;
+    assign EX_LOAD=(EX_memToReg)&&(EX_rw==ID_rs||EX_rw==ID_rt)&&EX_rw!=0;
     assign Branch_EX=branch&&(EX_memToReg||EX_regWrite)&&EX_rw!=0&&(EX_rw==ID_rs||EX_rw==ID_rt);
     assign Branch_LOAD=branch&&MEM_memToReg&&(MEM_rw==ID_rs||MEM_rw==ID_rt);
     assign NFG_EX=NPCFromGPR&&(EX_memToReg||EX_regWrite)&&EX_rw!=0&&(EX_rw==ID_rs||EX_rw==ID_rt);
     assign NFG_LOAD=NPCFromGPR&&MEM_memToReg&&(MEM_rw==ID_rs||MEM_rw==ID_rt);
-    assign stall=LOAD||NFG_EX||NFG_LOAD;//||Branch_EX||Branch_LOAD;
+    assign stall=EX_LOAD||NFG_EX||NFG_LOAD;//||Branch_EX||Branch_LOAD;
     assign branchCommitAtMEM=Branch_EX||Branch_LOAD;
     modport Controller(input stall,output NPCFromGPR,branch);
     modport ID(output ID_rs,ID_rt,input branchCommitAtMEM);
@@ -151,9 +152,9 @@ endinterface
 interface IMEM_WB(input clk); 
     type_WB_CTRL WB_CTRL;
     type_WB_DATA WB_DATA;
-    
-    modport MEM(output WB_CTRL,WB_DATA);
-    modport WB(input  WB_CTRL,WB_DATA);
+    wire [31:0]DMout;
+    modport MEM(output WB_CTRL,WB_DATA,DMout);
+    modport WB(input  WB_CTRL,WB_DATA,DMout);
 endinterface
 interface IBridge(input clk);
     logic [31:0]PrWD,PrRD;
@@ -163,8 +164,8 @@ interface IBridge(input clk);
     logic IOWrite;
     modport CPU(input PrRD,HWInt,
                 output PrWD,PrAddr,PrBE,IOWrite);
-    modport Access(output PrWD,PrAddr,PrBE,IOWrite);
-    modport MEM(input PrRD);
+    modport MEM(output PrWD,PrAddr,PrBE,IOWrite);
+    modport WB(input PrRD);
     modport CP0(input HWInt);
 endinterface
 interface IBypass(input clk);
