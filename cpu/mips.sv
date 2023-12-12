@@ -60,6 +60,7 @@ module mips (
         .i_cp0,
         .i_ex_mem, 
         .i_stallDetect,
+        .i_bridge,
         .i_branchCorrect
     );
     
@@ -80,7 +81,6 @@ module mips (
         .clk(clk),
         .rst(rst),
         .i_mem_wb,
-        .i_bridge,
         .i_bypass
     );
     // outports wire

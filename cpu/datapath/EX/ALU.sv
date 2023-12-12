@@ -4,7 +4,7 @@ module ALU(
     input [4:0] sa,
     input [3:0]F,
     output reg[31:0]C, 
-   // output [31:0]sum,
+    output [31:0]sum,
     output zero); 
     wire [31:0] sll,srl,sra,sllv,srlv,srav; 
     assign sll=B<<sa;
@@ -13,7 +13,7 @@ module ALU(
     assign sllv=B<<A;
     assign srlv=B>>A;
     assign srav=$signed(B)>>>A;
-   // assign sum=A+B;
+    assign sum=A+B;
 
     always_comb begin
         case(F)
