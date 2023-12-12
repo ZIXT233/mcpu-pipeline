@@ -48,7 +48,7 @@ module ID (
     );
     // outports wire
     wire [31:0] 	f_rd1;
-    wire [31:0] 	f_rd2;
+    wire [31:0] 	f_rd2,nouse;
     
     FORWARD u_ID_FORWARD(
         .MEM_BACK 	( i_bypass.MEM_BACK  ),
@@ -63,7 +63,8 @@ module ID (
         .f_rd2    	( f_rd2     ),
         .EX_memWrite(0),
         .MEM_memToReg(0),
-        .MEM_EXT_MEMout(0)
+        .MEM_EXT_MEMout(0),
+        .f_rd2_for_MEM(nouse)
     );
     // outports wire
 

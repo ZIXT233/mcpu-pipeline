@@ -26,7 +26,7 @@ module EX (
     // verilator lint_on UNUSED
     assign {PCP1,instr,rd1,rd2,EXTB}=i_id_ex.EX_DATA;
 
-    wire[31:0]f_rd1,f_rd2,ALUB,ALUC,EXout;//MDHI,MDLO;  
+    wire[31:0]f_rd1,f_rd2,f_rd2_for_MEM,ALUB,ALUC,EXout;//MDHI,MDLO;  
     
     assign i_cp0.EX_TO_CP0={CP0Write,instr[15:11],f_rd2};
     assign i_stallDetect.EX_rw=(savePC&&!regDst)?5'h1F:(regDst?instr[15:11]:instr[20:16]);
@@ -46,6 +46,7 @@ module EX (
         .rd2(rd2),
         .f_rd1     	( f_rd1      ),
         .f_rd2     	( f_rd2      ),
+        .f_rd2_for_MEM,
         .EX_memWrite(i_id_ex.MEM_CTRL.memWrite),
         .MEM_memToReg(i_bypass.MEM_memToReg),
         .MEM_EXT_MEMout(i_bypass.MEM_EXT_MEMout)
@@ -88,7 +89,7 @@ module EX (
         .isDMByte(i_id_ex.WB_CTRL.isDMByte),
         .isDMHalf(i_id_ex.WB_CTRL.isDMHalf),
         .addr(accessAddr),
-        .f_rd2,
+        .f_rd2(f_rd2_for_MEM),
         .i_bridge,
         .DMout(i_ex_mem.DMout)
     );

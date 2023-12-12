@@ -10,6 +10,7 @@ module FORWARD (
     input [31:0]rd2,
     output [31:0] f_rd1,
     output [31:0] f_rd2,
+    output [31:0] f_rd2_for_MEM,
     input EX_memWrite,
     input [31:0]MEM_EXT_MEMout,
     input MEM_memToReg
@@ -33,7 +34,8 @@ module FORWARD (
     wire oriB=!BFromMEM&&!BFromWB&&!LOADBFromWB;
 
     assign f_rd1=`fmatch(AFromMEM,MEM_Wd)|`fmatch(AFromWB,WB_Wd)|`fmatch(oriA,rd1);
-    assign f_rd2=`fmatch(BFromMEM,MEM_Wd)|`fmatch(BFromWB,WB_Wd)|`fmatch(oriB,rd2)|`fmatch(LOADBFromWB,MEM_EXT_MEMout);
+    assign f_rd2=`fmatch(BFromMEM,MEM_Wd)|`fmatch(BFromWB,WB_Wd)|`fmatch(oriB,rd2);
+    assign f_rd2_for_MEM=`fmatch(BFromMEM,MEM_Wd)|`fmatch(BFromWB,WB_Wd)|`fmatch(oriB,rd2)|`fmatch(LOADBFromWB,MEM_EXT_MEMout);
 
     
 endmodule //Forward
