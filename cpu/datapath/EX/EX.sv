@@ -85,6 +85,7 @@ module EX (
 */
     Access u_Access(
         .clk(clk),
+        .memToReg(i_id_ex.WB_CTRL.memToReg),
         .memWrite(i_id_ex.MEM_CTRL.memWrite),
         .isDMByte(i_id_ex.WB_CTRL.isDMByte),
         .isDMHalf(i_id_ex.WB_CTRL.isDMHalf),

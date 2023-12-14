@@ -1,6 +1,7 @@
 `include "cpu/pipelineInterfaces.sv"
 module Access(
     input clk,
+    input memToReg,
     input memWrite,
     input isDMByte,
     input isDMHalf,
@@ -21,7 +22,7 @@ module Access(
 `ifdef VERILATOR
     sim_dm_ram u_dm_ram (
         .clka(clk),    // input wire clka
-        .ena(AddrInDM),      // input wire ena
+        .ena(AddrInDM ),      // input wire ena
         .wea({4{DMWrite}}&be),      // input wire [3 : 0] wea
         .addra(addr[13:2]),  // input wire [11 : 0] addra
         .dina(f_rd2<<{addr[1:0],3'b0}),    // input wire [31 : 0] dina
@@ -30,7 +31,7 @@ module Access(
 `else
     dm_ram u_dm_ram (
         .clka(clk),    // input wire clka
-        .ena(AddrInDM),      // input wire ena
+        .ena(AddrInDM ),      // input wire ena
         .wea({4{DMWrite}}&be),      // input wire [3 : 0] wea
         .addra(addr[13:2]),  // input wire [11 : 0] addra
         .dina(f_rd2<<{addr[1:0],3'b0}),    // input wire [31 : 0] dina
@@ -38,6 +39,7 @@ module Access(
     );
 `endif
     assign i_bridge.IOWrite=memWrite&&!AddrInDM;
+    assign i_bridge.IORead=memToReg&&!AddrInDM;
     assign i_bridge.PrAddr=addr[31:2];
     assign i_bridge.PrWD=f_rd2<<{addr[1:0],3'b0};
     assign i_bridge.PrBE=be;

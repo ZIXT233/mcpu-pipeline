@@ -162,10 +162,10 @@ interface IBridge(input clk);
     logic [31:2]PrAddr;
     logic [3:0]PrBE;
     logic [7:2]HWInt;
-    logic IOWrite;
+    logic IOWrite,IORead;
     modport CPU(input PrRD,HWInt,
-                output PrWD,PrAddr,PrBE,IOWrite);
-    modport Access(output PrWD,PrAddr,PrBE,IOWrite);
+                output PrWD,PrAddr,PrBE,IOWrite,IORead);
+    modport Access(output PrWD,PrAddr,PrBE,IOWrite,IORead);
     modport MEM(input PrRD);
     modport CP0(input HWInt);
 endinterface

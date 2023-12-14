@@ -9,7 +9,7 @@ module sim_im_rom (
     output reg[31:0]douta);
     reg[31:0] rom[0:2047];
     initial begin
-        $readmemh("../sample_codes/qsortClang.txt",rom);
+        $readmemh("../sample_codes/uart.txt",rom);
     end
     always @(posedge clka)begin
         if(ena)douta<=rom[addra];
