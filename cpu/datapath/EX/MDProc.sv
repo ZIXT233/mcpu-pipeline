@@ -7,28 +7,29 @@ module MDProc (
     output [31:0]O_HI,
     output [31:0]O_LO
 );
-    reg [63:0]hifo;
+    reg [63:0]hifo,mid;
     assign O_HI=hifo[63:32];
     assign O_LO=hifo[31:0];
     always @(posedge clk) begin
+        //$display("A:%d B:%d hifo:%d mid:%d",A,B,hifo,mid);
         case(F)
-        0:;
+        0:hifo<=mid;
         1:hifo[63:32]<=A;
         2:hifo[31:0]<=A;
         3:begin
-            if(isSign)hifo<=$signed(A)*$signed(B);
-            else hifo<=A*B;
+            if(isSign)mid<=$signed(A)*$signed(B);
+            else mid<=A*B;
         end
-        4:begin
+        /*4:begin
             if(isSign) begin 
-                hifo[31:0]<=$signed(A)/$signed(B);
-                hifo[63:32]<=$signed(A)%$signed(B);
+                mid[31:0]<=$signed(A)/$signed(B);
+                mid[63:32]<=$signed(A)%$signed(B);
             end 
             else begin 
-                hifo[31:0]<=A/B;
-                hifo[63:32]<=A%B;
-            end
-        end
+                mid[31:0]<=A/B;
+                mid[63:32]<=A%B;
+
+        end*/
         endcase 
     end
 endmodule //MDPROC

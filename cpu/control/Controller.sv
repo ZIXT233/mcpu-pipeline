@@ -140,7 +140,7 @@ module Controller (
     //  status strict signal 
     //写使能信号是状�?�严格的
     //由于s0每个命令必须经过，且s0赋�?�依赖于npc
-    //�??npc跳转信号在s0出现，会影响npc（�?�且此时npc跳转信号�??上�?�??指令的），故npc跳转信号要排�??S0
+    //�??npc跳转信号在s0出现，会影响npc（�?�且此时npc跳转信号�??上�?�??指令的），故npc跳转信号要排�??S0
     wire[2:0] branchType=beq?1:
                       bne?2:  
                       bgtz?3: 

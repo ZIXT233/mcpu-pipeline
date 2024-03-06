@@ -11,7 +11,7 @@ module BranchPredict (
     reg lastPredict;
     reg [5:0]lastPredictAddr;
     reg[1:0] lastPredictTime=3;
-    //int miss=1,branchCnt=0;
+    int miss=1,branchCnt=0;
     initial begin
         for(int i=0;i<64;i++) fsm[i]=2;
     end
@@ -20,18 +20,18 @@ module BranchPredict (
             lastPredict<=predictBranchAvail;
             lastPredictAddr<=low_addr;
             lastPredictTime<=0;
-           // branchCnt<=branchCnt+1;
+            branchCnt<=branchCnt+1;
         end
         
         if(lastPredictTime<2) begin
             if(i_branchCorrect.correctAtEX||i_branchCorrect.correctAtMEM)begin
-                //$display("predict wrong:[%x] %d",lastPredictAddr,fsm[lastPredictAddr]);
-                //$display("predict miss:%d/%d",miss,branchCnt);
-                //miss<=miss+1;
-                if(lastPredict&&fsm[lastPredictAddr]<3)begin //预测跳转但是错�??，fsm[1]:0->1,故fsm++
+                $display("predict wrong:[%x] %d",lastPredictAddr,fsm[lastPredictAddr]);
+                $display("predict miss:%d/%d",miss,branchCnt);
+                miss<=miss+1;
+                if(lastPredict&&fsm[lastPredictAddr]<3)begin //预测跳转但是错�??，fsm[1]:0->1,故fsm++
                     fsm[lastPredictAddr]<=fsm[lastPredictAddr]+1;
                 end
-                else if(!lastPredict&&fsm[lastPredictAddr]>0)begin //预测不跳但是错�??,fsm[1]: 1->0 ,故fsm--
+                else if(!lastPredict&&fsm[lastPredictAddr]>0)begin //预测不跳但是错�??,fsm[1]: 1->0 ,故fsm--
                     fsm[lastPredictAddr]<=fsm[lastPredictAddr]-1;
                 end
             end

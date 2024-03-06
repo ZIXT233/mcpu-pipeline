@@ -20,6 +20,7 @@ module ID (
     assign i_stallDetect.ID_rs=instr[25:21];
     assign i_stallDetect.ID_rt=instr[20:16];
     assign i_stallDetect.ID_memWrite=i_controller.MEM_CTRL.memWrite;
+    assign i_stallDetect.ID_MDWB=i_controller.EX_CTRL.MDHIWB|i_controller.EX_CTRL.MDLOWB;
     assign i_cp0.ID_PCP1=PCP1;
     wire [31:0] WB_Wd;
     wire [4:0] WB_rw;

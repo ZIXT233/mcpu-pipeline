@@ -26,13 +26,13 @@ module EX (
     // verilator lint_on UNUSED
     assign {PCP1,instr,rd1,rd2,EXTB}=i_id_ex.EX_DATA;
 
-    wire[31:0]f_rd1,f_rd2,f_rd2_for_MEM,ALUB,ALUC,EXout;//MDHI,MDLO;  
+    wire[31:0]f_rd1,f_rd2,f_rd2_for_MEM,ALUB,ALUC,EXout,MDHI,MDLO;  
     
     assign i_cp0.EX_TO_CP0={CP0Write,instr[15:11],f_rd2};
     assign i_stallDetect.EX_rw=(savePC&&!regDst)?5'h1F:(regDst?instr[15:11]:instr[20:16]);
     assign i_stallDetect.EX_regWrite=i_id_ex.WB_CTRL.regWrite;
     assign i_stallDetect.EX_memToReg=i_id_ex.WB_CTRL.memToReg;
-    
+    assign i_stallDetect.EX_MUL=(MDFunc==3);
     wire[31:0]accessAddr;
     assign ALUB=ALUSrc?EXTB:f_rd2;
     FORWARD u_EX_FORWARD(
@@ -73,7 +73,7 @@ module EX (
         .sum(accessAddr),
         .zero(zero)
     );
-  /*  MDPROC U_MDPROC(
+    MDProc U_MDPROC(
         .clk(clk),
         .A(f_rd1),
         .B(ALUB),
@@ -82,7 +82,7 @@ module EX (
         .O_HI(MDHI),
         .O_LO(MDLO)
     );
-*/
+
     Access u_Access(
         .clk(clk),
         .memToReg(i_id_ex.WB_CTRL.memToReg),
@@ -97,8 +97,8 @@ module EX (
     assign EXout=isSlt?{31'b0,ALUC[31]}:
                  savePC?{2'b0,PCP1<<2}:
                  CP0WB?i_cp0.CP0_TO_EX:
-               //  MDHIWB?MDHI:
-               //  MDLOWB?MDLO:
+                 MDHIWB?MDHI:
+                 MDLOWB?MDLO:
                  ALUC;
 
     initial begin
