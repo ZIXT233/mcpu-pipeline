@@ -23,8 +23,8 @@ module Controller (
     assign i_controller.MEM_FLUSH=MEM_FLUSH;
     assign i_controller.ID_CTRL={NPCFromEPC,ExlSet,jmp,NPCFromGPR,branchType,extop,exsign};
     assign i_controller.EX_CTRL={branchType,CP0WB,CP0Write,regDst,isSlt,savePC,ALUSrc,aluop,MDSign,MDFunc,MDHIWB,MDLOWB};
-    assign i_controller.MEM_CTRL={memWrite,mul};
-    assign i_controller.WB_CTRL={regWrite,memToReg,isDMByte,isDMHalf,isLOADS};
+    assign i_controller.MEM_CTRL={memWrite};
+    assign i_controller.WB_CTRL={regWrite,memToReg,isDMByte,isDMHalf,isLOADS,mul};
     assign i_stallDetect.NPCFromGPR=NPCFromGPR;
     assign i_stallDetect.branch=(branchType!=0);
     assign i_cp0.CP0_CTRL={ExlSet,ExlClr};

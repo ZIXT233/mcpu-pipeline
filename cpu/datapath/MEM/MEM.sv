@@ -13,12 +13,11 @@ module MEM (
     IBranchCorrect.MEM i_branchCorrect
 );
     wire [31:0] EXout;
-    assign EXout=i_ex_mem.MEM_CTRL.MUL?i_ex_mem.MULout:
-                 i_ex_mem.MEM_DATA.EXout;
+    assign EXout=i_ex_mem.MEM_DATA.EXout;
     // verilator lint_off UNUSED
-    wire regWrite,memToReg,isDMByte,isDMHalf,isLOADS;
+    wire regWrite,memToReg,isDMByte,isDMHalf,isLOADS,MUL;
     // verilator lint_on UNUSED
-    assign {regWrite,memToReg,isDMByte,isDMHalf,isLOADS}=i_ex_mem.WB_CTRL;
+    assign {regWrite,memToReg,isDMByte,isDMHalf,isLOADS,MUL}=i_ex_mem.WB_CTRL;
 
     assign i_bypass.MEM_BACK={i_ex_mem.WB_CTRL.regWrite,EXout,i_ex_mem.MEM_DATA.rw}; //regWrite,Wd,rw
     assign i_bypass.MEM_memToReg=memToReg;
@@ -43,6 +42,7 @@ module MEM (
     );  
     wire [31:0]WB_Wd;
     assign WB_Wd=memToReg?EXT_MEMout:EXout;
+    assign i_mem_wb.MULout=i_ex_mem.MULout;
     initial begin
         i_mem_wb.WB_CTRL=0;
         i_mem_wb.WB_DATA=0;

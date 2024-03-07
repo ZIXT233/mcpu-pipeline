@@ -32,6 +32,7 @@ module EX (
     assign i_stallDetect.EX_rw=(savePC&&!regDst)?5'h1F:(regDst?instr[15:11]:instr[20:16]);
     assign i_stallDetect.EX_regWrite=i_id_ex.WB_CTRL.regWrite;
     assign i_stallDetect.EX_memToReg=i_id_ex.WB_CTRL.memToReg;
+    assign i_stallDetect.EX_MUL=i_id_ex.WB_CTRL.MUL;
     //assign i_stallDetect.EX_MUL=MUL;
     wire[31:0]accessAddr;
     assign ALUB=ALUSrc?EXTB:f_rd2;
@@ -78,7 +79,7 @@ module EX (
         .clk,
         .A(f_rd1),
         .B(ALUB),
-        .CE(i_id_ex.MEM_CTRL.MUL),
+        .CE(i_id_ex.WB_CTRL.MUL),
         .P(i_ex_mem.MULout)
     );
 `else
@@ -86,7 +87,7 @@ module EX (
         .clk,
         .A(f_rd1),
         .B(ALUB),
-        .CE(i_id_ex.MEM_CTRL.MUL),
+        .CE(i_id_ex.WB_CTRL.MUL),
         .P(i_ex_mem.MULout)
     );
 `endif

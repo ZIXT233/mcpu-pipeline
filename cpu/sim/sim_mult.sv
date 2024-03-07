@@ -5,7 +5,14 @@ module sim_mult(
     input CE,
     output reg[31:0] P
 );
+    logic state=0;
     always @(posedge clk) begin
-        if(CE) P<=A*B;
+        if(state==0) begin
+            if(CE) state<=1;
+        end
+        else begin
+            P<=A*B;
+            state<=0;
+        end
     end
 endmodule

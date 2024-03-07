@@ -8,6 +8,7 @@ module WB (
     IMEM_WB.WB i_mem_wb,
     IBypass.WB i_bypass
 );
-
-    assign i_bypass.WB_BACK={i_mem_wb.WB_CTRL.regWrite,i_mem_wb.WB_DATA.WB_Wd,i_mem_wb.WB_DATA.rw};
+    wire [31:0] WB_Wd;
+    assign WB_Wd=i_mem_wb.WB_CTRL.MUL?i_mem_wb.MULout:i_mem_wb.WB_DATA.WB_Wd;
+    assign i_bypass.WB_BACK={i_mem_wb.WB_CTRL.regWrite,WB_Wd,i_mem_wb.WB_DATA.rw};
 endmodule //WB
