@@ -13,6 +13,7 @@ typedef struct packed {
 } type_WB_CTRL;
 typedef struct packed {
     logic memWrite;
+    logic MUL;
 } type_MEM_CTRL;
 typedef struct packed {
     logic [2:0]branchType;
@@ -146,9 +147,9 @@ interface IEX_MEM(input clk);
     type_MEM_DATA MEM_DATA;
     type_Branch_Commit branchCommit;
     logic EXBranchAvail;
-    wire [31:0] DMout;
-    modport EX(output MEM_CTRL,WB_CTRL,MEM_DATA,DMout,branchCommit,EXBranchAvail);
-    modport MEM(input  MEM_CTRL,WB_CTRL,MEM_DATA,DMout,branchCommit,EXBranchAvail);
+    wire [31:0] DMout,MULout;
+    modport EX(output MEM_CTRL,WB_CTRL,MEM_DATA,DMout,branchCommit,EXBranchAvail,MULout);
+    modport MEM(input  MEM_CTRL,WB_CTRL,MEM_DATA,DMout,branchCommit,EXBranchAvail,MULout);
 endinterface
 interface IMEM_WB(input clk); 
     type_WB_CTRL WB_CTRL;

@@ -13,7 +13,8 @@ module MEM (
     IBranchCorrect.MEM i_branchCorrect
 );
     wire [31:0] EXout;
-    assign EXout=i_ex_mem.MEM_DATA.EXout;
+    assign EXout=i_ex_mem.MEM_CTRL.MUL?i_ex_mem.MULout:
+                 i_ex_mem.MEM_DATA.EXout;
     // verilator lint_off UNUSED
     wire regWrite,memToReg,isDMByte,isDMHalf,isLOADS;
     // verilator lint_on UNUSED

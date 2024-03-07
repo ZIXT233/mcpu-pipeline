@@ -32,8 +32,6 @@ module EX (
     assign i_stallDetect.EX_rw=(savePC&&!regDst)?5'h1F:(regDst?instr[15:11]:instr[20:16]);
     assign i_stallDetect.EX_regWrite=i_id_ex.WB_CTRL.regWrite;
     assign i_stallDetect.EX_memToReg=i_id_ex.WB_CTRL.memToReg;
-    wire MUL;
-    assign MUL=(MDFunc==3);
     //assign i_stallDetect.EX_MUL=MUL;
     wire[31:0]accessAddr;
     assign ALUB=ALUSrc?EXTB:f_rd2;
@@ -75,6 +73,23 @@ module EX (
         .sum(accessAddr),
         .zero(zero)
     );
+`ifdef VERILATOR
+    sim_mult u_mult(
+        .clk,
+        .A(f_rd1),
+        .B(ALUB),
+        .CE(i_id_ex.MEM_CTRL.MUL),
+        .P(i_ex_mem.MULout)
+    );
+`else
+    mult u_mult(
+        .clk,
+        .A(f_rd1),
+        .B(ALUB),
+        .CE(i_id_ex.MEM_CTRL.MUL),
+        .P(i_ex_mem.MULout)
+    );
+`endif
     /*
     MDProc U_MDPROC(
         .clk(clk),
@@ -102,7 +117,7 @@ module EX (
                  CP0WB?i_cp0.CP0_TO_EX:
                  //MDHIWB?MDHI:
                  //MDLOWB?MDLO:
-                 MUL?f_rd1*ALUB:
+                 //MUL?f_rd1*ALUB:
                  ALUC;
 
     initial begin
