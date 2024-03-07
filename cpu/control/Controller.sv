@@ -77,6 +77,7 @@ module Controller (
     wire mtlo =(op==0)    &&(func==6'b010011);
     wire mfhi =(op==0)    &&(func==6'b010000);
     wire mflo =(op==0)    &&(func==6'b010010);
+    wire mul  =(op==6'b011100)  && (func==6'b000010);
     wire mult =(op==0)    &&(func==6'b011000);
     wire multu=(op==0)    &&(func==6'b011001);
     wire div  =(op==0)    &&(func==6'b011010);
@@ -89,7 +90,7 @@ module Controller (
 
     //controll signal
     //assist variable 
-    wire typeR    =add|addu|sub|subu|slt|AND|OR|XOR|NOR|sll|srl|sra|sllv|srlv|srav;
+    wire typeR    =add|addu|sub|subu|slt|AND|OR|XOR|NOR|sll|srl|sra|sllv|srlv|srav|MDMUL;
     wire typeIA   =ori|lui|addi|addiu|slti|andi|xori; //typeI(Algorithm): ALU Src I and NO DM
     wire typeIB   =Branch;                //while branch is typeI,but ALUSrc no I
     //wire typeJ    =j|jal|jr|jalr;
@@ -127,7 +128,8 @@ module Controller (
                      ALURs? 12:
                      0;
 
-    wire MDMUL=mult|multu;
+    //wire MDMUL=mult|multu|mul;
+    wire MDMUL = mul;
     wire MDDIV=div|divu;
     wire MDSign=mult|div;
     wire MDHIWB=mfhi;

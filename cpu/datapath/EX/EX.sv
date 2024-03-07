@@ -32,7 +32,9 @@ module EX (
     assign i_stallDetect.EX_rw=(savePC&&!regDst)?5'h1F:(regDst?instr[15:11]:instr[20:16]);
     assign i_stallDetect.EX_regWrite=i_id_ex.WB_CTRL.regWrite;
     assign i_stallDetect.EX_memToReg=i_id_ex.WB_CTRL.memToReg;
-    assign i_stallDetect.EX_MUL=(MDFunc==3);
+    wire MUL;
+    assign MUL=(MDFunc==3);
+    //assign i_stallDetect.EX_MUL=MUL;
     wire[31:0]accessAddr;
     assign ALUB=ALUSrc?EXTB:f_rd2;
     FORWARD u_EX_FORWARD(
@@ -73,6 +75,7 @@ module EX (
         .sum(accessAddr),
         .zero(zero)
     );
+    /*
     MDProc U_MDPROC(
         .clk(clk),
         .A(f_rd1),
@@ -82,7 +85,7 @@ module EX (
         .O_HI(MDHI),
         .O_LO(MDLO)
     );
-
+    */
     Access u_Access(
         .clk(clk),
         .memToReg(i_id_ex.WB_CTRL.memToReg),
@@ -97,8 +100,9 @@ module EX (
     assign EXout=isSlt?{31'b0,ALUC[31]}:
                  savePC?{2'b0,PCP1<<2}:
                  CP0WB?i_cp0.CP0_TO_EX:
-                 MDHIWB?MDHI:
-                 MDLOWB?MDLO:
+                 //MDHIWB?MDHI:
+                 //MDLOWB?MDLO:
+                 MUL?f_rd1*ALUB:
                  ALUC;
 
     initial begin
@@ -109,6 +113,7 @@ module EX (
         i_ex_mem.EXBranchAvail=0;
     end
     always @(posedge clk) begin
+        //$display("%d%d%d%d",EXout,f_rd1,ALUB,MUL);
         if(i_controller.EX_FLUSH) begin
             //o_MEM_DATA<=0;
             i_ex_mem.MEM_CTRL<=0;
