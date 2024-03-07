@@ -21,10 +21,11 @@ module MEM (
 
     assign i_bypass.MEM_BACK={i_ex_mem.WB_CTRL.regWrite,EXout,i_ex_mem.MEM_DATA.rw}; //regWrite,Wd,rw
     assign i_bypass.MEM_memToReg=memToReg;
-    assign i_bypass.MEM_EXT_MEMout=EXT_MEMout;
+    //assign i_bypass.MEM_EXT_MEMout=EXT_MEMout;
     
     assign i_stallDetect.MEM_rw=i_ex_mem.MEM_DATA.rw;
     assign i_stallDetect.MEM_memToReg=i_ex_mem.WB_CTRL.memToReg;
+    assign i_stallDetect.MEM_MUL=i_ex_mem.WB_CTRL.MUL;
 
     wire AddrInDM=(EXout[15:0]<'h3000);
     wire [31:0]MEMout,EXT_MEMout;

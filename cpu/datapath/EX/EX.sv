@@ -47,10 +47,10 @@ module EX (
         .rd2(rd2),
         .f_rd1     	( f_rd1      ),
         .f_rd2     	( f_rd2      ),
-        .f_rd2_for_MEM,
-        .EX_memWrite(i_id_ex.MEM_CTRL.memWrite),
-        .MEM_memToReg(i_bypass.MEM_memToReg),
-        .MEM_EXT_MEMout(i_bypass.MEM_EXT_MEMout)
+        .f_rd2_for_MEM
+        //.EX_memWrite(i_id_ex.MEM_CTRL.memWrite),
+        //.MEM_memToReg(i_bypass.MEM_memToReg),
+        //.MEM_EXT_MEMout(i_bypass.MEM_EXT_MEMout)
     );
     wire branchCommitAtEX=!i_id_ex.branchCommit.branchCommitAtMEM && i_id_ex.branchCommit.branchType!=0;
     assign i_branchCorrect.correctAtEX = branchCommitAtEX && (i_id_ex.branchCommit.predictBranchAvail!=i_id_ex.IDBranchAvail);

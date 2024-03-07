@@ -11,7 +11,7 @@ module sim_im_rom (
     int lat=0;
     reg[31:0] rom[0:2047];
     initial begin
-        $readmemh("../sample_codes/mul.txt",rom);
+        $readmemh("../sample_codes/qsortClang.txt",rom);
     end
     always @(posedge clka)begin
         if(ena) begin
