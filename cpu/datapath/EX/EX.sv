@@ -84,7 +84,7 @@ module EX (
     );
 `else
     mult u_mult(
-        .clk,
+        .CLK(clk),
         .A(f_rd1),
         .B(ALUB),
         .CE(i_id_ex.WB_CTRL.MUL),
