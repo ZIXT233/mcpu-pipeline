@@ -3,6 +3,7 @@ module IF (
     input clk,
     input rst,
     IController.IF i_controller,
+    IStallDetect.IF i_stallDetect,
     IIF_ID.IF i_if_id,
     IBranchCorrect.IF i_branchCorrect
 );
@@ -15,14 +16,29 @@ module IF (
         .NPC(NPC),
         .clk(clk),
         .reset(rst),
-        .PCWrite(i_controller.IF_CTRL.PCWrite  ),
+        .PCWrite(i_controller.IF_CTRL.PCWrite&&cpu_req_ready),
         .PC(IF_PC)
+    );
+    wire [15:2]mem_req_addr;
+    wire [31:0]mem_req_data;
+    assign i_stallDetect.instrReady=1'b1;
+    wire cpu_req_ready;
+    ICache u_iCache(
+        .clk,
+        .rst,
+        //CPU
+        .cpu_req_addr(IF_PC[15:2]),
+        .cpu_req_data(IF_instr),
+        .cpu_req_ready,
+        //MEM
+        .mem_req_addr,
+        .mem_req_data
     );
     IM IM (
         .clk(clk),
-        .ce(i_controller.IF_CTRL.PCWrite),
-        .addr(NPC[15:2]),
-        .instruct(IF_instr)
+        .ce(1'b1),
+        .addr(mem_req_addr),
+        .instruct(mem_req_data)
     );
      
     reg [31:0] ID_instr; 
@@ -37,7 +53,7 @@ module IF (
             firstFetch<=1'b1;
         end
         else begin
-            if(i_controller.IF_FLUSH||firstFetch) begin 
+            if(i_controller.IF_FLUSH||firstFetch||!cpu_req_ready) begin 
                 ID_instr<=0;
             end
             else if(i_controller.IF_CTRL.PCWrite)begin 
@@ -53,3 +69,4 @@ module IF (
 
     
 endmodule //IF
+

@@ -7,6 +7,7 @@ module IM(
     wire[10:0] index=addr-'hC00;
     // verilator lint_on WIDTH
 
+
     //always @(posedge clk) $display("%d",index);
 `ifdef VERILATOR
     sim_im_rom u_imrom (

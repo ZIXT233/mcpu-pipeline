@@ -20,8 +20,8 @@ module npc(
     assign NOJPC=PC+1;
     assign BPC=PC+{{14{offset[17]}},offset};
     //assign PCP1=PC+1; 多周期，IF后周期的PC即为原PCP1
-    wire[31:2] JPC=`npcmatch(goExceptionHandler,`ExceptionHandlerAddr)|
-               `npcmatch(NPCFromEPC,EPC)|
+    wire[31:2] JPC=//`npcmatch(goExceptionHandler,`ExceptionHandlerAddr)|
+               //`npcmatch(NPCFromEPC,EPC)|
                `npcmatch(NPCFromGPR,reg_index[31:2])|
                `npcmatch(jmp,{4'b0,instr_index})|
                `npcmatch(branchAvail,BPC);

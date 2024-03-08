@@ -19,6 +19,7 @@ module mips (
         .clk         	( clk          ),
         .rst         	( rst          ),
         .i_controller,
+        .i_stallDetect,
         .i_if_id,
         .i_branchCorrect
     );

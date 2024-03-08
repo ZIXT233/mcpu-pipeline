@@ -72,13 +72,14 @@ module ID (
 
     
     wire       	predictBranchAvail;  //always branch
-    BranchPredict u_branch_predict(
+    assign predictBranchAvail=IDBranchAvail;
+    /*BranchPredict u_branch_predict(
         .clk,
         .low_addr(PCP1[7:2]),
         .i_branchCorrect,
-        .branchType,
-        .predictBranchAvail
-    );
+        .branchType
+        //.predictBranchAvail
+    );*/
     wire[31:2] NOJPC,BPC;
     npc npc (
         .PC(PCP1),
