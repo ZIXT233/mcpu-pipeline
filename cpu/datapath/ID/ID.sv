@@ -71,19 +71,26 @@ module ID (
 
 
     
-    wire       	predictBranchAvail;  //always branch
-    assign predictBranchAvail=IDBranchAvail;
-    /*BranchPredict u_branch_predict(
+    wire       	theBranchAvail,predictBranchAvail;  
+    BranchPredict u_branch_predict(
         .clk,
         .low_addr(PCP1[7:2]),
         .i_branchCorrect,
-        .branchType
-        //.predictBranchAvail
-    );*/
+        .branchType,
+        .predictBranchAvail
+    );
+    wire IDBranchAvail;    
+    BRANCH u_BRANCH(
+        .rd1          	( f_rd1           ),
+        .rd2        	( f_rd2         ),
+        .branchType  	( branchType   ),
+        .branchAvail 	( IDBranchAvail  )
+    );
+    assign theBranchAvail=i_stallDetect.branchCommitAtEX?predictBranchAvail:IDBranchAvail;
     wire[31:2] NOJPC,BPC;
     npc npc (
         .PC(PCP1),
-        .branchAvail(predictBranchAvail), 
+        .branchAvail(theBranchAvail), 
         .jmp(jmp),
         .offset(instr[15:0]),
         .instr_index(instr[25:0]),
@@ -92,19 +99,12 @@ module ID (
         .goExceptionHandler(ExlSet),
         .NPCFromEPC(NPCFromEPC),
         .EPC(i_cp0.EPC),
-        .jpcAvail(ExlSet||NPCFromEPC||NPCFromGPR||jmp||predictBranchAvail),
+        .jpcAvail(ExlSet||NPCFromEPC||NPCFromGPR||jmp||theBranchAvail),
         .NPC(i_if_id.NPC),
         .NOJPC,
         .BPC
     );
 
-    wire IDBranchAvail;    
-    BRANCH u_BRANCH(
-        .rd1          	( f_rd1           ),
-        .rd2        	( f_rd2         ),
-        .branchType  	( branchType   ),
-        .branchAvail 	( IDBranchAvail  )
-    );
     //assign i_if_id.jpcAvail=ExlSet|NPCFromEPC||NPCFromGPR||jmp||branchAvail;
     initial begin
         i_id_ex.EX_DATA=0;
@@ -133,7 +133,7 @@ module ID (
             i_id_ex.branchCommit.branchType<=branchType;
             i_id_ex.branchCommit.NOJPC<=NOJPC;
             i_id_ex.branchCommit.BPC<=BPC;
-            i_id_ex.branchCommit.branchCommitAtMEM<=i_stallDetect.branchCommitAtMEM;
+            i_id_ex.branchCommit.branchCommitAtEX<=i_stallDetect.branchCommitAtEX;
         end
     end
 endmodule //ID

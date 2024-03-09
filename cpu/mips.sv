@@ -73,8 +73,7 @@ module mips (
         .i_mem_wb,
         .i_bypass,
         .i_stallDetect,
-        .i_bridge,
-        .i_branchCorrect
+        .i_bridge
     );
     
     

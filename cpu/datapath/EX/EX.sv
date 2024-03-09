@@ -52,9 +52,10 @@ module EX (
         //.MEM_memToReg(i_bypass.MEM_memToReg),
         //.MEM_EXT_MEMout(i_bypass.MEM_EXT_MEMout)
     );
-    wire branchCommitAtEX=!i_id_ex.branchCommit.branchCommitAtMEM && i_id_ex.branchCommit.branchType!=0;
-    assign i_branchCorrect.correctAtEX = branchCommitAtEX && (i_id_ex.branchCommit.predictBranchAvail!=i_id_ex.IDBranchAvail);
-    assign i_branchCorrect.correctPCAtEX = i_id_ex.IDBranchAvail?i_id_ex.branchCommit.BPC
+    //wire branchCommitAtEX=!i_id_ex.branchCommit.branchCommitAtMEM && i_id_ex.branchCommit.branchType!=0;
+    wire branchCommitAtEX=i_id_ex.branchCommit.branchCommitAtEX;// && i_id_ex.branchCommit.branchType!=0;
+    assign i_branchCorrect.correctAtEX = branchCommitAtEX && (i_id_ex.branchCommit.predictBranchAvail!=EXBranchAvail);
+    assign i_branchCorrect.correctPCAtEX = EXBranchAvail?i_id_ex.branchCommit.BPC
                                            :i_id_ex.branchCommit.NOJPC;
 
     wire EXBranchAvail;
@@ -64,7 +65,11 @@ module EX (
          .branchType  	( branchType   ),
          .branchAvail 	( EXBranchAvail  )
      );
-
+    /*always @(posedge clk)begin
+        if(branchCommitAtEX) begin
+            $display("%d %d %d %d %x",f_rd1,f_rd2,EXBranchAvail,i_id_ex.branchCommit.predictBranchAvail,i_id_ex.branchCommit.NOJPC);
+        end
+    end*/
     ALU ALU(
         .A(f_rd1),
         .B(ALUB),

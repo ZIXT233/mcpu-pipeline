@@ -162,8 +162,8 @@ module Controller (
      end
 `endif
     wire PCWrite  = !i_stallDetect.stall;
-    wire IF_FLUSH = ExlSet || i_branchCorrect.correctAtEX || i_branchCorrect.correctAtMEM;
-    wire ID_FLUSH =i_stallDetect.stall || i_branchCorrect.correctAtMEM;
+    wire IF_FLUSH = ExlSet || i_branchCorrect.correctAtEX;// || i_branchCorrect.correctAtMEM;
+    wire ID_FLUSH =i_stallDetect.stall;// || i_branchCorrect.correctAtMEM;
     wire EX_FLUSH=0;
     wire MEM_FLUSH=0;
     //`S(0); 

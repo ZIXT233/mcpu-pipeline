@@ -24,7 +24,7 @@ module BranchPredict (
         end
         
         if(lastPredictTime<2) begin
-            if(i_branchCorrect.correctAtEX||i_branchCorrect.correctAtMEM)begin
+            if(i_branchCorrect.correctAtEX)begin
                 $display("predict wrong:[%x] %d",lastPredictAddr,fsm[lastPredictAddr]);
                 $display("predict miss:%d/%d",miss,branchCnt);
                 miss<=miss+1;

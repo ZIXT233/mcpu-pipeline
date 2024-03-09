@@ -9,14 +9,13 @@ module IF (
 );
     wire[31:2] IF_PC,NPC;
     wire[31:0] IF_instr;
-    assign NPC=i_branchCorrect.correctAtMEM?i_branchCorrect.correctPCAtMEM:
-               i_branchCorrect.correctAtEX?i_branchCorrect.correctPCAtEX:
+    assign NPC=i_branchCorrect.correctAtEX?i_branchCorrect.correctPCAtEX:
                i_if_id.NPC;
     pc pc (
         .NPC(NPC),
         .clk(clk),
         .reset(rst),
-        .PCWrite(i_controller.IF_CTRL.PCWrite&&cpu_req_ready),
+        .PCWrite((i_controller.IF_CTRL.PCWrite&&cpu_req_ready)||i_branchCorrect.correctAtEX),
         .PC(IF_PC)
     );
     wire [15:2]mem_req_addr;
@@ -47,17 +46,21 @@ module IF (
         ID_instr=0;
         firstFetch=1'b1;
     end
+    //int step=1;
     always @(posedge clk or negedge rst) begin
         if(!rst) begin
             ID_instr<=0;
             firstFetch<=1'b1;
         end
         else begin
+            //$display("step:%d %x",step,IF_PC);
+            //step<=step+1;
             if(i_controller.IF_FLUSH||firstFetch||!cpu_req_ready) begin 
                 ID_instr<=0;
+                //$display("%x",0);
             end
             else if(i_controller.IF_CTRL.PCWrite)begin 
-                //$display("[%x]",new_instr);
+                //$display("%x",IF_instr);
                 ID_instr<=IF_instr;
             end
             firstFetch<=1'b0;

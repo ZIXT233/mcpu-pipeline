@@ -9,8 +9,7 @@ module MEM (
     IEX_MEM.MEM i_ex_mem,
     IMEM_WB.MEM i_mem_wb,
     IBypass.MEM i_bypass,
-    IStallDetect.MEM i_stallDetect,
-    IBranchCorrect.MEM i_branchCorrect
+    IStallDetect.MEM i_stallDetect
 );
     wire [31:0] EXout;
     assign EXout=i_ex_mem.MEM_DATA.EXout;
@@ -31,9 +30,7 @@ module MEM (
     wire [31:0]MEMout,EXT_MEMout;
     assign MEMout=AddrInDM?i_ex_mem.DMout:i_bridge.PrRD;
 
-    assign i_branchCorrect.correctAtMEM=i_ex_mem.branchCommit.branchCommitAtMEM && (i_ex_mem.EXBranchAvail!=i_ex_mem.branchCommit.predictBranchAvail);
-    assign i_branchCorrect.correctPCAtMEM=i_ex_mem.EXBranchAvail?i_ex_mem.branchCommit.BPC:i_ex_mem.branchCommit.NOJPC;
-    DREXT U_DREXT(
+       DREXT U_DREXT(
         .in_data(MEMout),
         .out_data(EXT_MEMout),
         .low_addr(EXout[1:0]),

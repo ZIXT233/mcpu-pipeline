@@ -16,10 +16,11 @@ module pc(
             PC<=`START_ADDR;
         end
         else begin
-             if(PCWrite)begin 
+            //$display("--%x",line);
+            if(PCWrite)begin 
                 PC<=NPC;
                 //fCnt<=fCnt+1;
-                //$display("--%x",line);
+
                 //$display("%d/%d",fCnt,clkCnt);
             end
             if(PC==`START_ADDR)begin
