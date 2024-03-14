@@ -104,9 +104,9 @@ interface IStallDetect(input clk);
     assign NFG_EX=NPCFromGPR&&(EX_memToReg||EX_regWrite)&&EX_rw!=0&&(EX_rw==ID_rs||EX_rw==ID_rt);
     assign NFG_LOAD=NPCFromGPR&&MEM_memToReg&&(MEM_rw==ID_rs||MEM_rw==ID_rt);
     assign stall=(LOAD&&!LOAD_STORE_SAME)||NFG_EX||NFG_LOAD||MUL||!instrReady||MUL_MUL;//||Branch_EX;//||Branch_EX||Branch_LOAD;
-    always @(posedge clk)begin
+    /*always @(posedge clk)begin
         if(LOAD) $display("LOAD");
-    end
+    end*/
     assign branchCommitAtEX=Branch_EX||Branch_LOAD||Branch_MUL;
     modport Controller(input stall,output NPCFromGPR,branch);
     modport IF(output instrReady);

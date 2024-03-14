@@ -27,7 +27,7 @@ module MEM (
     assign i_stallDetect.MEM_memToReg=i_ex_mem.WB_CTRL.memToReg;
     assign i_stallDetect.MEM_MUL=i_ex_mem.WB_CTRL.MUL;
 
-    wire AddrInDM=(EXout[15:0]<'h3000);
+    wire AddrInDM=(EXout[31:16]<'h9000);
     wire [31:0]MEMout,EXT_MEMout;
     assign MEMout=AddrInDM?i_memory.dataRead:i_bridge.PrRD;
 

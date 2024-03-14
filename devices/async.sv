@@ -45,7 +45,7 @@ reg [7:0] TxD_shift = 0;
 always @(posedge clk)
 begin
 	if(TxD_ready & TxD_start)begin
-		$display("uart:%c",TxD_data);
+		//$display("uart:%c",TxD_data);
 		TxD_shift <= TxD_data;
 	end
 	else
@@ -231,9 +231,9 @@ module uart(
 	assign status={6'b0,RxD_data_ready,!TxD_busy};
 	assign Dout={24'b0,A?status:RxD_data};
 	always @(posedge clk)begin
-		if(TxD_start) ;//$display("send[%x]",Din[7:0]);
+		if(TxD_start) $display("send[%x]",Din[7:0]);
 		if(RxD_clear) $display("uart read,RxD_data:%x",RxD_data);
-		//$display("S:%x",A);
+		//$display("A:%x,status:%d",A,status);
 	end
 	async_transmitter #(.ClkFrequency(ClkFrequency),.Baud(Baud))
 	u_async_transmitter (

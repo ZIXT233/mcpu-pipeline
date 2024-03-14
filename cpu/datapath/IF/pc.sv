@@ -17,7 +17,7 @@ module pc(
             PC<=`START_ADDR;
         end
         else begin
-            $display("--%x",line);
+            //$display("--%x",line);
             if(PCWrite)begin 
                 PC<=NPC;
                 //fCnt<=fCnt+1;

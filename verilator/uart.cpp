@@ -25,16 +25,22 @@ int main(int argc, char **argv)
     unsigned char TxD_data;
     int r=0,rcnt=0;
     top->RxD=1;
-    while (main_time < 2800 && !Verilated::gotFinish()) { //控制仿真时间
+    int send=-1;
+    char TC='T';
+    while (main_time < 20800 && !Verilated::gotFinish()) { //控制仿真时间
         top->clk^=1;
-        if(top->clk==0&&main_time>20&&rcnt<9){
-            top->RxD=getchar();
-            if(top->RxD=='0') top->RxD=0;
-            else top->RxD=1;
-        }else if(top->clk==0&&rcnt==9) top->RxD=1;
+
 		top->eval();
         if(top->clk){
-            
+            if(send>=0){
+                if(send==0) top->RxD=0;
+                else if(send<=8){
+                    top->RxD=TC&1;
+                    TC>>=1;
+                }
+                else top->RxD=1;
+                send++;
+            }
             if(TxD_start==false){
                 if(top->TxD==0){
                     TxD_start=true;
@@ -45,7 +51,10 @@ int main(int argc, char **argv)
             else{
                 TxD_data>>=1;
                 TxD_data|=(top->TxD&1)<<7;
-                if(++TxD_cnt>=8) printf("uart_send:%02x\n",TxD_data),TxD_start=false;
+                if(++TxD_cnt>=8) {
+                    printf("uart_send:%c\n",TxD_data),TxD_start=false;
+                    if(TxD_data=='.')  send=0;
+                }
             }
         }
 		tfp->dump(main_time); //dump wave
