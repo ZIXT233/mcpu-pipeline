@@ -5,7 +5,7 @@ interface IMemory(input clk,rst);
     logic [31:2] instrAddr;
     logic [31:0] instrRead;
     logic instrReady;
-    logic [31:2] dataAddr;
+    logic [31:0] dataAddr;
     logic [31:0] dataRead,dataWrite;
     logic [3:0] dataBE;
     logic dataWE,dataEN;

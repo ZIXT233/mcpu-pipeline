@@ -10,16 +10,24 @@ module MDProc (
     reg [63:0]hifo,mid;
     assign O_HI=hifo[63:32];
     assign O_LO=hifo[31:0];
+    mult u_mult(
+        .clk,
+        .A,
+        .B,
+        .CE(F==3),
+        .P(hifo)
+    );
+
     always @(posedge clk) begin
         //$display("A:%d B:%d hifo:%d mid:%d",A,B,hifo,mid);
         case(F)
         0:hifo<=mid;
         1:hifo[63:32]<=A;
         2:hifo[31:0]<=A;
-        3:begin
+        /*3:begin
             if(isSign)mid<=$signed(A)*$signed(B);
             else mid<=A*B;
-        end
+        end*/
         /*4:begin
             if(isSign) begin 
                 mid[31:0]<=$signed(A)/$signed(B);

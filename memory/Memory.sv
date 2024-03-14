@@ -14,19 +14,20 @@ module Memory(
     reg prevDataReqBaseRAM;
     wire BaseRAM_WE,BaseRAM_EN,ExtRAM_WE,ExtRAM_EN;
     wire [3:0] BaseRAM_WEA,ExtRAM_WEA;
-    wire [31:2] BaseRAM_ADDR,ExtRAM_ADDR;
+    wire [31:2] BaseRAM_ADDR,ExtRAM_ADDR,dataAddr;
     wire [31:0] BaseRAM_Din,BaseRAM_Dout;
     wire [31:0] ExtRAM_Din,ExtRAM_Dout;
     assign clk = i_memory.clk;
     assign rst = i_memory.rst;
-    assign dataReqBaseRAM = i_memory.dataEN && (i_memory.dataAddr < `EXTRAM_START_ADDR);
-    assign BaseRAM_ADDR=dataReqBaseRAM ? i_memory.dataAddr : i_memory.instrAddr;
+    assign dataAddr = i_memory.dataAddr[31:2];
+    assign dataReqBaseRAM = i_memory.dataEN && (dataAddr < `EXTRAM_START_ADDR);
+    assign BaseRAM_ADDR=dataReqBaseRAM ? dataAddr : i_memory.instrAddr;
     assign BaseRAM_WE=dataReqBaseRAM && i_memory.dataWE;
     assign BaseRAM_WEA={4{BaseRAM_WE}}&i_memory.dataBE;
     assign BaseRAM_Din=i_memory.dataWrite << {i_memory.dataAddr[1:0],3'b0};
     assign BaseRAM_EN=1'b1;
 
-    assign ExtRAM_ADDR=i_memory.dataAddr-`EXTRAM_START_ADDR;
+    assign ExtRAM_ADDR=dataAddr-`EXTRAM_START_ADDR;
     assign ExtRAM_WE=!dataReqBaseRAM && i_memory.dataWE;
     assign ExtRAM_WEA={4{ExtRAM_WE}}&i_memory.dataBE;
     assign ExtRAM_Din=i_memory.dataWrite << {i_memory.dataAddr[1:0],3'b0};

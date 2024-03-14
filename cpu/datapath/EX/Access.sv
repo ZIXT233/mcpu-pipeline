@@ -24,7 +24,7 @@ module Access(
 
     assign i_memory.dataWE=DMWrite;
     assign i_memory.dataEN=(memToReg||DMWrite)&&AddrInDM;
-    assign i_memory.dataAddr=addr[31:2];
+    assign i_memory.dataAddr=addr;
     assign i_memory.dataWrite=f_rd2;
     assign i_memory.dataBE=be;
     assign i_bridge.IOWrite=memWrite&&!AddrInDM;
