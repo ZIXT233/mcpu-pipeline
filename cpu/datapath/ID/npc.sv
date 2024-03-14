@@ -23,7 +23,7 @@ module npc(
     wire[31:2] JPC=//`npcmatch(goExceptionHandler,`ExceptionHandlerAddr)|
                //`npcmatch(NPCFromEPC,EPC)|
                `npcmatch(NPCFromGPR,reg_index[31:2])|
-               `npcmatch(jmp,{4'b0,instr_index})|
+               `npcmatch(jmp,{PC[31:28],instr_index})|
                `npcmatch(branchAvail,BPC);
 
     assign NPC=jpcAvail?JPC:NOJPC;

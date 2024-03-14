@@ -1,10 +1,12 @@
 `include "cpu/pipelineInterfaces.sv"
+`include "IIO.sv"
 module IF (
     input clk,
     input rst,
     IController.IF i_controller,
     IStallDetect.IF i_stallDetect,
     IIF_ID.IF i_if_id,
+    IMemory.IF i_memory,
     IBranchCorrect.IF i_branchCorrect
 );
     wire[31:2] IF_PC,NPC;
@@ -15,12 +17,12 @@ module IF (
         .NPC(NPC),
         .clk(clk),
         .reset(rst),
-        .PCWrite((i_controller.IF_CTRL.PCWrite&&cpu_req_ready)||i_branchCorrect.correctAtEX),
+        .PCWrite(i_controller.IF_CTRL.PCWrite||i_branchCorrect.correctAtEX),
         .PC(IF_PC)
     );
-    wire [15:2]mem_req_addr;
-    wire [31:0]mem_req_data;
-    assign i_stallDetect.instrReady=1'b1;
+    //wire [15:2]mem_req_addr;
+    //wire [31:0]mem_req_data;
+    assign i_stallDetect.instrReady=cpu_req_ready;
     wire cpu_req_ready;
     ICache u_iCache(
         .clk,
@@ -30,15 +32,16 @@ module IF (
         .cpu_req_data(IF_instr),
         .cpu_req_ready,
         //MEM
-        .mem_req_addr,
-        .mem_req_data
+        .mem_req_addr(i_memory.instrAddr),
+        .mem_req_data(i_memory.instrRead),
+        .mem_req_ready(i_memory.instrReady)
     );
-    IM IM (
+    /*IM IM (
         .clk(clk),
         .ce(1'b1),
         .addr(mem_req_addr),
         .instruct(mem_req_data)
-    );
+    );*/
      
     reg [31:0] ID_instr; 
     reg firstFetch;
@@ -55,7 +58,7 @@ module IF (
         else begin
             //$display("step:%d %x",step,IF_PC);
             //step<=step+1;
-            if(i_controller.IF_FLUSH||firstFetch||!cpu_req_ready) begin 
+            if(i_controller.IF_FLUSH||firstFetch) begin 
                 ID_instr<=0;
                 //$display("%x",0);
             end

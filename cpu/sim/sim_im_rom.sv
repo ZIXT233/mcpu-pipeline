@@ -11,11 +11,13 @@ module sim_im_rom (
     int lat=0;
     reg[31:0] rom[0:2047];
     initial begin
-        $readmemh("../sample_codes/mul.txt",rom);
+
+        $readmemh("../sample_codes/ccqsort/out.txt",rom);
     end
     always @(posedge clka)begin
         if(ena) begin
             if(lat==0) begin
+                //$display("%d",addra);
                 douta<=rom[addra];
                 lat<=`LATENCY;
             end

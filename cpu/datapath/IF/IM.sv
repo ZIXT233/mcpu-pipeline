@@ -4,7 +4,7 @@ module IM(
     input [15:2]addr,
     output [31:0]instruct);
     // verilator lint_off WIDTH
-    wire[10:0] index=addr-'hC00;
+    wire[10:0] index=addr;//-'hC00;
     // verilator lint_on WIDTH
 
 

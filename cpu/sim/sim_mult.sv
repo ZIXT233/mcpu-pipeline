@@ -6,12 +6,18 @@ module sim_mult(
     output reg[31:0] P
 );
     logic state=0;
+    logic [31:0]DA,DB;
     always @(posedge clk) begin
+        //$display("%d %d  %d",A,B, P);
         if(state==0) begin
-            if(CE) state<=1;
+            if(CE) begin 
+                DA<=A;
+                DB<=B;
+                state<=1;
+            end
         end
         else begin
-            P<=A*B;
+            P<=DA*DB;
             state<=0;
         end
     end

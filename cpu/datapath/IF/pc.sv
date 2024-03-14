@@ -1,4 +1,4 @@
-`define START_ADDR 30'h0000C00
+`define START_ADDR 30'h20000000
 module pc(
     input wire[31:2] NPC,
     input clk,
@@ -8,15 +8,16 @@ module pc(
     initial begin
         PC=`START_ADDR;
     end
-    wire [29:0] line;
-    assign line=PC<<2;
+    wire [31:0] line;
+    assign line={PC,2'b0};
+    
     //integer clkCnt=0,fCnt=0;
     always @(posedge clk or negedge reset) begin
         if(!reset) begin
             PC<=`START_ADDR;
         end
         else begin
-            //$display("--%x",line);
+            $display("--%x",line);
             if(PCWrite)begin 
                 PC<=NPC;
                 //fCnt<=fCnt+1;

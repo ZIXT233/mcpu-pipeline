@@ -69,7 +69,7 @@ module seg7(
             
             case(be)
             4'hf:begin
-                ram[A]<=D;//$display("[%d]%d",A,D);
+                ram[A]<=D;$display("seg[%d]%d",A,D);
             end
             4'b0011: ram[A][15:0]<=D[15:0];
             4'b1100: ram[A][31:16]<=D[31:16];
@@ -83,6 +83,6 @@ module seg7(
     end
      always @(ram[0] or ram[1]) begin
 
-        //$display("7seg:%x%x",ram[1],ram[0]);
+        $display("7seg:%x%x",ram[1],ram[0]);
      end
 endmodule

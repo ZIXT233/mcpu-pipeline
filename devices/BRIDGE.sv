@@ -38,10 +38,10 @@ module BRIDGE (
     wire[31:0]  DEV0_RD,DEV1_RD,DEV2_RD,DEV3_RD,DEV_WD;
     //verilator lint_on UNDRIVEN
     wire[3:0]   WeDEV;
-    wire HitDEV0 = (PrAddr[31:1+`DEV0_LO_ADDR]=='h7F);
-    wire HitDEV1 = (PrAddr[31:1+`DEV1_LO_ADDR]=='h80);
-    wire HitDEV2 = (PrAddr[31:1+`DEV2_LO_ADDR]=='h81);
-    wire HitDEV3 = (PrAddr[31:1+`DEV2_LO_ADDR]=='h82);
+    wire HitDEV0 = (PrAddr[31:1+`DEV0_LO_ADDR]=='hBFD07F);
+    wire HitDEV1 = (PrAddr[31:1+`DEV1_LO_ADDR]=='hBFD080);
+    wire HitDEV2 = (PrAddr[31:1+`DEV2_LO_ADDR]=='hBFD081);
+    wire HitDEV3 = (PrAddr[31:1+`DEV2_LO_ADDR]=='hBFD003);
     assign PrRD =   (HitDEV0) ? DEV0_RD :
                     (HitDEV1) ? DEV1_RD :
                     (HitDEV2) ? DEV2_RD :

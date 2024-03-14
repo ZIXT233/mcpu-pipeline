@@ -1,4 +1,5 @@
 `include "cpu/pipelineInterfaces.sv"
+`include "IIO.sv"
 module EX (
     input      clk,
     // verilator lint_off UNUSED
@@ -10,6 +11,7 @@ module EX (
     IBypass.EX i_bypass,
     ICP0.EX i_cp0,
     IBridge.Access i_bridge,
+    IMemory.Access i_memory,
     IStallDetect.EX i_stallDetect,
     IBranchCorrect.EX i_branchCorrect
 );
@@ -116,10 +118,10 @@ module EX (
         .addr(accessAddr),
         .f_rd2(f_rd2_for_MEM),
         .i_bridge,
-        .DMout(i_ex_mem.DMout)
+        .i_memory
     );
     assign EXout=isSlt?{31'b0,ALUC[31]}:
-                 savePC?{2'b0,PCP1<<2}:
+                 savePC?{PCP1,2'b0}:
                  CP0WB?i_cp0.CP0_TO_EX:
                  //MDHIWB?MDHI:
                  //MDLOWB?MDLO:
