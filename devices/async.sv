@@ -44,8 +44,10 @@ assign TxD_busy = ~TxD_ready;
 reg [7:0] TxD_shift = 0;
 always @(posedge clk)
 begin
-	if(TxD_ready & TxD_start)
+	if(TxD_ready & TxD_start)begin
+		$display("uart:%c",TxD_data);
 		TxD_shift <= TxD_data;
+	end
 	else
 	if(TxD_state[3] & BitTick)
 		TxD_shift <= (TxD_shift >> 1);

@@ -11,7 +11,7 @@ module sim_dm_ram (
     wire [22:2]index;
     assign index=addra[22:2];
     initial begin
-        if(!isExt) $readmemh("../sample_codes/ccqsort/out.txt",ram);
+        if(!isExt) $readmemh("../sample_codes/lab2/out.txt",ram);
     end
     always @(posedge clka) begin
         if(ena) begin
