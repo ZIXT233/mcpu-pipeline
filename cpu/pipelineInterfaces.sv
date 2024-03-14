@@ -86,8 +86,8 @@ interface IStallDetect(input clk);
     logic branch;
     logic [4:0] EX_rw;
     logic EX_regWrite;
-    logic EX_MUL,MEM_MUL;
-    logic MUL;
+    logic EX_MUL,MEM_MUL,ID_MUL;
+    logic MUL,MUL_MUL;
     logic EX_memToReg;
     logic [4:0] MEM_rw;
     logic MEM_memToReg;
@@ -96,17 +96,21 @@ interface IStallDetect(input clk);
     logic branchCommitAtEX;
     assign LOAD=(EX_memToReg)&&(EX_rw==ID_rs||EX_rw==ID_rt)&&EX_rw!=0;
     assign MUL =(EX_MUL)&&(EX_rw==ID_rs||EX_rw==ID_rt)&&EX_rw!=0;
+    assign MUL_MUL = ID_MUL&&EX_MUL;
     assign LOAD_STORE_SAME=1'b0;//(EX_memToReg&&ID_memWrite)&&(EX_rw==ID_rt)&&EX_rw!=0;
     assign Branch_EX=branch&&(EX_memToReg||EX_regWrite)&&EX_rw!=0&&(EX_rw==ID_rs||EX_rw==ID_rt);
     assign Branch_LOAD=branch&&MEM_memToReg&&(MEM_rw==ID_rs||MEM_rw==ID_rt);
     assign Branch_MUL=branch&&MEM_MUL&&(MEM_rw==ID_rs||MEM_rw==ID_rt);
     assign NFG_EX=NPCFromGPR&&(EX_memToReg||EX_regWrite)&&EX_rw!=0&&(EX_rw==ID_rs||EX_rw==ID_rt);
     assign NFG_LOAD=NPCFromGPR&&MEM_memToReg&&(MEM_rw==ID_rs||MEM_rw==ID_rt);
-    assign stall=(LOAD&&!LOAD_STORE_SAME)||NFG_EX||NFG_LOAD||MUL||!instrReady;//||Branch_EX;//||Branch_EX||Branch_LOAD;
+    assign stall=(LOAD&&!LOAD_STORE_SAME)||NFG_EX||NFG_LOAD||MUL||!instrReady||MUL_MUL;//||Branch_EX;//||Branch_EX||Branch_LOAD;
+    always @(posedge clk)begin
+        if(LOAD) $display("LOAD");
+    end
     assign branchCommitAtEX=Branch_EX||Branch_LOAD||Branch_MUL;
     modport Controller(input stall,output NPCFromGPR,branch);
     modport IF(output instrReady);
-    modport ID(output ID_rs,ID_rt,ID_memWrite,input branchCommitAtEX);
+    modport ID(output ID_rs,ID_rt,ID_memWrite,ID_MUL,input branchCommitAtEX);
     modport EX(output EX_rw,EX_regWrite,EX_memToReg,EX_MUL);
     modport MEM(output MEM_rw,MEM_memToReg,MEM_MUL);
 endinterface
@@ -161,18 +165,7 @@ interface IMEM_WB(input clk);
     modport MEM(output WB_CTRL,WB_DATA,MULout);
     modport WB(input  WB_CTRL,WB_DATA,MULout);
 endinterface
-interface IBridge(input clk);
-    logic [31:0]PrWD,PrRD;
-    logic [31:2]PrAddr;
-    logic [3:0]PrBE;
-    logic [7:2]HWInt;
-    logic IOWrite,IORead;
-    modport CPU(input PrRD,HWInt,
-                output PrWD,PrAddr,PrBE,IOWrite,IORead);
-    modport Access(output PrWD,PrAddr,PrBE,IOWrite,IORead);
-    modport MEM(input PrRD);
-    modport CP0(input HWInt);
-endinterface
+
 interface IBypass(input clk);
     type_Bypass_DATA MEM_BACK,WB_BACK;
     logic[31:0]MEM_EXT_MEMout;

@@ -1,7 +1,9 @@
 `include "cpu/pipelineInterfaces.sv"
+`include "IIO.sv"
 module mips (
     input clk,
     input rst,
+    IMemory i_memory,
     IBridge i_bridge
 );
 
@@ -21,7 +23,8 @@ module mips (
         .i_controller,
         .i_stallDetect,
         .i_if_id,
-        .i_branchCorrect
+        .i_branchCorrect,
+        .i_memory
     );
 
     Controller u_Controller(
@@ -62,7 +65,8 @@ module mips (
         .i_ex_mem, 
         .i_stallDetect,
         .i_bridge,
-        .i_branchCorrect
+        .i_branchCorrect,
+        .i_memory
     );
     
     MEM u_MEM(
@@ -73,6 +77,7 @@ module mips (
         .i_mem_wb,
         .i_bypass,
         .i_stallDetect,
+        .i_memory,
         .i_bridge
     );
     

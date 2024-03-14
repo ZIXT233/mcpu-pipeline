@@ -47,12 +47,18 @@ module top(
     .clk_in1(clk));      // input clk_in1
 `endif
     IBridge i_bridge(oclk);
+    IMemory i_memory(oclk,rst);
+
     mips mips(
         .clk(oclk),
         .rst(locked),
-        .i_bridge
+        .i_bridge,
+        .i_memory
     );
 
+    Memory u_Memory(
+        .i_memory
+    );
 
     BRIDGE #(.ClkFrequency(ClkFrequency),.uart_baud(uart_baud)) 
     u_BRIDGE(

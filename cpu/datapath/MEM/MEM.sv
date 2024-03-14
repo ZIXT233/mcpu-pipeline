@@ -6,6 +6,7 @@ module MEM (
     // verilator lint_on UNUSED
     IController.Controller i_controller,
     IBridge.MEM i_bridge,
+    IMemory.MEM i_memory,
     IEX_MEM.MEM i_ex_mem,
     IMEM_WB.MEM i_mem_wb,
     IBypass.MEM i_bypass,
@@ -28,7 +29,7 @@ module MEM (
 
     wire AddrInDM=(EXout[15:0]<'h3000);
     wire [31:0]MEMout,EXT_MEMout;
-    assign MEMout=AddrInDM?i_ex_mem.DMout:i_bridge.PrRD;
+    assign MEMout=AddrInDM?i_memory.dataRead:i_bridge.PrRD;
 
        DREXT U_DREXT(
         .in_data(MEMout),
