@@ -11,11 +11,11 @@ module sim_dm_ram (
     wire [22:2]index;
     assign index=addra[22:2];
     initial begin
-        if(!isExt) $readmemh("../sample_codes/lab2/out.txt",ram);
+         $readmemh("../sample_codes/lab2/out.txt",ram);
     end
     always @(posedge clka) begin
         if(ena) begin
-            //if(!isExt)$display("[%d]%d, %d, %x",index,dina,ram[index],wea);
+            if(isExt)$display("[%d]%d, %x, %x",index,dina,ram[index],wea);
             douta<=ram[index];
             case(wea)
             4'hf:begin

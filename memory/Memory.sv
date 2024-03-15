@@ -69,7 +69,7 @@ module Memory(
             //$display("%x %x %x %x,%d",i_memory.instrReady,dataReqBaseRAM,i_memory.instrAddr,i_memory.dataAddr,i_memory.dataRead);
             prevDataReqBaseRAM<=dataReqBaseRAM;
             if(dataReqBaseRAM)begin
-                $display("dataReqBase");
+                //$display("dataReqBase");
                 i_memory.instrReady<=0;
                 preInstrAddr<=-1;
             end

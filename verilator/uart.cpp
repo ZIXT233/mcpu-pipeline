@@ -27,7 +27,7 @@ int main(int argc, char **argv)
     top->RxD=1;
     int send=-1;
     char TC='T';
-    while (main_time < 20800 && !Verilated::gotFinish()) { //控制仿真时间
+    while (main_time < 10800 && !Verilated::gotFinish()) { //控制仿真时间
         top->clk^=1;
 
 		top->eval();

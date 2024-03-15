@@ -12,7 +12,7 @@ module sim_im_rom (
     reg[31:0] rom[0:2047];
     initial begin
 
-        $readmemh("../sample_codes/ccqsort/out.txt",rom);
+        $readmemh("../sample_codes/kernel.txt",rom);
     end
     always @(posedge clka)begin
         if(ena) begin

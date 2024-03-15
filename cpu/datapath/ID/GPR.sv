@@ -29,5 +29,6 @@ module GPR(
             //$display("reg %d=%x",rw,$signed(Wd));
             register[rw]<=Wd;
         end
+        $display("s1:%x s2:%x",register[17],register[18]);
     end
 endmodule
